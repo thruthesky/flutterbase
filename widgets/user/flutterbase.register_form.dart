@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:fluttercms/flutterbase/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/flutterbase.globals.dart';
+import 'package:fluttercms/flutterbase/flutterbase.helpers.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.button.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
@@ -71,26 +74,35 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
     if (fb.loggedIn) {
       loadProfile();
     }
+
+    // Timer(Duration(milliseconds: 100), () {
+    //   int i = randomInt(10000000, 99999999);
+    //   _emailController.text = 'email$i@gmail.com';
+    //   _passwordController.text = 'pw!,$i';
+    //   _nicknameController.text = 'my nick';
+    //   _phoneNumberController.text = '+8210$i';
+    //   _birthdayController.text = '20100123';
+    // });
     super.initState();
   }
 
   loadProfile() async {
-    // print('loading profile');
     setState(() => inLoading = true);
-    // try {
-    //   var _user = await fb.userProfile();
-    //   if (mounted) {
-    //     setState(() {
-    //       user = _user;
-    //       _nicknameController.text = user.displayName;
-    //       _phoneNumberController.text = user.phoneNumber;
-    //       _birthdayController.text = user.birthday;
-    //     });
-    //   }
-    // } catch (e) {
-    //   widget.onError(e);
-    //   // AppService.alert(null, t(e));
-    // }
+    try {
+      FlutterbaseUser user = await fb.profile();
+      print(user);
+      if (mounted) {
+        setState(() {
+          _nicknameController.text = user.displayName;
+          _phoneNumberController.text = user.phoneNumber;
+          _birthdayController.text = user.birthday.toString();
+        });
+      }
+    } catch (e) {
+      print(e);
+      widget.onError(e);
+      // AppService.alert(null, t(e));
+    }
 
     setState(() => inLoading = false);
   }
@@ -136,7 +148,7 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
                   hintText: t('input email'),
                 ),
               )
-            : Text('user email'),
+            : Text(fb.user.email),
         FlutterbaseSpace(),
         if (fb.notLoggedIn)
           TextField(
@@ -214,18 +226,10 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
             final data = getFormData();
             try {
               if (fb.notLoggedIn) {
-                // await fb.register(data);
-                final FirebaseUser user =
-                    (await fb.auth.createUserWithEmailAndPassword(
-                  email: _emailController.text,
-                  password: _passwordController.text,
-                ))
-                        .user;
-                print('user registered: ${user.email}');
+                await fb.register(data);
                 widget.onRegisterSuccess();
               } else {
-                // await fb.userUpdate(data);
-                print('do update');
+                await fb.profileUpdate(data);
                 widget.onUpdateSuccess();
               }
             } catch (e) {

@@ -1,31 +1,49 @@
-const WRONG_CLASS_NAME = 'engin/wrong-class-name';
-const WRONG_METHOD_NAME = 'engin/wrong-method-name';
+
 
 /// From Firebase
-const String ERROR_INVALID_EMAIL = 'error_invalid_email';
-const String ERROR_USER_NOT_FOUND = 'error_user_not_found';
-const String ERROR_WRONG_PASSWORD = 'error_wrong_password';
+const String ERROR_INVALID_EMAIL = 'ERROR_INVALID_EMAIL';
+const String ERROR_USER_NOT_FOUND = 'ERROR_USER_NOT_FOUND';
+const String ERROR_WRONG_PASSWORD = 'ERROR_WRONG_PASSWORD';
 const String AUTH_INVALID_EMAIL = 'auth/invalid-email';
 const String AUTH_INVALID_PASSWORD = 'auth/invalid-password';
 const String AUTH_INVALID_PHONE_NUMBER = 'auth/invalid-phone-number';
 const String AUTH_PHONE_NUMBER_ALREADY_EXIST =
     'auth/phone-number-already-exists';
 
+const String ERROR_INVALID_CUSTOM_TOKEN = 'INVALID_CUSTOM_TOKEN';
+const String ERROR_CUSTOM_TOKEN_MISMATCH = 'CUSTOM_TOKEN_MISMATCH';
+const String ERROR_INVALID_CREDENTIAL = 'INVALID_CREDENTIAL';
+const String ERROR_USER_MISMATCH = 'USER_MISMATCH';
+const String ERROR_REQUIRES_RECENT_LOGIN = 'REQUIRES_RECENT_LOGIN';
+const String ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL = 'ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL';
+const String ERROR_EMAIL_ALREADY_IN_USE = 'EMAIL_ALREADY_IN_USE';
+const String ERROR_CREDENTIAL_ALREADY_IN_USE = 'CREDENTIAL_ALREADY_IN_USE';
+const String ERROR_USER_DISABLED = 'USER_DISABLED';
+const String ERROR_USER_TOKEN_EXPIRED = 'USER_TOKEN_EXPIRED';
+const String ERROR_INVALID_USER_TOKEN = 'INVALID_USER_TOKEN';
+const String ERROR_OPERATION_NOT_ALLOWED = 'OPERATION_NOT_ALLOWED';
+const String ERROR_WEAK_PASSWORD = 'ERROR_WEAK_PASSWORD';
+
 /// Firebase Auth 에 사용자가 존재하지 않는 경우 에러 메시지
 const String AUTH_USER_NOT_FOUND = 'auth/user-not-found';
 
 /// Firebase Auth 에는 존재하지만, Firestore 에 존재하지 않는 경우 에러 메시지
-const String USER_NOT_EXIST = 'engin/user-not-exist';
+const String USER_NOT_EXIST = 'flutterbase/user-not-exist';
 
-/// From Enginf (Backend, Cloud Functions)
-const String EMAIL_IS_NOT_PROVIDED = 'engin/email-is-not-provided';
-const String PASSWORD_IS_NOT_PROVIDED = 'engin/password-is-not-provided';
+/// From Flutterbase
+/// 
+const String INVALID_PARAMETER = 'flutterbase/invalid-parameter';
+const String FAILED_TO_REGISTER = 'flutterbase/failed-to-register';
+const String EMAIL_IS_EMPTY = 'flutterbase/email-is-empty';
+const String PASSWORD_IS_EMPTY = 'flutterbase/password-is-empty';
+const String DISPLAYNAME_IS_EMPTY = 'flutterbase/displayname-is-empty';
 
 /// App/Model Error code
 const String INPUT_EMAIL = 'input_email';
 const String INPUT_PASSWORD = 'input_password';
 const String ERROR_USER_IS_NULL = 'user_is_null';
 const String LOGIN_FIRST = 'login_first';
+const String EMAIL_CANNOT_BY_CHANGED = 'email-cannot-be-changed';
 
 const String ALREADY_LOGIN_ON_REGISTER_PAGE = 'already_login_on_register_page';
 

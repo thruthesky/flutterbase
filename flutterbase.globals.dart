@@ -203,6 +203,15 @@ String randomString({int length = 24}) {
   return new String.fromCharCodes(codeUnits);
 }
 
+
+/// Generates a positive random integer uniformly distributed on the range
+/// from [min], inclusive, to [max], exclusive.
+int randomInt(int min, int max) {
+  final _random = new Random();
+   return min + _random.nextInt(max - min);
+}
+
+
 /// Enum 의 값을 바탕으로 enum 요소 참조
 /// 예)
 /// ``` dart
