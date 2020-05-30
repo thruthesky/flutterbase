@@ -86,6 +86,7 @@ class EngineRoutes {
 
 
 const String CACHE_VERSION = '1';
+const String CACHE_BOX = 'flutterbasecache';
 
 class EngineCacheKey {
   static String forumList(String id) {

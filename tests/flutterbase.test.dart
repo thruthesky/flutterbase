@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.helpers.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
 
 class FlutterbaseTest {
   FlutterbaseTest() {

@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.category_list.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.helpers.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.texts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -190,5 +192,21 @@ class FlutterbaseModel extends ChangeNotifier {
   CollectionReference get _postCol => store.collection('posts');
   DocumentReference _postDoc(String id) {
     return _postCol.document(id);
+  }
+
+  /// 게시글 삭제
+  ///
+  /// 입력값은 프로토콜 문서 참고
+  Future<FlutterbasePost> postDelete(String id) async {
+    // final post = await callFunction({'route': 'post.delete', 'data': id});
+    // return FlutterbasePost.fromEngineData(post);
+    return null;
+  }
+
+  /// 카테고리 목록 전체를 가져온다.
+  Future<FlutterbaseCategoryList> categoryList() async {
+    // return EngineCategoryList.fromEngineData(
+    //     await callFunction({'route': 'category.list'}));
+    return null;
   }
 }

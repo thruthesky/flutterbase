@@ -235,6 +235,12 @@ open(String route, {arguments}) {
   );
 }
 
+///
+void back({arguments}) {
+  Navigator.pop(fb.context, arguments);
+}
+
+
 
 /// Returns true if [obj] is one of null, false, empty string, or 0.
 bool isEmpty(obj) {

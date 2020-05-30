@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/models/flutterbase.model.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.user_photo.dart';
+import 'package:fluttercms/flutterbase/widgets/user/flutterbase.user_photo.dart';
 import 'package:provider/provider.dart';
 
 /// `FlutterbaseAppBar` Widget
