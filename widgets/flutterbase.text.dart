@@ -1,5 +1,5 @@
 
-import '../flutterbase.globals.dart';
+import '../etc/flutterbase.globals.dart';
 import 'package:flutter/material.dart';
 
 /// Text widget that supports i18n tranlsation.

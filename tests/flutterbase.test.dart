@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:fluttercms/flutterbase/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/flutterbase.helpers.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.helpers.dart';
 
 class FlutterbaseTest {
   FlutterbaseTest() {

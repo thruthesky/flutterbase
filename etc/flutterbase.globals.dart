@@ -1,6 +1,6 @@
-import 'package:fluttercms/flutterbase/flutterbase.app.localization.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.app.localization.dart';
 
-import './widgets/flutterbase.text.dart';
+import '../widgets/flutterbase.text.dart';
 import 'dart:math';
 
 // import './widgets/engine.text.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 // import './engine.error.helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import './flutterbase.model.dart';
+import '../models/flutterbase.model.dart';
 
 ///
 /// `Engine` 에서 사용하는 글로벌 변수 몽므
@@ -227,13 +227,14 @@ T enumValueFromString<T>(String key, Iterable<T> values) => values.firstWhere(
     );
 
 /// 다른 라우트로 이동을 한다.
-redirect(String route, {arguments}) {
+open(String route, {arguments}) {
   return Navigator.pushNamed(
     fb.context,
     route,
     arguments: arguments,
   );
 }
+
 
 /// Returns true if [obj] is one of null, false, empty string, or 0.
 bool isEmpty(obj) {
