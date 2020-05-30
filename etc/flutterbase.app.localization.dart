@@ -34,7 +34,7 @@ class AppLocalizations {
     if (code == null) return null;
     var texts = textTranslations;
     // print(texts);
-    code = code.toLowerCase();
+    // code = code.toLowerCase();
     if (texts == null ||
         texts[code] == null ||
         texts[code][locale.languageCode] == null) {

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.category_list.helper.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.category.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
@@ -30,7 +30,7 @@ class FlutterbaseModel extends ChangeNotifier {
               // engineUser = await userProfile();
               // print('engineUser: ');
               // print(engineUser);
-
+              userDocument = await profile();
             } catch (e) {
               // print('got profile error: ');
               // print(e);
@@ -65,9 +65,15 @@ class FlutterbaseModel extends ChangeNotifier {
   /// - 따라서 `onAuthStateChanged` 에서 사용자가 로그인/로그아웃을 할 때 마다 `user` 정보를 업데이트해서 보관한다.
   ///
   /// - 로그인을 안한 상태이면 null.
-  /// - `user` 값은 `onAuthStateChanged` 에서만 변경되어야 한다. 그래서 getter 로 값을 읽을 수 있도록 한다.
+  /// - `user` 값은 `onAuthStateChanged` 에서만 변경되어야 한다. 그래서 실수하지 않도록 getter 로 값을 읽을 수 있도록 한다.
+  /// - `user` 값을 `onAuthStateChagned` 에서 관리하는 이유는
+  ///   - 사용자가 로그아웃으로 자동으로 `Anonymous`로 로그인을 한다.
+  ///     즉, 로그아웃을 하면  `user` 값은 `Anonymous` 사용자로 자동으로 변경이 되는 데, 이를 감지하고 업데이트 하기 위해서이다.
   FirebaseUser _user;
   FirebaseUser get user => _user;
+
+  /// 사용자 도큐먼트 값을 가진다.
+  FlutterbaseUser userDocument;
 
   /// 사용자가 로그인을 했으면 참을 리턴
   ///
@@ -83,7 +89,7 @@ class FlutterbaseModel extends ChangeNotifier {
 
   /// 관리자 이면 참을 리턴한다.
   bool get isAdmin {
-    return false;
+    return userDocument.isAdmin;
   }
 
   /// 사용자 로그아웃을 하고 `notifyListeners()` 를 한다. `user` 는 Listeners 에서 자동 업데이트된다.
@@ -128,12 +134,16 @@ class FlutterbaseModel extends ChangeNotifier {
     await user.reload();
   }
 
-  /// 사용자 로그인을 한다.
+  /// 로그인을 한다.
   ///
-  /// `Firebase Auth` 를 바탕으로 로그인을 한다.
+  /// `Firebase Auth` 에 직접 로그인을 한다.
   /// 에러가 있으면 에러를 throw 하고,
   /// 로그인이 성공하면 `notifiyListeners()`를 한 다음, `FirebaseUser` 객체를 리턴한다.
-  /// 주의 할 것은 `user` 변수는 이 함수에서 직접 업데이트 하지 않고 `onAuthStateChanged()`에서 자동 감지를 해서 업데이트 한다.
+  ///
+  /// 주의 할 것은
+  /// - `user` 변수는 이 함수에서 직접 업데이트 하지 않고 `onAuthStateChanged()`에서 자동 감지를 해서 업데이트 한다.
+  ///
+  ///
   Future<FirebaseUser> login(String email, String password) async {
     if (email == null || email == '') throw INPUT_EMAIL;
     if (password == null || password == '') throw INPUT_PASSWORD;
@@ -177,12 +187,15 @@ class FlutterbaseModel extends ChangeNotifier {
     }
   }
 
-  /// 사용자 정보를 Firestore Document 에서 가져와서 리턴한다.
+  /// 사용자 정보 Collection 에서 Document 가져와 파싱해서 리턴한다.
+  ///
+  /// - 사용자 Document 는 존재하지 않을 수 있다. null 일 수 있다. (테스트 하는 경우)
+  ///
   Future<FlutterbaseUser> profile() async {
     // print('profile: user.uid: ${user.uid}');
 
     final doc = await _userDoc(user.uid).get();
-    return FlutterbaseUser.fromDocument(doc.data);
+    return FlutterbaseUser.fromMap(doc.data);
   }
 
   CollectionReference get _userCol => store.collection('users');
@@ -195,6 +208,35 @@ class FlutterbaseModel extends ChangeNotifier {
     return _postCol.document(id);
   }
 
+  CollectionReference get _categoryCol => store.collection('categories');
+  DocumentReference _categoryDoc(String id) {
+    return _categoryCol.document(id);
+  }
+
+  /// 게시글 작성
+  ///
+  /// - id 는 저장하지 않는다.
+  Future<FlutterbasePost> postEdit(Map<String, dynamic> data) async {
+    String id = data['id'];
+    data.remove('id');
+
+    data['uid'] = user.uid;
+    data['updatedAt'] = FieldValue.serverTimestamp();
+
+    if (id == null) {
+      data['createdAt'] = FieldValue.serverTimestamp();
+      final ref = await _postCol.add(data);
+      id = ref.documentID;
+    } else {
+      await _postDoc(id).updateData(data);
+    }
+    return await postGet(id);
+  }
+
+  Future<FlutterbasePost> postGet(id) async {
+    return FlutterbasePost.fromMap((await _postDoc(id).get()).data);
+  }
+
   /// 게시글 삭제
   ///
   /// 입력값은 프로토콜 문서 참고
@@ -205,10 +247,36 @@ class FlutterbaseModel extends ChangeNotifier {
   }
 
   /// 카테고리 목록 전체를 가져온다.
-  Future<FlutterbaseCategoryList> categoryList() async {
-    // return EngineCategoryList.fromEngineData(
-    //     await callFunction({'route': 'category.list'}));
-    return null;
+  Future<List<FlutterbaseCategory>> loadCategories() async {
+    final QuerySnapshot snapshot = await _categoryCol.getDocuments();
+    final docs = snapshot.documents;
+    if (docs.length == 0) return [];
+
+    List<FlutterbaseCategory> cats = [];
+    for (final doc in docs) {
+      cats.add(FlutterbaseCategory.fromMap(doc.data));
+    }
+
+    return cats;
+  }
+
+  Future<FlutterbaseCategory> categoryEdit({
+    @required String id,
+    String title,
+    String description,
+  }) async {
+    if (isEmpty(id)) throw ID_IS_EMPTY;
+    final doc = _categoryDoc(id);
+    await doc.setData({'id': id, 'title': title, 'description': description},
+        merge: true);
+    final data = (await doc.get()).data;
+    return FlutterbaseCategory.fromMap(data);
+  }
+
+  /// 카테고리를 삭제한다.
+  ///
+  Future categoryDelete(String id) async {
+    await _categoryDoc(id).delete();
   }
 
   Future vote(data) async {

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
@@ -17,7 +16,8 @@ class FlutterbasePostListView extends StatefulWidget {
   final FlutterbasePost post;
 
   @override
-  _FlutterbasePostListViewState createState() => _FlutterbasePostListViewState();
+  _FlutterbasePostListViewState createState() =>
+      _FlutterbasePostListViewState();
 }
 
 class _FlutterbasePostListViewState extends State<FlutterbasePostListView> {
@@ -48,10 +48,12 @@ class FlutterbasePostListViewButtons extends StatefulWidget {
   final FlutterbasePost post;
 
   @override
-  _FlutterbasePostListViewButtonsState createState() => _FlutterbasePostListViewButtonsState();
+  _FlutterbasePostListViewButtonsState createState() =>
+      _FlutterbasePostListViewButtonsState();
 }
 
-class _FlutterbasePostListViewButtonsState extends State<FlutterbasePostListViewButtons> {
+class _FlutterbasePostListViewButtonsState
+    extends State<FlutterbasePostListViewButtons> {
   bool inDelete = false;
   bool inLike = false;
   bool inDisike = false;
@@ -84,9 +86,9 @@ class _FlutterbasePostListViewButtonsState extends State<FlutterbasePostListView
           onTap: () async {
             /// 글 수정
 
-
-            alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
-alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 해서 코드를 간결하게 한다.');
+            // alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
+            // alert(
+            //     'inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 해서 코드를 간결하게 한다.');
             // /// 글이 삭제되면 수정 불가
             // if (fb.isDeleted(widget.post)) return alert(t(ALREADY_DELETED));
 
@@ -101,6 +103,7 @@ alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 �
 
             /// 글 수정 후, 카테고리가 변경되어, 현재 카테고리가 글에 포함되지 않으면, 첫번째 카테고리로 이동한다.
             if (!_post.categories.contains(forum.id)) {
+              print('!_post.categories.contains(forum.id)');
               return open(
                 EngineRoutes.postList,
                 arguments: {'id': _post.categories.first},
@@ -115,17 +118,16 @@ alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 �
             /// 이미 vote 중이면 불가
             if (inLike || inDisike) return;
 
-
             alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
-alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 해서 코드를 간결하게 한다.');
+            alert(
+                'inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 해서 코드를 간결하게 한다.');
             // /// 글이 삭제되면  불가
             // if (fb.isDeleted(widget.post)) return alert(t(ALREADY_DELETED));
 
             // /// 본인의 글이면 불가
             // if (fb.isMine(widget.post)) return alert(t(CANNOT_VOTE_ON_MINE));
             setState(() => inLike = true);
-            final re =
-                await fb.vote({'id': widget.post.id, 'vote': 'like'});
+            final re = await fb.vote({'id': widget.post.id, 'vote': 'like'});
             setState(() {
               inLike = false;
               widget.post.likes = re['likes'];
@@ -141,17 +143,17 @@ alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 �
             /// 이미 vote 중이면 불가
             if (inLike || inDisike) return;
 
-
             alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
-alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 해서 코드를 간결하게 한다.');
+            alert(
+                'inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 해서 코드를 간결하게 한다.');
+
             /// 글이 삭제되면  불가
             // if (fb.isDeleted(widget.post)) return alert(t(ALREADY_DELETED));
 
             // /// 본인의 글이면 불가
             // if (fb.isMine(widget.post)) return alert(t(CANNOT_VOTE_ON_MINE));
             setState(() => inDisike = true);
-            final re =
-                await fb.vote({'id': widget.post.id, 'vote': 'dislike'});
+            final re = await fb.vote({'id': widget.post.id, 'vote': 'dislike'});
             setState(() {
               inDisike = false;
               widget.post.likes = re['likes'];
@@ -163,7 +165,6 @@ alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 �
         FlutterbaseTextButton(
           loader: inDelete,
           onTap: () async {
-
             alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
             // /// 글이 삭제되면 재 삭제 불가
             // if (fb.isDeleted(widget.post)) return alert(t(ALREADY_DELETED));

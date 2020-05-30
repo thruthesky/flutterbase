@@ -1,5 +1,3 @@
-
-
 /// From Firebase
 const String ERROR_INVALID_EMAIL = 'ERROR_INVALID_EMAIL';
 const String ERROR_USER_NOT_FOUND = 'ERROR_USER_NOT_FOUND';
@@ -15,7 +13,8 @@ const String ERROR_CUSTOM_TOKEN_MISMATCH = 'CUSTOM_TOKEN_MISMATCH';
 const String ERROR_INVALID_CREDENTIAL = 'INVALID_CREDENTIAL';
 const String ERROR_USER_MISMATCH = 'USER_MISMATCH';
 const String ERROR_REQUIRES_RECENT_LOGIN = 'REQUIRES_RECENT_LOGIN';
-const String ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL = 'ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL';
+const String ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL =
+    'ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL';
 const String ERROR_EMAIL_ALREADY_IN_USE = 'EMAIL_ALREADY_IN_USE';
 const String ERROR_CREDENTIAL_ALREADY_IN_USE = 'CREDENTIAL_ALREADY_IN_USE';
 const String ERROR_USER_DISABLED = 'USER_DISABLED';
@@ -31,12 +30,13 @@ const String AUTH_USER_NOT_FOUND = 'auth/user-not-found';
 const String USER_NOT_EXIST = 'flutterbase/user-not-exist';
 
 /// From Flutterbase
-/// 
+///
 const String INVALID_PARAMETER = 'flutterbase/invalid-parameter';
 const String FAILED_TO_REGISTER = 'flutterbase/failed-to-register';
 const String EMAIL_IS_EMPTY = 'flutterbase/email-is-empty';
 const String PASSWORD_IS_EMPTY = 'flutterbase/password-is-empty';
 const String DISPLAYNAME_IS_EMPTY = 'flutterbase/displayname-is-empty';
+const String ID_IS_EMPTY = 'id-is-empty';
 
 /// App/Model Error code
 const String INPUT_EMAIL = 'input_email';
@@ -67,6 +67,10 @@ const String CONFIRM_POST_DELETE_CONTENT = 'confirm post delete content';
 const String CONFIRM_COMMENT_DELETE_TITLE = 'confirm comment delete title';
 const String CONFIRM_COMMENT_DELETE_CONTENT = 'confirm comment delete content';
 
+const String CONFIRM_CATEGORY_DELETE_TITLE = 'confirm category delete title';
+const String CONFIRM_CATEGORY_DELETE_CONTENT =
+    'confirm category delete content';
+
 const String CREATE_POST = 'create post';
 const String UPDATE_POST = 'update post';
 const String CREATE_CATEGORY = 'create category';
@@ -77,13 +81,12 @@ const String BIRTHDAY_8_DIGITS = 'birthday 8 digits';
 const String SHOW_DATE_PICKER = 'show date picker';
 const String POST_CREATE = 'post create';
 
-
+const String PERMISSION_DENIED = 'permission denied';
 
 /// @see README
 class EngineRoutes {
   static final String postList = 'postList';
 }
-
 
 const String CACHE_VERSION = '1';
 const String CACHE_BOX = 'flutterbasecache';
@@ -92,6 +95,7 @@ class EngineCacheKey {
   static String forumList(String id) {
     return id + '-forum-list-' + CACHE_VERSION;
   }
+
   static String frontPage(String id) {
     return id + '-front-page-' + CACHE_VERSION;
   }

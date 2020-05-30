@@ -36,12 +36,12 @@ class FlutterbaseForumModel extends ChangeNotifier {
   /// 첫 번째 목록을 캐시.
   ///
   /// 인터넷이 안되거나 느린 경우, 첫 페이지를 볼 수 있음.
-  String cacheKey;
+  // String cacheKey;
 
   /// 첫 페이지인 경우만 캐시를 하도록 조건 검사
-  bool get cache {
-    return cacheKey != null && pageNo == 1;
-  }
+  // bool get cache {
+  //   return cacheKey != null && pageNo == 1;
+  // }
 
   bool noMorePosts = false;
   bool inLoading = false;
@@ -63,7 +63,7 @@ class FlutterbaseForumModel extends ChangeNotifier {
 
   void _scrollListener() {
     if (noMorePosts) {
-      print('_scrollListener():: no more posts on $id');
+      // print('_scrollListener():: no more posts on $id');
       return;
     }
 
@@ -99,7 +99,7 @@ class FlutterbaseForumModel extends ChangeNotifier {
     this.limit = limit;
     this.onError = onError;
     this.onLoad = onLoad;
-    this.cacheKey = cacheKey;
+    // this.cacheKey = cacheKey;
     scrollController.addListener(_scrollListener);
     _loadPage();
   }
@@ -110,7 +110,7 @@ class FlutterbaseForumModel extends ChangeNotifier {
   ///
   /// [onLoad] 이 것은 페이지가 로드 될 때 마다 호출 된다. setState() 와 같은 필요한 작업을 하면 된다.
   ///
-  /// [cacheKey]이 것이 문자열이면 이면,
+  ///
   ///
   /// * 첫번째 페이지만 캐시를 한다.
   /// * 게시판을 목록 할 때 마다 `notifyListeners()` 가 되며, callback handler 인 `_onLoad()`가 호출 된다.
@@ -118,85 +118,62 @@ class FlutterbaseForumModel extends ChangeNotifier {
   /// * 첫 페이지를 로드 할 때, `onLoad`가 두번 호출 된다.
   ///
   /// @return async 로 작업하고, 현재 글 목록 전체를 리턴한다.
+  ///
+  /// @attention 첫페이지 캐시를 하지 않는다.
+  ///   - 서버 Timestamp 를 변환해야하는등 로직이 복잡하다.
+  ///   - 대신 인터넷이 연결되어져 있지 않으면, 알림 페이지를 표시한다.
   _loadPage() async {
-    if (noMorePosts) {
-      // print('--> _loadPage() - No more posts on $id !');
-      return this.posts;
-    }
-    if (inLoading) {
-      print('already in loading. just return');
-      return;
-    } else
-      inLoading = true;
+    if (noMorePosts) return;
+    if (inLoading) return;
+    inLoading = true;
     notify();
-    if (cache) {
-      final docs = Hive.box(CACHE_BOX).get(cacheKey);
-      if (docs != null) {
-        posts = [];
-        for (final doc in docs) {
-          posts.add(FlutterbasePost.fromEngineData(doc));
-        }
-        if (onLoad != null) onLoad(posts);
-        notify();
-      }
-    }
-
-    Query q = Firestore.instance.collection('post');
+    Query q = Firestore.instance.collection('posts');
     q = q.where('categories', arrayContains: id);
     q = q.orderBy('createdAt', descending: true);
+
+    /// 주의:startAtter 값을  배열로 넘겨주어야 한다.
     if (startAfter != null) q = q.startAfter([startAfter]);
 
-    /// 주의: 배열로 넘겨주어야 한다.
     q = q.limit(limit);
-    q.snapshots().listen(
-      (data) {
-        if (isEmpty(data?.documents?.length)) {
-          noMorePosts = true;
-          inLoading = false;
-          notify();
-          return;
-        }
-        startAfter = data.documents.last.data['createdAt'];
-        List<FlutterbasePost> _posts = [];
-        List _docs = [];
-        data.documents.forEach(
-          (doc) {
-            final docData = doc.data;
-            docData['id'] = doc.documentID;
-            var _re = FlutterbasePost.fromEngineData(docData);
-            // print('_re: ');
-            // print(_re);
-            _docs.add(docData);
-            _posts.add(_re);
-            print('title: ${_re.title}');
-          },
-        );
-        if (cache) {
-          Hive.box(CACHE_BOX).put(cacheKey, _docs);
-        }
+    QuerySnapshot qs = await q.getDocuments();
+    final docs = qs.documents;
 
-        /// 캐시를 하는 경우, 첫 페이지 글은 덮어 쓴다.
-        if (cache) {
-          posts = _posts;
-        } else {
-          posts.addAll(_posts);
-        }
-
-        // print('posts from firestore: limit: $limit length: ${_posts.length}');
-        if (onLoad != null) onLoad(posts);
-        if (_posts.length < limit) {
-          noMorePosts = true;
-        }
-        pageNo++;
-        inLoading = false;
-        print('notify: $pageNo');
-        notify();
-      },
-    ).onError((e) {
-      print('------>  FlutterbaseForumModel::_loadPage() ERROR: $e');
-      alert(e);
+    if (docs.length == 0) {
+      noMorePosts = true;
       inLoading = false;
-    });
+      notify();
+      return;
+    }
+
+    startAfter = docs.last.data['createdAt'];
+    // print('startAFter: $startAfter');
+
+    List<FlutterbasePost> _posts = [];
+    // List _docs = [];
+    docs.forEach(
+      (doc) {
+        final docData = doc.data;
+        docData['id'] = doc.documentID;
+        var _re = FlutterbasePost.fromMap(docData);
+        // print('_re: ');
+        // print(_re);
+        // _docs.add(docData);
+        _posts.add(_re);
+        // print('title: ${_re.title}');
+      },
+    );
+
+    posts.addAll(_posts);
+
+    // print('posts from firestore: limit: $limit length: ${_posts.length}');
+    if (onLoad != null) onLoad(posts);
+    if (_posts.length < limit) {
+      noMorePosts = true;
+    }
+    pageNo++;
+    inLoading = false;
+    print('notify: $pageNo');
+    notify();
   }
 
   addPost(FlutterbasePost post) {
@@ -210,14 +187,16 @@ class FlutterbaseForumModel extends ChangeNotifier {
   ///
   /// 만약, 글 카테고리가 변경되어, 현재 게시판 카테고리에 더 이상 속하지 않는다면, 글을 목록에서 뺀다.
   updatePost(FlutterbasePost oldPost, FlutterbasePost updatedPost) {
-    print('updatePost: updatedPost:');
+    print('updatePost: $updatedPost');
 
     /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
     oldPost = this.posts.firstWhere((p) => p.id == oldPost.id);
-    print(updatedPost);
+
     if (updatedPost.categories.contains(id)) {
+      print('replace');
       oldPost.replaceWith(updatedPost);
     } else {
+      print('remove');
       posts.removeWhere((p) => p.id == updatedPost.id);
     }
     notify();

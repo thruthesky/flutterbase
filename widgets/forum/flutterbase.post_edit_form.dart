@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.category_list.helper.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.category.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
@@ -25,7 +25,7 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
   int progress = 0;
   bool inSubmit = false;
 
-  FlutterbaseCategoryList categoryList;
+  List<FlutterbaseCategory> categories;
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
@@ -60,7 +60,7 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
   }
 
   initLoadCategories() async {
-    categoryList = await fb.categoryList();
+    categories = await fb.loadCategories();
     if (mounted) setState(() => null);
   }
 
@@ -89,7 +89,7 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
 
   List<dynamic> _categorySelected = [];
   Iterable<Widget> get categoryChips sync* {
-    for (var cat in categoryList.categories) {
+    for (var cat in categories) {
       yield FilterChip(
         label: T(cat.id),
         selected: _categorySelected.contains(cat.id),
@@ -130,7 +130,7 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
             T('@todo 게시판 카테고리 선택. 게시판 카테고리가 여러개 인 경우. 첫번째 카테고리로 이동.'),
             T('select category'),
             Divider(),
-            categoryList == null
+            categories == null
                 ? PlatformCircularProgressIndicator()
                 : Wrap(
                     spacing: 6.0,
@@ -185,17 +185,9 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
                   onPressed: () async {
                     if (inSubmit) return;
                     setState(() => inSubmit = true);
-                    // print('post: $post');
                     try {
-                      alert('post create 와 update 를 edit 하나의 함수로 통일 ');
-                      var re;
-                      // if (post?.id == null) {
-                      //   re = await fb.postCreate(getFormData());
-                      // } else {
-                      //   re = await fb.postUpdate(getFormData());
-                      // }
-
-                      back(arguments: re);
+                      FlutterbasePost p = await fb.postEdit(getFormData());
+                      back(arguments: p);
                     } catch (e) {
                       alert(e);
                       setState(() => inSubmit = false);

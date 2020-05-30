@@ -19,7 +19,10 @@ class FlutterbasePostCreateActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: Icon(Icons.add),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Icon(Icons.add),
+      ),
       onTap: () async {
         /// 글 생성
         if (fb.notLoggedIn) return alert(t(LOGIN_FIRST));
@@ -35,6 +38,7 @@ class FlutterbasePostCreateActionButton extends StatelessWidget {
         if (forum != null) forum.addPost(_post);
 
         /// 글 작성/수정 후, 첫번째 카테고리로 이동
+        /// @TODO: 중복 라우터를 없애는 것이 좋겠다.
         return open(
           EngineRoutes.postList,
           arguments: {'id': _post.categories.first},

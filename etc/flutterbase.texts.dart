@@ -263,7 +263,8 @@ Map<String, Map<String, String>> textTranslations = {
   },
   ERROR_INVALID_CUSTOM_TOKEN: {
     'ko': '',
-    'en': 'The custom token format is incorrect. Please check the documentation.',
+    'en':
+        'The custom token format is incorrect. Please check the documentation.',
   },
   ERROR_CUSTOM_TOKEN_MISMATCH: {
     'ko': '',
@@ -275,15 +276,18 @@ Map<String, Map<String, String>> textTranslations = {
   },
   ERROR_USER_MISMATCH: {
     'ko': '',
-    'en': 'The supplied credentials do not correspond to the previously signed in user.',
+    'en':
+        'The supplied credentials do not correspond to the previously signed in user.',
   },
   ERROR_REQUIRES_RECENT_LOGIN: {
     'ko': '',
-    'en': 'This operation is sensitive and requires recent authentication. Log in again before retrying this request.',
+    'en':
+        'This operation is sensitive and requires recent authentication. Log in again before retrying this request.',
   },
   ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL: {
     'ko': '',
-    'en': 'An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.',
+    'en':
+        'An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.',
   },
   ERROR_EMAIL_ALREADY_IN_USE: {
     'ko': '',
@@ -291,7 +295,8 @@ Map<String, Map<String, String>> textTranslations = {
   },
   ERROR_CREDENTIAL_ALREADY_IN_USE: {
     'ko': '',
-    'en': 'This credential is already associated with a different user account.',
+    'en':
+        'This credential is already associated with a different user account.',
   },
   ERROR_USER_DISABLED: {
     'ko': '',
@@ -299,31 +304,37 @@ Map<String, Map<String, String>> textTranslations = {
   },
   ERROR_USER_TOKEN_EXPIRED: {
     'ko': '',
-    'en': 'The user\'s credential is no longer valid. The user must sign in again.',
+    'en':
+        'The user\'s credential is no longer valid. The user must sign in again.',
   },
   ERROR_INVALID_USER_TOKEN: {
     'ko': '',
-    'en': 'The user\'s credential is no longer valid. The user must sign in again.',
+    'en':
+        'The user\'s credential is no longer valid. The user must sign in again.',
   },
   ERROR_OPERATION_NOT_ALLOWED: {
     'ko': '',
-    'en': 'This operation is not allowed. You must enable this service in the console.',
+    'en':
+        'This operation is not allowed. You must enable this service in the console.',
   },
   ERROR_WEAK_PASSWORD: {
     'ko': '',
     'en': 'The given password is invalid.',
   },
+  CONFIRM_CATEGORY_DELETE_TITLE: {'ko': '카테고리 삭제', 'en': 'Category Delete'},
+  CONFIRM_CATEGORY_DELETE_CONTENT: {
+    'ko': '카테고리를 삭제하시겠습니까?',
+    'en': 'Do you want to delete category?',
+  }
 };
 
 class FlutterbaseI18N {
-
   /// @deprecated - 대소문자를 구분하도록 변경을 했다.
   /// i18n 문자열 키 소문자 확인
   ///
   /// i18n 문자열의 키는 반드시 소문자열 이어야한다.
   /// 디버깅 모드에서 모든 키가 소문자인지 검사를 한다.
   void i18nKeyCheck() {
-
     // if (kDebugMode) {
     //   for (String k in textTranslations.keys) {
     //     if (k != k.toLowerCase()) {

@@ -1,4 +1,5 @@
 import 'package:fluttercms/flutterbase/etc/flutterbase.app.localization.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 
 import '../widgets/flutterbase.text.dart';
 import 'dart:math';
@@ -23,32 +24,23 @@ import '../models/flutterbase.model.dart';
 /// * 객체 생성은 main.dart 에서 하면 된다.
 FlutterbaseModel fb = FlutterbaseModel();
 
-
-
 // const String hiveCacheBox = 'cache';
 
+/// Translate texts
+/// 
 /// Returns translated string from the text code.
-/// If [code] is [EngineError], then it takes [EngineError.code] as [code] and translate it.
+/// If [code] is an `Error object`,
+///   - It parses the Error and returns proper text translation.
 String t(code, {info}) {
-  // print(code);
-  // if (code is EngineError) {
-  //   code = code.code;
-  //   // if (info == null) info = code.message;
-  // }
   if (code is FlutterError) code = code.message;
   if (code is PlatformException) {
-    // @fix type error
-    // print('code: ');
-    // print(code);
-    String _code = '';
-    _code += code?.code ?? '';
-    _code += ' ' + code?.message ?? '';
-    // print(_code);
-    // if ( code?.details != null && code?.details[0] != null ) {
-    //   _code += ' ' + code.details[0];
-    // }
-    code = _code;
-    // code =  '${code.code} ${code.message} ${code.details['code']}';
+    String tmp = code.code + "\n" + code.message + "\n" + (code.details ?? '');
+
+    if (tmp.indexOf('Error 7') != -1 ||
+        tmp.indexOf('insufficient permissions') != -1) {
+      code = PERMISSION_DENIED;
+    } else
+      code = tmp;
   }
 
   return AppLocalizations.of(fb.context).t(code, info: info);
@@ -203,14 +195,12 @@ String randomString({int length = 24}) {
   return new String.fromCharCodes(codeUnits);
 }
 
-
 /// Generates a positive random integer uniformly distributed on the range
 /// from [min], inclusive, to [max], exclusive.
 int randomInt(int min, int max) {
   final _random = new Random();
-   return min + _random.nextInt(max - min);
+  return min + _random.nextInt(max - min);
 }
-
 
 /// Enum 의 값을 바탕으로 enum 요소 참조
 /// 예)
@@ -239,8 +229,6 @@ open(String route, {arguments}) {
 void back({arguments}) {
   Navigator.pop(fb.context, arguments);
 }
-
-
 
 /// Returns true if [obj] is one of null, false, empty string, or 0.
 bool isEmpty(obj) {

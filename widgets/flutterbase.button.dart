@@ -9,6 +9,8 @@ class FlutterbaseButton extends StatelessWidget {
     this.text,
     this.onPressed,
   });
+
+  /// [loader] 가 참이면, spinner 를 보여주고, 버튼을 disable 시킨다.
   final bool loader;
   final String text;
   final Function onPressed;
@@ -16,7 +18,7 @@ class FlutterbaseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      onPressed: onPressed,
+      onPressed: loader ? null : onPressed,
       child: Row(
         children: <Widget>[
           if (loader) ...[

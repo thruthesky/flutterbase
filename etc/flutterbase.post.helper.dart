@@ -1,5 +1,3 @@
-
-
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 
 /// 글 helper class
@@ -39,33 +37,43 @@ class FlutterbasePost {
     this.photoUrl,
     this.likes,
     this.dislikes,
-  }) {
-    if (comments == null) comments = [];
-    if (urls == null) urls = [];
-    if (categories != null && categories.length > 0) {
-      categories = List.from(categories);
+  });
+  factory FlutterbasePost.fromMap(Map<dynamic, dynamic> data) {
+    int createdAt = 0;
+    if (!isEmpty(data['createdAt'])) {
+      createdAt = data['createdAt'].millisecondsSinceEpoch;
     }
-    if (isEmpty(likes)) likes = 0;
-    if (isEmpty(dislikes)) dislikes = 0;
-  }
-  factory FlutterbasePost.fromEngineData(Map<dynamic, dynamic> data) {
+    int updatedAt = 0;
+    if (!isEmpty(data['updatedAt'])) {
+      updatedAt = data['updatedAt'].millisecondsSinceEpoch;
+    }
+    int deletedAt = 0;
+    if (!isEmpty(data['deletedAt'])) {
+      deletedAt = data['deletedAt'].millisecondsSinceEpoch;
+    }
+
+    // if (categories != null && categories.length > 0) {
+    //   categories = List.from(categories);
+    // }
+    // if (isEmpty(likes)) likes = 0;
+    // if (isEmpty(dislikes)) dislikes = 0;
     return FlutterbasePost(
       id: data['id'],
       categories: data['categories'],
       title: data['title'],
       content: data['content'],
       uid: data['uid'],
-      createdAt: data['createdAt'],
-      updatedAt: data['updatedAt'],
-      deletedAt: data['deletedAt'],
-      comments: data['comments'],
-      urls: data['urls'] != null
-          ? List<dynamic>.from(data['urls'])
-          : [], // To preved 'fixed-length' error.
-      displayName: data['displayName'],
-      photoUrl: data['photoUrl'],
-      likes: data['likes'],
-      dislikes: data['dislikes'],
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      deletedAt: deletedAt,
+      // comments: data['comments'],
+      // urls: data['urls'] != null
+      //     ? List<dynamic>.from(data['urls'])
+      //     : [], // To preved 'fixed-length' error.
+      // displayName: data['displayName'],
+      // photoUrl: data['photoUrl'],
+      // likes: data['likes'],
+      // dislikes: data['dislikes'],
     );
   }
 
