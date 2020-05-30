@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.category_list.helper.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
@@ -208,5 +209,44 @@ class FlutterbaseModel extends ChangeNotifier {
     // return EngineCategoryList.fromEngineData(
     //     await callFunction({'route': 'category.list'}));
     return null;
+  }
+
+  Future vote(data) async {
+    // return await callFunction({'route': 'post.like', 'data': data});
+  }
+
+  /// 코멘트 생성
+  ///
+  /// * 입력값은 프로토콜 문서 참고
+  /// * postCreate(), postUpdate() 와는 달리 자동으로 FlutterbaseComment 로 변환하지 않는다.
+  ///   이유는 백엔드로 부터 데이터를 가져 왔을 때, 곧바로 랜더링 준비를 하면(Model 호출 등) 클라이언트에 무리를 줄 수 있다.
+  ///   미리 하지 말고 필요(랜더링)할 때, 그 때 준비해서 해당 작업을 하면 된다.
+  /// * 코멘트를 백엔드로 가져 올 때, 랜더링 준비를 하지 않으므로, 여기서도 하지 않는다.
+  Future<FlutterbaseComment> commentCreate(data) async {
+    // final comment =
+    //     await callFunction({'route': 'comment.create', 'data': data});
+    // // return comment;
+    // return FlutterbaseComment.fromEngineData(comment);
+    return null;
+  }
+
+  /// 코멘트 수정
+  ///
+  /// * 입력값은 프로토콜 문서 참고
+  /// * commentCreate() 의 설명을 참고.
+  Future<FlutterbaseComment> commentUpdate(data) async {
+    // final comment =
+    //     await callFunction({'route': 'comment.update', 'data': data});
+    // // return comment;
+    // return FlutterbaseComment.fromEngineData(comment);
+    return null;
+  }
+
+  /// 코멘트 삭제
+  ///
+  /// * 입력값은 프로토콜 문서 참고
+  Future commentDelete(String id) async {
+    // final deleted = await callFunction({'route': 'comment.delete', 'data': id});
+    // return deleted;
   }
 }
