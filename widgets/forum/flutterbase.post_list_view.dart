@@ -101,12 +101,12 @@ class _FlutterbasePostListViewButtonsState
             if (_post == null) return;
             forum.updatePost(widget.post, _post);
 
-            /// 글 수정 후, 카테고리가 변경되어, 현재 카테고리가 글에 포함되지 않으면, 첫번째 카테고리로 이동한다.
-            if (!_post.categories.contains(forum.id)) {
+            /// 글 수정 후, 카테고리가 변경되면, 변경된 카테고리로 이동한다.
+            if (_post.category != forum.id) {
               print('!_post.categories.contains(forum.id)');
               return open(
                 EngineRoutes.postList,
-                arguments: {'id': _post.categories.first},
+                arguments: {'id': _post.category},
               );
             }
           },

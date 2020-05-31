@@ -1,5 +1,4 @@
 import './flutterbase.defines.dart';
-import 'package:flutter/foundation.dart';
 
 /// 대소문자 구분없이 기록
 /// 나중에 모두 소문자로 변경해서 사용 함

@@ -1,21 +1,28 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
 
 class FlutterbaseTest {
   FlutterbaseTest() {
     print('--> FlutterbaseTest()');
-    run();
+
+    /// 로그인 될 때까지 기다림
+    Timer(Duration(milliseconds: 200), () {
+      run();
+    });
   }
 
   int successCount = 0;
   int errorCount = 0;
 
   run() async {
-    await testRegister();
+    // await testRegister();
+    await testComment();
 
     showResult();
   }
@@ -146,5 +153,254 @@ class FlutterbaseTest {
       /// permission denied.
       eq(e.code, 'Error 7');
     }
+  }
+
+  createTestPost() async {
+    try {
+      /// 카테고리가 존재 해야 함
+      return await fb.postEdit({
+        'title': 'title',
+        'category': 'qna',
+      });
+    } catch (e) {
+      fail('Must create on creating a post $e');
+    }
+  }
+
+  testComment() async {
+    /// Create a post
+    FlutterbasePost post = await createTestPost();
+
+    // print(post);
+
+    /// Create Comment A
+    FlutterbaseComment commentA = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: 0, // 1단계
+      previousCommentOrder: null,
+      content: 'A',
+    );
+    eq(commentA.content, 'A');
+
+    List<FlutterbaseComment> _comments = await fb.commentsGet(post.id);
+    eq(_comments.length, 1);
+    eq(_comments[0].depth, 1);
+    eq(_comments[0].order,
+        '99999.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
+
+    /// Create Comment B
+    FlutterbaseComment commentB = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: 0, // 1단계
+      previousCommentOrder: commentA.order,
+      content: 'B',
+    );
+
+    _comments = await fb.commentsGet(post.id);
+    eq(_comments.length, 2);
+    eq(_comments[1].depth, 1);
+    eq(_comments[1].order,
+        '99998.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
+
+    /// Create Comment C
+    FlutterbaseComment commentC = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: 0, // 1단계
+      previousCommentOrder: commentB.order,
+      content: 'C',
+    );
+
+    _comments = await fb.commentsGet(post.id);
+    eq(_comments.length, 3);
+    eq(_comments[2].depth, 1);
+    eq(_comments[2].order,
+        '99997.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
+
+    /// Create Comment C -> CA
+
+    FlutterbaseComment commentCA = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentC.depth, // 이전 단계 depth. C 다음 이전 C.
+      previousCommentOrder: commentC.order, // 이전 단계 order. C 다음이므로 이전 C.
+      content: 'CA',
+    );
+
+    eq(commentCA.depth, 2);
+    eq(commentCA.order,
+        '99997.99998.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
+
+    /// Create Comment D
+    FlutterbaseComment commentD = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: 0, // 1단계
+      previousCommentOrder: commentC.order,
+      content: 'D',
+    );
+
+    eq(commentD.depth, 1);
+    eq(commentD.order,
+        '99996.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
+
+    /// Create Comment C -> CA -> CAA
+
+    FlutterbaseComment commentCAA = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentCA.depth, // 이전 단계 depth. CA 다음 이전은 CA.
+      previousCommentOrder: commentCA.order, // 이전 단계 order. CA 다음이므로 이전은 CA.
+      content: 'CAA',
+    );
+
+    eq(commentCAA.depth, 3);
+    eq(commentCAA.order,
+        '99997.99998.99998.99999.99999.99999.99999.99999.99999.99999.99999.99999');
+
+    /// Create B -> BA
+    ///
+    FlutterbaseComment commentBA = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentB.depth,
+      previousCommentOrder: commentB.order,
+      content: 'BA',
+    );
+
+    eq(commentBA.depth, 2);
+    eq(commentBA.order,
+        '99998.99998.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
+
+    /// Create A -> AA
+    FlutterbaseComment commentAA = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentA.depth,
+      previousCommentOrder: commentA.order,
+      content: 'AA',
+    );
+    eq(commentAA.depth, 2);
+    eq(commentAA.order,
+        '99999.99998.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
+
+    /// Create A -> AB
+    FlutterbaseComment commentAB = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentA.depth,
+      previousCommentOrder: commentAA.order,
+      content: 'AB',
+    );
+
+    eq(commentAB.order,
+        '99999.99997.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
+
+    /// Create A -> AC
+    FlutterbaseComment commentAC = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentA.depth,
+      previousCommentOrder: commentAB.order,
+      content: 'AC',
+    );
+
+
+
+    /// Create B -> BA -> BAA
+    ///
+    FlutterbaseComment commentBAA = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentBA.depth,
+      previousCommentOrder: commentBA.order,
+      content: 'BAA',
+    );
+
+
+
+    /// Create B -> BA -> BAAA
+    ///
+    FlutterbaseComment commentBAAA = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentBAA.depth,
+      previousCommentOrder: commentBAA.order,
+      content: 'BAAA',
+    );
+
+
+
+    /// Create B -> BA -> BAAB
+    ///
+    FlutterbaseComment commentBAAB = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentBAA.depth,
+      previousCommentOrder: commentBAAA.order, // 이전 댓글. 부모 댓글의 것이 아님.
+      content: 'BAAB',
+    );
+
+
+
+    /// Create B -> BA -> BAAC
+    ///
+    FlutterbaseComment commentBAAC = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentBAA.depth,
+      previousCommentOrder: commentBAAB.order, // 이전 댓글. 부모 댓글의 것이 아님.
+      content: 'BAAC',
+    );
+
+
+
+    /// Create B -> BA -> BAA -> BAAB -> BAABA
+    ///
+    FlutterbaseComment commentBAABA = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentBAAB.depth,
+      previousCommentOrder: commentBAAB.order, // 이전 댓글. 부모 댓글의 것이 아님.
+      content: 'BAABA',
+    );
+
+
+
+
+    /// Create B -> BB
+    ///
+    FlutterbaseComment commentBB = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: commentB.depth,
+      previousCommentOrder: commentBAAC.order, // 이전 댓글. 부모 댓글의 것이 아님.
+      content: 'BB',
+    );
+
+
+
+
+    print('------> crate done !!');
+    _comments = await fb.commentsGet(post.id);
+    _comments.forEach((element) {
+      print('created:');
+      print(element);
+    });
+
+    List<String> expected = [
+      'A',
+      'AA',
+      'AB',
+      'AC',
+      'B',
+      'BA',
+      'BAA',
+      'BAAA',
+      'BAAB',
+      'BAABA',
+      'BAAC',
+      'BB',
+      'C',
+      'CA',
+      'CAA',
+      'D',
+    ];
+    bool done = true;
+    for (int i = 0; i < _comments.length; i++) {
+      if (_comments[i].content != expected[i]) {
+        print(
+            '----------> failed: i: $i, ${_comments[i].content} : ${expected[i]}');
+        done = false;
+        break;
+      }
+    }
+    eq(done, true);
   }
 }

@@ -24,7 +24,7 @@ class FlutterbasePostCreateActionButton extends StatelessWidget {
         child: Icon(Icons.add),
       ),
       onTap: () async {
-        /// 글 생성
+        /// 글 생성 버튼 클릭 한 경우. 수정은 아님.
         if (fb.notLoggedIn) return alert(t(LOGIN_FIRST));
         FlutterbasePost _post = await openDialog(
           FlutterbasePostEditForm(id: id),
@@ -33,15 +33,10 @@ class FlutterbasePostCreateActionButton extends StatelessWidget {
         /// 글 생성 완료
         if (_post == null) return;
 
-        /// 모델이 있으면 모델에 글 추가
-        /// 그런데 어차피
-        if (forum != null) forum.addPost(_post);
-
-        /// 글 작성/수정 후, 첫번째 카테고리로 이동
-        /// @TODO: 중복 라우터를 없애는 것이 좋겠다.
+        /// TODO: 중복 라우터를 없애는 것이 좋겠다.
         return open(
           EngineRoutes.postList,
-          arguments: {'id': _post.categories.first},
+          arguments: {'id': _post.category},
         );
       },
     );

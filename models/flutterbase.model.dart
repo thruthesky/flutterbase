@@ -208,6 +208,14 @@ class FlutterbaseModel extends ChangeNotifier {
     return _postCol.document(id);
   }
 
+  CollectionReference _commentCol(String postId) {
+    return _postDoc(postId).collection('comments');
+  }
+
+  DocumentReference _commentDoc(String postId, String commentId) {
+    return _commentCol(postId).document(commentId);
+  }
+
   CollectionReference get _categoryCol => store.collection('categories');
   DocumentReference _categoryDoc(String id) {
     return _categoryCol.document(id);
@@ -215,8 +223,13 @@ class FlutterbaseModel extends ChangeNotifier {
 
   /// 게시글 작성
   ///
-  /// - id 는 저장하지 않는다.
+  /// - id 는 도큐먼트 ID 에 저장하지 않는다.
+  /// - category 는 카테고리이다.
+  /// - uid 는 자동 저장된다.
+  /// - [createdAt], [updatedAt] 도 자동 저장된다.
   Future<FlutterbasePost> postEdit(Map<String, dynamic> data) async {
+    if (data == null) throw INPUT_IS_EMPTY;
+    if (data['category'] == null) throw CATEGORY_IS_EMPTY;
     String id = data['id'];
     data.remove('id');
 
@@ -234,7 +247,7 @@ class FlutterbaseModel extends ChangeNotifier {
   }
 
   Future<FlutterbasePost> postGet(id) async {
-    return FlutterbasePost.fromMap((await _postDoc(id).get()).data);
+    return FlutterbasePost.fromMap((await _postDoc(id).get()).data, id: id);
   }
 
   /// 게시글 삭제
@@ -285,30 +298,108 @@ class FlutterbaseModel extends ChangeNotifier {
 
   /// 코멘트 생성
   ///
-  /// * 입력값은 프로토콜 문서 참고
+  /// 도큐먼트에  저장되어야하는 값
+  /// - uid (생성 할 때에만)
+  /// - content
+  /// - order
+  /// - createdAt (생성 할 때에만 )
+  /// - updatedAt
+  /// - deletedAt (삭제 할 때에만 )
+  ///
   /// * postCreate(), postUpdate() 와는 달리 자동으로 FlutterbaseComment 로 변환하지 않는다.
   ///   이유는 백엔드로 부터 데이터를 가져 왔을 때, 곧바로 랜더링 준비를 하면(Model 호출 등) 클라이언트에 무리를 줄 수 있다.
   ///   미리 하지 말고 필요(랜더링)할 때, 그 때 준비해서 해당 작업을 하면 된다.
   /// * 코멘트를 백엔드로 가져 올 때, 랜더링 준비를 하지 않으므로, 여기서도 하지 않는다.
-  Future<FlutterbaseComment> commentCreate(data) async {
-    // final comment =
-    //     await callFunction({'route': 'comment.create', 'data': data});
-    // // return comment;
-    // return FlutterbaseComment.fromEngineData(comment);
-    return null;
+  /// [dpeth] 는 1 부터 12 의 값이 저장되어야 한다.
+  /// 1단계 코멘트인 경우, [depth] 를 0 으로 입력하면 된다. 그러면 코드에서 +1을 해서 저장한다.
+  /// 2단계 코멘트의 경우, [depth] 를 1 로 이력하면, +1 을 해서 2로 저장한다.
+  Future<FlutterbaseComment> commentEdit({
+    @required String postId,
+    String commentId,
+    @required int parentCommentDepth,
+    @required String previousCommentOrder,
+    String content,
+  }) async {
+    // +1 을 하기 전의 값을 전달한다.
+    String order = getCommentOrder(parentCommentDepth, previousCommentOrder);
+    print('order: $order');
+
+    final Map<String, dynamic> data = {};
+
+    data['content'] = content;
+    data['uid'] = user.uid;
+    data['updatedAt'] = FieldValue.serverTimestamp();
+
+    if (commentId == null) {
+      // create
+      data['createdAt'] = FieldValue.serverTimestamp();
+      data['depth'] = parentCommentDepth + 1;
+      data['order'] = order;
+
+      print('data to create: $data');
+      final ref = await _commentCol(postId).add(data);
+      commentId = ref.documentID;
+    } else {
+      await _postDoc(commentId).updateData(data);
+    }
+    return await commentGet(postId, commentId);
+  }
+
+  Future<FlutterbaseComment> commentGet(String postId, String commentId) async {
+    final snapshot = await _commentDoc(postId, commentId).get();
+    if (!snapshot.exists) throw FIALED_TO_GET_COMMENT;
+    return FlutterbaseComment.fromMap(snapshot.data,
+        postId: postId, commentId: commentId);
+  }
+
+  Future<List<FlutterbaseComment>> commentsGet(String postId) async {
+    final snapshot = await _commentCol(postId)
+        .orderBy('order', descending: true)
+        .getDocuments();
+    final docs = snapshot.documents;
+    List<FlutterbaseComment> _comments = [];
+    docs.forEach(
+      (doc) {
+        final docData = doc.data;
+        var _re = FlutterbaseComment.fromMap(docData,
+            postId: postId, commentId: doc.documentID);
+
+        print('comment content: ${_re.content}');
+        _comments.add(_re);
+      },
+    );
+    return _comments;
+  }
+
+  /// [depth] 를 바탕으로 새로운 list order 값을 만들어 리턴
+  ///
+  /// [depth] 는 +1을 하기 전의 값이어야 한다.
+  /// 배열은 0 부터 시작으로, [dpeth] 가 0 이면 1단계, 1이면 2단계로 된다.
+  getCommentOrder(int depth, String order) {
+    if (order == null) {
+      order =
+          '99999.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999';
+    } else {
+      List<String> parts = order.split('.');
+      String el = parts[depth];
+      int computed = int.parse(el) - 1;
+      parts[depth] = computed.toString();
+      order = parts.join('.');
+    }
+    return order;
   }
 
   /// 코멘트 수정
   ///
   /// * 입력값은 프로토콜 문서 참고
   /// * commentCreate() 의 설명을 참고.
-  Future<FlutterbaseComment> commentUpdate(data) async {
-    // final comment =
-    //     await callFunction({'route': 'comment.update', 'data': data});
-    // // return comment;
-    // return FlutterbaseComment.fromEngineData(comment);
-    return null;
-  }
+  // Future<FlutterbaseComment> commentUpdate(data) async {
+  // final comment =
+  //     await callFunction({'route': 'comment.update', 'data': data});
+  // // return comment;
+  // return FlutterbaseComment.fromEngineData(comment);
+  //   return null;
+  // }
 
   /// 코멘트 삭제
   ///

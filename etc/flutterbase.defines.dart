@@ -32,11 +32,14 @@ const String USER_NOT_EXIST = 'flutterbase/user-not-exist';
 /// From Flutterbase
 ///
 const String INVALID_PARAMETER = 'flutterbase/invalid-parameter';
+const String INPUT_IS_EMPTY = 'flutterbase/input-is-empty';
 const String FAILED_TO_REGISTER = 'flutterbase/failed-to-register';
 const String EMAIL_IS_EMPTY = 'flutterbase/email-is-empty';
 const String PASSWORD_IS_EMPTY = 'flutterbase/password-is-empty';
 const String DISPLAYNAME_IS_EMPTY = 'flutterbase/displayname-is-empty';
 const String ID_IS_EMPTY = 'id-is-empty';
+const String CATEGORY_IS_EMPTY = 'flutterbase/category-is-empty';
+const String FIALED_TO_GET_COMMENT = 'flutterbase/failed-to-get-comment';
 
 /// App/Model Error code
 const String INPUT_EMAIL = 'input_email';

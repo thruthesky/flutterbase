@@ -1,5 +1,5 @@
+import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-
 
 class FlutterbaseComment {
   String content;
@@ -7,10 +7,11 @@ class FlutterbaseComment {
   int updatedAt;
   int deletedAt;
   String uid;
-  String id;
+  String commentId;
   String postId;
   String parentId;
   int depth;
+  String order;
 
   /// [inLoading] is used only for [post.tempComment] to indiate whether the comment in submission to backend.
   bool inLoading;
@@ -27,50 +28,62 @@ class FlutterbaseComment {
   int dislikes;
 
   FlutterbaseComment({
-    this.id,
-    this.uid,
     this.postId,
-    this.parentId,
+    this.commentId,
+    this.uid,
     this.content,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
     this.depth,
+    this.order,
     this.urls,
     this.displayName,
     this.photoUrl,
     this.likes,
     this.dislikes,
-  }) {
-    if (depth == null) depth = 0;
-    if (urls == null) urls = [];
-    if (isEmpty(likes)) likes = 0;
-    if (isEmpty(dislikes)) dislikes = 0;
-  }
-  factory FlutterbaseComment.fromEngineData(Map<dynamic, dynamic> data) {
+  });
+
+  /// 글 ID 와 코멘트 ID 를 데이터에 추가한다.
+  factory FlutterbaseComment.fromMap(Map<dynamic, dynamic> data,
+      {@required String postId, @required String commentId}) {
+    int createdAt = 0;
+    if (!isEmpty(data['createdAt'])) {
+      createdAt = data['createdAt'].millisecondsSinceEpoch;
+    }
+    int updatedAt = 0;
+    if (!isEmpty(data['updatedAt'])) {
+      updatedAt = data['updatedAt'].millisecondsSinceEpoch;
+    }
+    int deletedAt = 0;
+    if (!isEmpty(data['deletedAt'])) {
+      deletedAt = data['deletedAt'].millisecondsSinceEpoch;
+    }
+
     return FlutterbaseComment(
-      id: data['id'],
-      postId: data['postId'],
-      parentId: data['parentId'],
+      commentId: commentId,
+      postId: postId,
       content: data['content'],
       uid: data['uid'],
-      createdAt: data['createdAt'],
-      updatedAt: data['updatedAt'],
-      deletedAt: data['deletedAt'],
-      depth: data['depth'],
-      urls: data['urls'] != null
-          ? List<dynamic>.from(data['urls'])
-          : [], // To preved 'fixed-length' error.
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      deletedAt: deletedAt,
 
-      displayName: data['displayName'],
-      photoUrl: data['photoUrl'],
-      likes: data['likes'],
-      dislikes: data['dislikes'],
+      // urls: data['urls'] != null
+      //     ? List<dynamic>.from(data['urls'])
+      //     : [], // To preved 'fixed-length' error.
+
+      displayName: data['displayName'] ?? '',
+      photoUrl: data['photoUrl'] ?? '',
+      likes: data['likes'] ?? 0,
+      dislikes: data['dislikes'] ?? 0,
+      order: data['order'],
+      depth: data['depth'],
     );
   }
 
   @override
   String toString() {
-    return "id: $id, uid: $uid, postId: $postId, parentId: $parentId, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, dpeth: $depth, urls: $urls";
+    return "commentId: $commentId, uid: $uid, postId: $postId, parentId: $parentId, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, dpeth: $depth, urls: $urls, order: $order";
   }
 }

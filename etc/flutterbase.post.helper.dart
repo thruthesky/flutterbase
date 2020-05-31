@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 
 /// 글 helper class
 ///
 class FlutterbasePost {
-  List<dynamic> categories;
+  String category;
   String title;
   String content;
   int createdAt;
@@ -25,7 +26,7 @@ class FlutterbasePost {
   FlutterbasePost({
     this.id,
     this.uid,
-    this.categories,
+    this.category,
     this.title,
     this.content,
     this.createdAt,
@@ -38,7 +39,7 @@ class FlutterbasePost {
     this.likes,
     this.dislikes,
   });
-  factory FlutterbasePost.fromMap(Map<dynamic, dynamic> data) {
+  factory FlutterbasePost.fromMap(Map<dynamic, dynamic> data, {@required String id}) {
     int createdAt = 0;
     if (!isEmpty(data['createdAt'])) {
       createdAt = data['createdAt'].millisecondsSinceEpoch;
@@ -58,8 +59,8 @@ class FlutterbasePost {
     // if (isEmpty(likes)) likes = 0;
     // if (isEmpty(dislikes)) dislikes = 0;
     return FlutterbasePost(
-      id: data['id'],
-      categories: data['categories'],
+      id: id,
+      category: data['category'],
       title: data['title'],
       content: data['content'],
       uid: data['uid'],
@@ -84,7 +85,7 @@ class FlutterbasePost {
   replaceWith(FlutterbasePost post) {
     if (post == null) return;
     id = post.id;
-    categories = post.categories;
+    category = post.category;
     title = post.title;
     content = post.content;
     uid = post.uid;
@@ -97,6 +98,6 @@ class FlutterbasePost {
 
   @override
   String toString() {
-    return "id: $id, uid: $uid, categories: $categories, title: $title, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, comments: $comments";
+    return "id: $id, uid: $uid, category: $category, title: $title, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, comments: $comments";
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.category.helper.dart';
@@ -26,6 +25,7 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
   bool inSubmit = false;
 
   List<FlutterbaseCategory> categories;
+  String dropdownValue = 'discussion';
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
@@ -44,15 +44,13 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
             post = _post;
             _titleController.text = post.title;
             _contentController.text = post.content;
-            _categorySelected = post.categories;
           });
-          print(_categorySelected);
         }
 
         /// 게시판 아이디가 있는 경우, 카테고리 선택
         if (widget?.id != null) {
           setState(() {
-            _categorySelected.add(widget.id);
+            dropdownValue = widget.id;
           });
         }
       });
@@ -70,7 +68,7 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
 
     final data = {
       'id': post?.id,
-      'categories': _categorySelected,
+      'category': dropdownValue,
       'title': title,
       'content': content,
       'urls': post.urls,
@@ -87,25 +85,25 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
   // bool get isCreate => widget.id != null;
   // bool get isUpdate => !isCreate;
 
-  List<dynamic> _categorySelected = [];
-  Iterable<Widget> get categoryChips sync* {
-    for (var cat in categories) {
-      yield FilterChip(
-        label: T(cat.id),
-        selected: _categorySelected.contains(cat.id),
-        onSelected: (selected) {
-          setState(() {
-            if (selected) {
-              _categorySelected.add(cat.id);
-            } else {
-              _categorySelected.remove(cat.id);
-            }
-          });
-        },
-        selectedColor: Theme.of(context).primaryColorDark,
-      );
-    }
-  }
+  // List<dynamic> _categorySelected = [];
+  // Iterable<Widget> get categoryChips sync* {
+  //   for (var cat in categories) {
+  //     yield FilterChip(
+  //       label: T(cat.id),
+  //       selected: _categorySelected.contains(cat.id),
+  //       onSelected: (selected) {
+  //         setState(() {
+  //           if (selected) {
+  //             _categorySelected.add(cat.id);
+  //           } else {
+  //             _categorySelected.remove(cat.id);
+  //           }
+  //         });
+  //       },
+  //       selectedColor: Theme.of(context).primaryColorDark,
+  //     );
+  //   }
+  // }
 
   String get title {
     if (widget.id != null)
@@ -127,16 +125,38 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            T('@todo 게시판 카테고리 선택. 게시판 카테고리가 여러개 인 경우. 첫번째 카테고리로 이동.'),
-            T('select category'),
-            Divider(),
-            categories == null
-                ? PlatformCircularProgressIndicator()
-                : Wrap(
-                    spacing: 6.0,
-                    runSpacing: 0.0,
-                    children: categoryChips.toList(),
+            // categories == null
+            //     ? PlatformCircularProgressIndicator()
+            //     : Wrap(
+            //         spacing: 6.0,
+            //         runSpacing: 0.0,
+            //         children: categoryChips.toList(),
+            //       ),
+
+            if (categories != null)
+              DropdownButton<String>(
+                  value: dropdownValue,
+                  icon: Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: TextStyle(color: Colors.deepPurple),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.deepPurpleAccent,
                   ),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      dropdownValue = newValue;
+                    });
+                  },
+                  items: categories
+                      .map<DropdownMenuItem<String>>((FlutterbaseCategory cat) {
+                    return DropdownMenuItem<String>(
+                      value: cat.id,
+                      child: Text(cat.title),
+                    );
+                  }).toList()),
+
             Divider(),
             TextField(
               controller: _titleController,
@@ -187,6 +207,7 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
                     setState(() => inSubmit = true);
                     try {
                       FlutterbasePost p = await fb.postEdit(getFormData());
+                      // print('created: $p');
                       back(arguments: p);
                     } catch (e) {
                       alert(e);

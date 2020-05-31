@@ -60,34 +60,34 @@ class _FlutterbaseCommentEditFormState
   // StorageUploadTask _uploadTask;
 
   /// TODO - form validation
-  getFormData() {
-    final String content = _contentController.text;
+  // getFormData() {
+  //   final String content = _contentController.text;
 
-    final Map<String, dynamic> data = {
-      'content': content,
-    };
+  //   final Map<String, dynamic> data = {
+  //     'content': content,
+  //   };
 
-    if (isCreate && widget.parentComment != null) {
-      // comment under another comemnt
-      data['postId'] = widget.post.id;
-      data['parentId'] = widget.parentComment.id;
-      data['depth'] = widget.parentComment.depth + 1;
-    } else if (isUpdate) {
-      // comment update
-      data['id'] = widget.currentComment.id;
-    } else {
-      // comment under post
-      data['postId'] = widget.post.id;
-      data['depth'] = 0;
-    }
-    data['urls'] = widget.currentComment.urls;
-    // print('data: ');
-    // print(data);
-    return data;
-  }
+  //   if (isCreate && widget.parentComment != null) {
+  //     // comment under another comemnt
+  //     data['postId'] = widget.post.id;
+  //     // data['parentId'] = widget.parentComment.id;
+  //     data['depth'] = widget.parentComment.depth + 1;
+  //   } else if (isUpdate) {
+  //     // comment update
+  //     data['commentId'] = widget.currentComment.commentId;
+  //   } else {
+  //     // comment under post
+  //     data['postId'] = widget.post.id;
+  //     data['depth'] = 0;
+  //   }
+  //   data['urls'] = widget.currentComment.urls;
+  //   // print('data: ');
+  //   // print(data);
+  //   return data;
+  // }
 
   bool get isCreate {
-    return widget.currentComment?.id == null;
+    return widget.currentComment?.commentId == null;
   }
 
   bool get isUpdate {
@@ -161,19 +161,25 @@ class _FlutterbaseCommentEditFormState
                   if (inSubmit) return;
                   setState(() => inSubmit = true);
 
-                  var data = getFormData();
+                  // var data = getFormData();
                   try {
-                    alert('코멘트 create, update 를 하나로 합친다.');
-                    if (isCreate) {
-                      /// 코멘트 생성. 코멘트를 생성해서 리턴한다.
-                      FlutterbaseComment comment = await fb.commentCreate(data);
-                      back(arguments: comment);
-                    } else {
-                      /// 코멘트 수정. 수정된 코멘트를 리턴한다.
-                      FlutterbaseComment comment =
-                          await fb.commentUpdate(getFormData());
-                      back(arguments: comment);
-                    }
+                    // alert('코멘트 create, update 를 하나로 합친다.');
+                    // if (isCreate) {
+                    /// 코멘트 생성. 코멘트를 생성해서 리턴한다.
+                    FlutterbaseComment comment = await fb.commentEdit(
+                      postId: widget.post.id,
+                      commentId: widget.currentComment.commentId,
+                      parentCommentDepth: 0,
+                      previousCommentOrder: widget.parentComment?.order,
+                      content: _contentController.text,
+                    );
+                    back(arguments: comment);
+                    // } else {
+                    //   /// 코멘트 수정. 수정된 코멘트를 리턴한다.
+                    //   FlutterbaseComment comment =
+                    //       await fb.commentUpdate(getFormData());
+                    //   back(arguments: comment);
+                    // }
                   } catch (e) {
                     alert(e);
                   }

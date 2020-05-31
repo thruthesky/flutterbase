@@ -7,7 +7,7 @@ class FlutterbaseUser {
   String displayName;
   String phoneNumber;
   String photoURL;
-  String birthday;
+  int birthday;
   bool isAdmin;
   FlutterbaseUser({
     this.email,
@@ -16,10 +16,20 @@ class FlutterbaseUser {
     this.photoURL,
     this.birthday,
     this.isAdmin,
-  }) {
-    if (isAdmin == null) isAdmin = false;
-  }
+  });
   factory FlutterbaseUser.fromMap(Map<dynamic, dynamic> data) {
+    bool isAdmin = false;
+    if (data['isAdmin'] != null && data['isAdmin'] == true) isAdmin = true;
+
+
+    /// TODO: 왜 birthday 가 문자열로 저장이 되는지 원인을 모르겠다. 저장 할 때, 문자열로 저장이 되나?
+    int birthday;
+    if ( data['birthday'] is String ) {
+      birthday = int.parse(data['birthday']);
+    } else {
+      birthday = data['birthday'];
+    }
+
     if (data == null)
       return FlutterbaseUser();
     else
@@ -28,8 +38,8 @@ class FlutterbaseUser {
         displayName: data['displayName'],
         phoneNumber: data['phoneNumber'],
         photoURL: data['photoURL'],
-        birthday: data['birthday'],
-        isAdmin: data['isAdmin'],
+        birthday: birthday,
+        isAdmin: isAdmin,
       );
   }
 

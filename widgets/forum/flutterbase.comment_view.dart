@@ -90,7 +90,7 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
             );
 
             /// 결과를 목록에 집어 넣는다.
-            widget.forum.addComment(_comment, widget.post, widget.comment.id);
+            widget.forum.addComment(_comment, widget.post, widget.comment.commentId);
           },
           text: t('reply'),
         ),
@@ -131,7 +131,7 @@ alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 �
             // if (fb.isMine(widget.comment)) return alert(t(CANNOT_VOTE_ON_MINE));
             setState(() => inLike = true);
             final re =
-                await fb.vote({'id': widget.comment.id, 'vote': 'like'});
+                await fb.vote({'id': widget.comment.commentId, 'vote': 'like'});
             setState(() {
               inLike = false;
               widget.comment.likes = re['likes'];
@@ -155,7 +155,7 @@ alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 �
             // /// 본인의 글이면 불가
             // if (fb.isMine(widget.comment)) return alert(t(CANNOT_VOTE_ON_MINE));
             setState(() => inDisike = true);
-            final re = await fb.vote({'id': widget.comment.id, 'vote': 'dislike'});
+            final re = await fb.vote({'id': widget.comment.commentId, 'vote': 'dislike'});
             setState(() {
               inDisike = false;
               widget.comment.likes = re['likes'];
@@ -181,7 +181,7 @@ alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 �
               onYes: () async {
                 setState(() => inDelete = true);
                 try {
-                  var re = await fb.commentDelete(widget.comment.id);
+                  var re = await fb.commentDelete(widget.comment.commentId);
                   widget.comment.content = re['content'];
                   widget.forum.notify();
                 } catch (e) {

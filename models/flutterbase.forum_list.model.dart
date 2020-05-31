@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
-import 'package:hive/hive.dart';
 
 /// `Firestore` 에 직접 접속해서  목록을 가져오기 위해서 사용.
 ///
@@ -128,7 +126,7 @@ class FlutterbaseForumModel extends ChangeNotifier {
     inLoading = true;
     notify();
     Query q = Firestore.instance.collection('posts');
-    q = q.where('categories', arrayContains: id);
+    q = q.where('category', isEqualTo: id);
     q = q.orderBy('createdAt', descending: true);
 
     /// 주의:startAtter 값을  배열로 넘겨주어야 한다.
@@ -153,8 +151,8 @@ class FlutterbaseForumModel extends ChangeNotifier {
     docs.forEach(
       (doc) {
         final docData = doc.data;
-        docData['id'] = doc.documentID;
-        var _re = FlutterbasePost.fromMap(docData);
+        // docData['id'] = doc.documentID;
+        var _re = FlutterbasePost.fromMap(docData, id: doc.documentID);
         // print('_re: ');
         // print(_re);
         // _docs.add(docData);
@@ -172,7 +170,7 @@ class FlutterbaseForumModel extends ChangeNotifier {
     }
     pageNo++;
     inLoading = false;
-    print('notify: $pageNo');
+    // print('notify: $pageNo');
     notify();
   }
 
@@ -187,12 +185,12 @@ class FlutterbaseForumModel extends ChangeNotifier {
   ///
   /// 만약, 글 카테고리가 변경되어, 현재 게시판 카테고리에 더 이상 속하지 않는다면, 글을 목록에서 뺀다.
   updatePost(FlutterbasePost oldPost, FlutterbasePost updatedPost) {
-    print('updatePost: $updatedPost');
+    // print('updatePost: $updatedPost');
 
     /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
     oldPost = this.posts.firstWhere((p) => p.id == oldPost.id);
 
-    if (updatedPost.categories.contains(id)) {
+    if (updatedPost.category == id) {
       print('replace');
       oldPost.replaceWith(updatedPost);
     } else {
@@ -257,7 +255,7 @@ class FlutterbaseForumModel extends ChangeNotifier {
     /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
     post = this.posts.firstWhere((p) => p.id == post.id);
 
-    int i = post.comments.indexWhere((element) => element.id == comment.id);
+    int i = post.comments.indexWhere((element) => element.id == comment.commentId);
     post.comments.removeAt(i);
     post.comments.insert(i, comment);
     notify();
