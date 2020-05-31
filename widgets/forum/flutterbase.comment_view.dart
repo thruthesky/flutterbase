@@ -1,9 +1,9 @@
-
 import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
 import 'package:fluttercms/flutterbase/models/flutterbase.forum_list.model.dart';
+import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.text_button.dart';
 import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.comment_edit_form.dart';
 import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.comment_view_content.dart';
@@ -65,7 +65,8 @@ class FlutterbaseCommentButtons extends StatefulWidget {
   final FlutterbaseComment comment;
 
   @override
-  _FlutterbaseCommentButtonsState createState() => _FlutterbaseCommentButtonsState();
+  _FlutterbaseCommentButtonsState createState() =>
+      _FlutterbaseCommentButtonsState();
 }
 
 class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
@@ -75,22 +76,39 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
 
   @override
   Widget build(BuildContext context) {
+    FlutterbasePostModel postModel =
+        Provider.of<FlutterbasePostModel>(context, listen: false);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         FlutterbaseTextButton(
           onTap: () async {
             /// 코멘트 보기에서 Reply 버튼을 클릭한 경우, 코멘트 수정 창을 열고, 결과를 리턴 받음.
+
+            /// last sibling 찾기
+
+            ////
+
             FlutterbaseComment _comment = await openDialog(
               FlutterbaseCommentEditForm(
-                widget.post,
+                postModel: postModel,
+                post: widget.post,
                 currentComment: FlutterbaseComment(),
                 parentComment: widget.comment,
+                lastSiblingComment: fb.findLastSiblingComment(
+                  parentComment: widget.comment,
+                  comments: postModel.comments,
+                ),
               ),
             );
 
             /// 결과를 목록에 집어 넣는다.
-            widget.forum.addComment(_comment, widget.post, widget.comment.commentId);
+            /// TODO: 코멘트 업데이트
+            // widget.forum
+            //     .addComment(_comment, widget.post, widget.comment.commentId);
+
+            postModel.addComment(_comment);
           },
           text: t('reply'),
         ),
@@ -106,11 +124,13 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
 
             FlutterbaseComment _comment = await openDialog(
               FlutterbaseCommentEditForm(
-                widget.post,
+                post: widget.post,
                 currentComment: widget.comment,
               ),
             );
-            widget.forum.updateComment(_comment, widget.post);
+
+            /// TODO: 코멘트 업데이트
+            // widget.forum.updateComment(_comment, widget.post);
             // model.notify();
           },
           text: t('edit'),
@@ -122,8 +142,10 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
             /// 이미 vote 중이면 불가
             if (inLike || inDisike) return;
 
-alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
-alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 해서 코드를 간결하게 한다.');
+            alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
+            alert(
+                'inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 해서 코드를 간결하게 한다.');
+
             /// 글이 삭제되면  불가
             // if (fb.isDeleted(widget.comment)) return alert(t(ALREADY_DELETED));
 
@@ -147,15 +169,18 @@ alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 �
             /// 이미 vote 중이면 불가
             if (inLike || inDisike) return;
 
-alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
-alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 해서 코드를 간결하게 한다.');
+            alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
+            alert(
+                'inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 해서 코드를 간결하게 한다.');
+
             /// 글이 삭제되면  불가
             // if (fb.isDeleted(widget.comment)) return alert(t(ALREADY_DELETED));
 
             // /// 본인의 글이면 불가
             // if (fb.isMine(widget.comment)) return alert(t(CANNOT_VOTE_ON_MINE));
             setState(() => inDisike = true);
-            final re = await fb.vote({'id': widget.comment.commentId, 'vote': 'dislike'});
+            final re = await fb
+                .vote({'id': widget.comment.commentId, 'vote': 'dislike'});
             setState(() {
               inDisike = false;
               widget.comment.likes = re['likes'];
@@ -168,7 +193,7 @@ alert('inLike 를  fb.inVoting 으로 변경. vote()함수 안에서 캡슐화 �
           loader: inDelete,
           onTap: () async {
             /// 코멘트 삭제
-            
+
             alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
             // /// 삭제되면 재 삭제 불가
             // if (fb.isDeleted(widget.comment)) return alert(t(ALREADY_DELETED));

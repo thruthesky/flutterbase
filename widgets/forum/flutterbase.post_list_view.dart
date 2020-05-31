@@ -4,6 +4,7 @@ import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
 import 'package:fluttercms/flutterbase/models/flutterbase.forum_list.model.dart';
+import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.text_button.dart';
 import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.comment_edit_form.dart';
 import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.comment_view.dart';
@@ -22,18 +23,39 @@ class FlutterbasePostListView extends StatefulWidget {
 
 class _FlutterbasePostListViewState extends State<FlutterbasePostListView> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         FlutterbasePostListViewContent(widget.post),
         FlutterbasePostListViewButtons(widget.post),
-        if (widget.post.comments != null)
-          for (var c in widget.post.comments)
-            FlutterbaseCommentView(
-              widget.post,
-              c,
-              key: ValueKey(c.id ?? randomString()),
-            ),
+        Consumer<FlutterbasePostModel>(builder: (context, model, child) {
+          return Column(
+            children: <Widget>[
+              if (model.comments != null)
+                for (var c in model.comments)
+                  FlutterbaseCommentView(
+                    widget.post,
+                    c,
+                    key: ValueKey(c.commentId ?? randomString()),
+                  ),
+            ],
+          );
+        })
+
+        /// TODO: 코멘트 보여주기
+        // if (widget.post.comments != null)
+        //   for (var c in widget.post.comments)
+        //     FlutterbaseCommentView(
+        //       widget.post,
+        //       c,
+        //       key: ValueKey(c.id ?? randomString()),
+        //     ),
       ],
     );
   }
@@ -61,6 +83,8 @@ class _FlutterbasePostListViewButtonsState
   Widget build(BuildContext context) {
     FlutterbaseForumModel forum =
         Provider.of<FlutterbaseForumModel>(context, listen: false);
+    FlutterbasePostModel postModel =
+        Provider.of<FlutterbasePostModel>(context, listen: false);
     return Row(
       children: <Widget>[
         FlutterbaseTextButton(
@@ -71,12 +95,18 @@ class _FlutterbasePostListViewButtonsState
             /// 글이 삭제되어도 코멘트를 달 수 있다.
             FlutterbaseComment comment = await openDialog(
               FlutterbaseCommentEditForm(
-                widget.post,
+                postModel: postModel,
+                post: widget.post,
                 currentComment: FlutterbaseComment(),
+                lastSiblingComment: fb.findLastSiblingComment(
+                    parentComment: null, comments: postModel.comments),
               ),
             );
 
-            forum.addComment(comment, widget.post, null);
+            /// TODO: 코멘트를 생성하고 집어 넣기.
+            // forum.addComment(comment, widget.post, null);
+            
+            postModel.addComment(comment);
 
             // forum.notify();
           },

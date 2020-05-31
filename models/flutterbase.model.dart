@@ -317,12 +317,12 @@ class FlutterbaseModel extends ChangeNotifier {
     @required String postId,
     String commentId,
     @required int parentCommentDepth,
-    @required String previousCommentOrder,
+    @required String lastSiblingCommentOrder,
     String content,
   }) async {
     // +1 을 하기 전의 값을 전달한다.
-    String order = getCommentOrder(parentCommentDepth, previousCommentOrder);
-    print('order: $order');
+    String order = getCommentOrder(parentCommentDepth, lastSiblingCommentOrder);
+    // print('order: $order');
 
     final Map<String, dynamic> data = {};
 
@@ -336,7 +336,7 @@ class FlutterbaseModel extends ChangeNotifier {
       data['depth'] = parentCommentDepth + 1;
       data['order'] = order;
 
-      print('data to create: $data');
+      // print('Comment create data: $data');
       final ref = await _commentCol(postId).add(data);
       commentId = ref.documentID;
     } else {
@@ -387,6 +387,104 @@ class FlutterbaseModel extends ChangeNotifier {
       order = parts.join('.');
     }
     return order;
+  }
+
+  /// 형제 코멘트을 리턴한다.
+  ///
+  /// 주의: 부모를 포함해서 현제 코멘트들을 리스트로 리턴한다.
+  /// - 부모가 '99999' 의 값을 가지기 때문이다.
+  ///
+  List<FlutterbaseComment> findSiblings({
+    @required FlutterbaseComment parentComment,
+    @required List<FlutterbaseComment> comments,
+  }) {
+    // print('parent: $parentComment');
+    // print(
+    //     'parentOrder: ${parentComment.order}, parent depth: ${parentComment.depth}');
+    int depth = parentComment.depth;
+
+    String beginOrder = parentComment.order.substring(0, depth * 6);
+    String endOrder = parentComment.order.substring((depth + 1) * 6);
+
+    // print('beginOrder: $beginOrder, endOrder: $endOrder');
+
+    List<FlutterbaseComment> sibliings = [];
+    for (int i = 0; i < comments.length; i++) {
+      final c = comments[i];
+
+      String cBeginOrder = c.order.substring(0, depth * 6);
+      String cEndOrder = c.order.substring((depth + 1) * 6);
+      // print('cOrder: ${c.content} ${c.order}');
+      if (beginOrder == cBeginOrder && endOrder == cEndOrder) {
+        // print('sibiling: ${c.content}, ${c.order}');
+        sibliings.add(c);
+      }
+    }
+    return sibliings;
+  }
+
+  /// 형제 중 마지막 코멘트를 리턴한다.
+  ///
+  /// [parentComment] - 부모 코멘트
+  ///   부모 코멘트의 `depth` 를 보고, 같은 `depth` 중 order 가 가장 낮은 것을 리턴한다.
+  ///   글 내용에서 `reply` 버튼을 클릭한 경우는 null 일 수 있다.
+  /// [comments] - 현재 글의 코멘트 목록. 코멘트 목록에서 형제 중 마지막 코멘트를 찾는 것이다.
+  ///
+  /// 코멘트가 없으면 null 이 러턴된다.
+  /// 부모 코멘트에 자식 코멘트가 하나도 없으면, 즉, 형제 코멘트가 없으면, 부모 코멘트가 리턴된다.
+  FlutterbaseComment findLastSiblingComment({
+    @required FlutterbaseComment parentComment,
+    @required List<FlutterbaseComment> comments,
+  }) {
+    /// 코멘트가 작성되지 않은 경우, (글에 코멘트가 하나도 없는 경우,)
+    if (comments.length == 0) return null;
+
+    if (parentComment == null) {
+      // 글 보기에서 덧글을 클릭한 경우, 맨 마지막 코멘트를 리턴
+      // print('last sibling: ${comments.last}');
+      return comments.last;
+    }
+
+    final List<FlutterbaseComment> siblings =
+        findSiblings(parentComment: parentComment, comments: comments);
+
+    return siblings.last;
+
+    // print('siblings');
+    // print(siblings);
+
+    // return null;
+
+    // int depth = parentComment.depth;
+
+    // /// 코멘트 목록에서 새 댓글을 작성하고 자 하는 부모 코멘트 위치를 찾는다.
+    // int index =
+    //     comments.indexWhere((element) => element.order == parentComment.order);
+
+    // print('dpeth: $depth, index: $index');
+    // FlutterbaseComment last = comments[index];
+
+    // /// 부모 코멘트 하위에서,
+    // /// 부모 코멘트 depth 중, 가장 작은 order 값을 가지는 코멘트를 찾는다.
+    // for (int i = index + 1; i < comments.length; i++) {
+    //   FlutterbaseComment next = comments[i];
+    //   print('${last.order} : ${next.order}');
+    //   int lastDepth = int.parse(last.order.split('.')[depth]);
+    //   int nextDepth = int.parse(next.order.split('.')[depth]);
+
+    //   /// 두번째 depth 부터는 같은 값이 있으면, 다른 부모로 간주.
+    //   if (lastDepth >= nextDepth) {
+    //     // lastDepth = cDepth;
+    //     last = next;
+    //   } else {
+    //     // order 값이 같거나 증가하면, 다른 부모이므로 탈출
+    //     break;
+    //   }
+    // }
+
+    // print('last sibling: $last');
+
+    // return last;
   }
 
   /// 코멘트 수정

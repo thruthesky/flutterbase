@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
+
+/// 글 하나에 대한 Model
+///
+/// - 코멘트를 `Firestore` 에서 읽기
+/// - 코멘트 관리
+class FlutterbasePostModel extends ChangeNotifier {
+  FlutterbasePostModel({
+    @required this.post,
+  }) {
+    print(post);
+    _loadComments();
+  }
+
+  FlutterbasePost post;
+  List<FlutterbaseComment> comments = [];
+
+  _loadComments() async {
+    // print('_loadComments()');
+    comments = await fb.commentsGet(post.id);
+    // print('comments');
+    // print(comments);
+    notifyListeners();
+  }
+
+  /// 코멘트를 코멘트 목록에 집어 넣는다.
+  /// 
+  /// order 가 작은 것이 있으면 바로 그 앞에 집어 넣으면 된다.
+  addComment(FlutterbaseComment comment) {
+    if (comment == null) return;
+    int index =
+        comments.indexWhere(((c) => c.order.compareTo(comment.order) < 0));
+    if (index == -1) {
+      comments.add(comment);
+    } else {
+      comments.insert(index, comment);
+    }
+    notifyListeners();
+  }
+}

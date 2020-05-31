@@ -5,18 +5,23 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
+import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
 import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.comment_view_content.dart';
 import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.post_list_view_content.dart';
 
 class FlutterbaseCommentEditForm extends StatefulWidget {
-  FlutterbaseCommentEditForm(
-    this.post, {
+  FlutterbaseCommentEditForm({
+    @required this.postModel,
+    @required this.post,
     this.parentComment,
     this.currentComment,
+    this.lastSiblingComment,
     Key key,
   }) : super(key: key);
+
+  final FlutterbasePostModel postModel;
   final FlutterbasePost post;
 
   /// When user creates a new comment, [parentComment] will be set.
@@ -24,6 +29,9 @@ class FlutterbaseCommentEditForm extends StatefulWidget {
 
   /// When user updates a comment, [currentComemnt] will be set.
   final FlutterbaseComment currentComment;
+
+  /// 새 코멘트를 작성하는 경우, 부모 코멘트의 자식 중 order 가 가장 낮은 코멘트.
+  final FlutterbaseComment lastSiblingComment;
 
   @override
   _FlutterbaseCommentEditFormState createState() =>
@@ -169,8 +177,8 @@ class _FlutterbaseCommentEditFormState
                     FlutterbaseComment comment = await fb.commentEdit(
                       postId: widget.post.id,
                       commentId: widget.currentComment.commentId,
-                      parentCommentDepth: 0,
-                      previousCommentOrder: widget.parentComment?.order,
+                      parentCommentDepth: widget.parentComment?.depth ?? 0,
+                      lastSiblingCommentOrder: widget.lastSiblingComment?.order,
                       content: _contentController.text,
                     );
                     back(arguments: comment);
@@ -208,8 +216,8 @@ class _FlutterbaseCommentEditFormState
                   FlutterbasePostListViewContent(widget.post),
                   Column(
                     children: <Widget>[
-                      if (widget.post.comments != null)
-                        for (var c in widget.post.comments) ...[
+                      if (widget.postModel.comments != null)
+                        for (var c in widget.postModel.comments) ...[
                           FlutterbaseCommentViewContent(comment: c),
                           FlutterbaseSpace()
                         ],

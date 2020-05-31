@@ -12,7 +12,7 @@ class FlutterbaseTest {
     print('--> FlutterbaseTest()');
 
     /// 로그인 될 때까지 기다림
-    Timer(Duration(milliseconds: 200), () {
+    Timer(Duration(milliseconds: 400), () {
       run();
     });
   }
@@ -22,9 +22,19 @@ class FlutterbaseTest {
 
   run() async {
     // await testRegister();
-    await testComment();
+    // await testComment();
 
+    await testFindSiblings();
     showResult();
+  }
+
+  testFindSiblings() async {
+    List<FlutterbaseComment> _comments =
+        await fb.commentsGet('2soXtBpIp9aTRN3CGMr6');
+    final siblings =
+        fb.findSiblings(parentComment: _comments[4], comments: _comments);
+    print('sibilings: 2soXtBpIp9aTRN3CGMr6');
+    print(siblings);
   }
 
   showResult() {
@@ -177,7 +187,7 @@ class FlutterbaseTest {
     FlutterbaseComment commentA = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: 0, // 1단계
-      previousCommentOrder: null,
+      lastSiblingCommentOrder: null,
       content: 'A',
     );
     eq(commentA.content, 'A');
@@ -189,10 +199,10 @@ class FlutterbaseTest {
         '99999.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
 
     /// Create Comment B
-    FlutterbaseComment commentB = await fb.commentEdit(
+    FlutterbaseComment B = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: 0, // 1단계
-      previousCommentOrder: commentA.order,
+      lastSiblingCommentOrder: commentA.order,
       content: 'B',
     );
 
@@ -206,7 +216,7 @@ class FlutterbaseTest {
     FlutterbaseComment commentC = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: 0, // 1단계
-      previousCommentOrder: commentB.order,
+      lastSiblingCommentOrder: B.order,
       content: 'C',
     );
 
@@ -221,7 +231,7 @@ class FlutterbaseTest {
     FlutterbaseComment commentCA = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: commentC.depth, // 이전 단계 depth. C 다음 이전 C.
-      previousCommentOrder: commentC.order, // 이전 단계 order. C 다음이므로 이전 C.
+      lastSiblingCommentOrder: commentC.order, // 이전 단계 order. C 다음이므로 이전 C.
       content: 'CA',
     );
 
@@ -233,7 +243,7 @@ class FlutterbaseTest {
     FlutterbaseComment commentD = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: 0, // 1단계
-      previousCommentOrder: commentC.order,
+      lastSiblingCommentOrder: commentC.order,
       content: 'D',
     );
 
@@ -246,7 +256,7 @@ class FlutterbaseTest {
     FlutterbaseComment commentCAA = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: commentCA.depth, // 이전 단계 depth. CA 다음 이전은 CA.
-      previousCommentOrder: commentCA.order, // 이전 단계 order. CA 다음이므로 이전은 CA.
+      lastSiblingCommentOrder: commentCA.order, // 이전 단계 order. CA 다음이므로 이전은 CA.
       content: 'CAA',
     );
 
@@ -256,22 +266,22 @@ class FlutterbaseTest {
 
     /// Create B -> BA
     ///
-    FlutterbaseComment commentBA = await fb.commentEdit(
+    FlutterbaseComment BA = await fb.commentEdit(
       postId: post.id,
-      parentCommentDepth: commentB.depth,
-      previousCommentOrder: commentB.order,
+      parentCommentDepth: B.depth,
+      lastSiblingCommentOrder: B.order,
       content: 'BA',
     );
 
-    eq(commentBA.depth, 2);
-    eq(commentBA.order,
+    eq(BA.depth, 2);
+    eq(BA.order,
         '99998.99998.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
 
     /// Create A -> AA
     FlutterbaseComment commentAA = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: commentA.depth,
-      previousCommentOrder: commentA.order,
+      lastSiblingCommentOrder: commentA.order,
       content: 'AA',
     );
     eq(commentAA.depth, 2);
@@ -282,7 +292,7 @@ class FlutterbaseTest {
     FlutterbaseComment commentAB = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: commentA.depth,
-      previousCommentOrder: commentAA.order,
+      lastSiblingCommentOrder: commentAA.order,
       content: 'AB',
     );
 
@@ -293,86 +303,110 @@ class FlutterbaseTest {
     FlutterbaseComment commentAC = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: commentA.depth,
-      previousCommentOrder: commentAB.order,
+      lastSiblingCommentOrder: commentAB.order,
       content: 'AC',
     );
 
-
-
     /// Create B -> BA -> BAA
     ///
-    FlutterbaseComment commentBAA = await fb.commentEdit(
+    FlutterbaseComment BAA = await fb.commentEdit(
       postId: post.id,
-      parentCommentDepth: commentBA.depth,
-      previousCommentOrder: commentBA.order,
+      parentCommentDepth: BA.depth,
+      lastSiblingCommentOrder: BA.order,
       content: 'BAA',
     );
-
-
 
     /// Create B -> BA -> BAAA
     ///
     FlutterbaseComment commentBAAA = await fb.commentEdit(
       postId: post.id,
-      parentCommentDepth: commentBAA.depth,
-      previousCommentOrder: commentBAA.order,
+      parentCommentDepth: BAA.depth,
+      lastSiblingCommentOrder: BAA.order,
       content: 'BAAA',
     );
-
-
 
     /// Create B -> BA -> BAAB
     ///
     FlutterbaseComment commentBAAB = await fb.commentEdit(
       postId: post.id,
-      parentCommentDepth: commentBAA.depth,
-      previousCommentOrder: commentBAAA.order, // 이전 댓글. 부모 댓글의 것이 아님.
+      parentCommentDepth: BAA.depth,
+      lastSiblingCommentOrder: commentBAAA.order, // 이전 댓글. 부모 댓글의 것이 아님.
       content: 'BAAB',
     );
-
-
 
     /// Create B -> BA -> BAAC
     ///
     FlutterbaseComment commentBAAC = await fb.commentEdit(
       postId: post.id,
-      parentCommentDepth: commentBAA.depth,
-      previousCommentOrder: commentBAAB.order, // 이전 댓글. 부모 댓글의 것이 아님.
+      parentCommentDepth: BAA.depth,
+      lastSiblingCommentOrder: commentBAAB.order, // 이전 댓글. 부모 댓글의 것이 아님.
       content: 'BAAC',
     );
-
-
 
     /// Create B -> BA -> BAA -> BAAB -> BAABA
     ///
     FlutterbaseComment commentBAABA = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: commentBAAB.depth,
-      previousCommentOrder: commentBAAB.order, // 이전 댓글. 부모 댓글의 것이 아님.
+      lastSiblingCommentOrder: commentBAAB.order, // 이전 댓글. 부모 댓글의 것이 아님.
       content: 'BAABA',
     );
 
-
-
-
     /// Create B -> BB
     ///
-    FlutterbaseComment commentBB = await fb.commentEdit(
+    FlutterbaseComment BB = await fb.commentEdit(
       postId: post.id,
-      parentCommentDepth: commentB.depth,
-      previousCommentOrder: commentBAAC.order, // 이전 댓글. 부모 댓글의 것이 아님.
+      parentCommentDepth: B.depth,
+      lastSiblingCommentOrder: commentBAAC.order, // 이전 댓글. 부모 댓글의 것이 아님.
       content: 'BB',
     );
 
+    /// 형제 중 마지막 코멘트의 order
 
+    /// BBA
+    ///
+    FlutterbaseComment BBA = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: BB.depth, // 부모
+      lastSiblingCommentOrder: BB.order, // 형제가 없으면, 부모
+      content: 'BBA',
+    );
 
+    FlutterbaseComment BC = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: B.depth, // 부모
+      lastSiblingCommentOrder: BB.order, // 형재 중 마지막
+      content: 'BC',
+    );
 
-    print('------> crate done !!');
+    FlutterbaseComment BCA = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: BC.depth, // 부모
+      lastSiblingCommentOrder: BC.order, // 형제가 없으면, 부모
+      content: 'BCA',
+    );
+
+    FlutterbaseComment BD = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: B.depth, // 부모
+      lastSiblingCommentOrder: BC.order, // 형제 중 마지막
+      content: 'BD',
+    );
+
+    FlutterbaseComment BAB = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: BA.depth, // 부모
+      lastSiblingCommentOrder: BAA.order, // 형제 중 마지막
+      content: 'BAB',
+    );
+
     _comments = await fb.commentsGet(post.id);
     _comments.forEach((element) {
-      print('created:');
-      print(element);
+      // print('created:');
+      // print(element);
     });
+
+    // print('------> crate done. length: ${_comments.length}');
 
     List<String> expected = [
       'A',
@@ -386,7 +420,12 @@ class FlutterbaseTest {
       'BAAB',
       'BAABA',
       'BAAC',
+      'BAB',
       'BB',
+      'BBA',
+      'BC',
+      'BCA',
+      'BD',
       'C',
       'CA',
       'CAA',

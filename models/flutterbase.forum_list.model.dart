@@ -222,42 +222,40 @@ class FlutterbaseForumModel extends ChangeNotifier {
   ///      commentToAdd, post, parentCommentId);
   /// ```
   /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
-  addComment(
-      FlutterbaseComment comment, FlutterbasePost post, String parentId) {
-    if (comment == null) return;
+  // addComment(
+  //     FlutterbaseComment comment, FlutterbasePost post, String parentId) {
+  //   if (comment == null) return;
 
-    /// 현재 최신 글 목록(캐시를 한다면, 캐시 데이터가 아닌 실 데이터)의 코멘트 목록을 가져와서 업데이트 한다.
-    /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
-    post = this.posts.firstWhere((p) => p.id == post.id);
+  //   /// 현재 최신 글 목록(캐시를 한다면, 캐시 데이터가 아닌 실 데이터)의 코멘트 목록을 가져와서 업데이트 한다.
+  //   /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
+  //   post = this.posts.firstWhere((p) => p.id == post.id);
 
-    var comments = post.comments;
-
-    if (parentId != null) {
-      var i = comments.indexWhere((c) => c.id == parentId);
-      if (i == -1) {
-        print(
-            'addComment() critical error. finding comment. This should never happened');
-        return;
-      }
-      comments.insert(i + 1, comment);
-    } else {
-      comments.insert(0, comment);
-    }
-    notify();
-  }
+  //   if (parentId != null) {
+  //     var i = comments.indexWhere((c) => c.id == parentId);
+  //     if (i == -1) {
+  //       print(
+  //           'addComment() critical error. finding comment. This should never happened');
+  //       return;
+  //     }
+  //     comments.insert(i + 1, comment);
+  //   } else {
+  //     comments.insert(0, comment);
+  //   }
+  //   notify();
+  // }
 
   /// 코멘트를 수정하고, 기존의 코멘트와 바꿔치기 한다.
   ///
   /// [comment] 업데이트된 코멘트
-  updateComment(FlutterbaseComment comment, FlutterbasePost post) {
-    if (comment == null) return;
+  // updateComment(FlutterbaseComment comment, FlutterbasePost post) {
+  //   if (comment == null) return;
 
-    /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
-    post = this.posts.firstWhere((p) => p.id == post.id);
+  //   /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
+  //   post = this.posts.firstWhere((p) => p.id == post.id);
 
-    int i = post.comments.indexWhere((element) => element.id == comment.commentId);
-    post.comments.removeAt(i);
-    post.comments.insert(i, comment);
-    notify();
-  }
+  //   int i = post.comments.indexWhere((element) => element.id == comment.commentId);
+  //   post.comments.removeAt(i);
+  //   post.comments.insert(i, comment);
+  //   notify();
+  // }
 }

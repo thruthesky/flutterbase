@@ -12,7 +12,7 @@ class FlutterbasePost {
   int deletedAt;
   String uid;
   String id;
-  List<dynamic> comments;
+  // List<dynamic> comments;
   List<dynamic> urls;
 
   /// 글 쓴이 이름과 photoURL
@@ -32,7 +32,7 @@ class FlutterbasePost {
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
-    this.comments,
+    // this.comments,
     this.urls,
     this.displayName,
     this.photoUrl,
@@ -98,6 +98,6 @@ class FlutterbasePost {
 
   @override
   String toString() {
-    return "id: $id, uid: $uid, category: $category, title: $title, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, comments: $comments";
+    return "id: $id, uid: $uid, category: $category, title: $title, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt";
   }
 }
