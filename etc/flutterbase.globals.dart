@@ -1,5 +1,9 @@
 import 'package:fluttercms/flutterbase/etc/flutterbase.app.localization.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.texts.dart';
+import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
 
 import '../widgets/flutterbase.text.dart';
 import 'dart:math';
@@ -27,11 +31,12 @@ FlutterbaseModel fb = FlutterbaseModel();
 // const String hiveCacheBox = 'cache';
 
 /// Translate texts
-/// 
+///
 /// Returns translated string from the text code.
 /// If [code] is an `Error object`,
 ///   - It parses the Error and returns proper text translation.
 String t(code, {info}) {
+  if (code == null) return null;
   if (code is FlutterError) code = code.message;
   if (code is PlatformException) {
     String tmp = code.code + "\n" + code.message + "\n" + (code.details ?? '');
@@ -112,19 +117,34 @@ void _back({arguments}) {
 /// @example async( onError: alert );
 /// @example alert(e) - where `e` can be an Error Object.
 alert(dynamic title, {String content}) {
-  /// 제목이 문자열이 아니면, t() 한다.
-  if (title != null && !(title is String)) {
-    title = t(title);
-  }
-
-  /// 내용이 문자열이 아니면, t() 한다.
-  if (content != null && !(content is String)) {
-    content = t(content);
-  }
+  /// 제목만 있고 내용이 없으면, 제목을 내용으로 표시한다.
   if (content == null) {
     content = title;
     title = null;
   }
+
+  /// title 이 문자열이고,
+  if (title is String) {
+    /// textTranslations 에 존재 하는 것이면 t 한다.
+    if (textTranslations[title] != null) {
+      title = t(title);
+    }
+  } else {
+    /// 제목이 문자열이 아니면, t() 한다.
+    title = t(title);
+  }
+
+  /// content 가 문자열이고,
+  if (content is String) {
+    /// textTranslations 에 존재하면 t 한다.
+    if (textTranslations[content] != null) {
+      content = t(content);
+    }
+  } else {
+    /// 내용이 문자열이 아니면, t() 한다.
+    content = t(content);
+  }
+
   showPlatformDialog(
     context: fb.context,
     builder: (_) => PlatformAlertDialog(
@@ -140,7 +160,7 @@ alert(dynamic title, {String content}) {
   );
 }
 
-openDialog(childWidget) {
+openPopupPage(childWidget) {
   return showGeneralDialog(
     context: fb.context,
     barrierDismissible: true,
@@ -152,6 +172,22 @@ openDialog(childWidget) {
       return childWidget;
     },
   );
+}
+
+/// 게시글 또는 코멘트 작성 박스 오픈
+///
+openForumBox(childWidget) {
+  // if (postOrComment != null) {
+  //   if (postOrComment.deletedAt != null) {
+  //     alert(t(ALREADY_DELETED));
+  //     return null;
+  //   }
+  //   if (postOrComment.uid != fb.user.uid) {
+  //     alert(t(NOT_MINE));
+  //     return null;
+  //   }
+  // }
+  return openPopupPage(childWidget);
 }
 
 /// Can it be synchronous by using async/await? So, it does not need to use callback functions.
@@ -166,7 +202,7 @@ confirm({String title, String content, Function onNo, Function onYes}) {
           FlatButton(
             child: T('no'),
             onPressed: () {
-              onNo();
+              if ( onNo != null ) onNo();
               _back();
             },
           ),

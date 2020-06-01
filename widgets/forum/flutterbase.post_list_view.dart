@@ -30,34 +30,32 @@ class _FlutterbasePostListViewState extends State<FlutterbasePostListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
+    return Consumer<FlutterbasePostModel>(builder: (context, model, child) {
+      return Column(children: <Widget>[
         FlutterbasePostListViewContent(widget.post),
         FlutterbasePostListViewButtons(widget.post),
-        Consumer<FlutterbasePostModel>(builder: (context, model, child) {
-          return Column(
-            children: <Widget>[
-              if (model.comments != null)
-                for (var c in model.comments)
-                  FlutterbaseCommentView(
-                    widget.post,
-                    c,
-                    key: ValueKey(c.commentId ?? randomString()),
-                  ),
-            ],
-          );
-        })
+        Column(
+          children: <Widget>[
+            if (model.comments != null)
+              for (var c in model.comments)
+                FlutterbaseCommentView(
+                  widget.post,
+                  c,
+                  key: ValueKey(c.commentId ?? randomString()),
+                ),
+          ],
+        ),
+      ]);
 
-        /// TODO: 코멘트 보여주기
-        // if (widget.post.comments != null)
-        //   for (var c in widget.post.comments)
-        //     FlutterbaseCommentView(
-        //       widget.post,
-        //       c,
-        //       key: ValueKey(c.id ?? randomString()),
-        //     ),
-      ],
-    );
+      /// TODO: 코멘트 보여주기
+      // if (widget.post.comments != null)
+      //   for (var c in widget.post.comments)
+      //     FlutterbaseCommentView(
+      //       widget.post,
+      //       c,
+      //       key: ValueKey(c.id ?? randomString()),
+      //     ),
+    });
   }
 }
 
@@ -93,7 +91,7 @@ class _FlutterbasePostListViewButtonsState
             /// 글에서 Reply 버튼을 클릭한 경우
             ///
             /// 글이 삭제되어도 코멘트를 달 수 있다.
-            FlutterbaseComment comment = await openDialog(
+            FlutterbaseComment comment = await openForumBox(
               FlutterbaseCommentEditForm(
                 postModel: postModel,
                 post: widget.post,
@@ -125,9 +123,8 @@ class _FlutterbasePostListViewButtonsState
             // /// 자신의 글이 아니면, 에러
             // if (!fb.isMine(widget.post)) return alert(t(NOT_MINE));
 
-            FlutterbasePost _post = await openDialog(
-              FlutterbasePostEditForm(post: widget.post),
-            );
+            FlutterbasePost _post =
+                await openForumBox(FlutterbasePostEditForm(post: widget.post));
             if (_post == null) return;
             forum.updatePost(widget.post, _post);
 
@@ -205,10 +202,7 @@ class _FlutterbasePostListViewButtonsState
             confirm(
               title: t(CONFIRM_POST_DELETE_TITLE),
               content: t(CONFIRM_POST_DELETE_CONTENT),
-              onYes: () async {
-                await forum.deletePost(widget.post);
-              },
-              onNo: () {},
+              onYes: () => forum.deletePost(postModel).catchError(alert),
             );
           },
           text: t('Delete'),

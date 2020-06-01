@@ -6,6 +6,7 @@ import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
+import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
 
 /// `Firestore` 에 직접 접속해서  목록을 가져오기 위해서 사용.
 ///
@@ -203,22 +204,10 @@ class FlutterbaseForumModel extends ChangeNotifier {
     notify();
   }
 
+  /// 글 삭제
   ///
-  deletePost(FlutterbasePost post) async {
-    post.inDeleting = true;
-    notify();
-    try {
-      await fb.postDelete(post);
-      notify();
-    } catch (e) {
-      onError(e);
-    }
-
-    // 인터넷이 너무 빨라, 로더가 보이지 않는 것을 방지
-    Timer(Duration(milliseconds: 300), () {
-      post.inDeleting = false;
-      notify();
-    });
+  /// 에러가 있으면 throw 된다.
+  deletePost(FlutterbasePostModel postModel) {
+    return fb.postDelete(postModel);
   }
-
 }

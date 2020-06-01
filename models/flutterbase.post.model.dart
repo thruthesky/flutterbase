@@ -18,12 +18,16 @@ class FlutterbasePostModel extends ChangeNotifier {
   FlutterbasePost post;
   List<FlutterbaseComment> comments = [];
 
+  notify() {
+    notifyListeners();
+  }
+
   _loadComments() async {
     // print('_loadComments()');
     comments = await fb.commentsGet(post.id);
     // print('comments');
     // print(comments);
-    notifyListeners();
+    notify();
   }
 
   /// 코멘트를 코멘트 목록에 집어 넣는다.
@@ -38,7 +42,7 @@ class FlutterbasePostModel extends ChangeNotifier {
     } else {
       comments.insert(index, comment);
     }
-    notifyListeners();
+    notify();
   }
 
   /// 코멘트를 수정하고, 기존의 코멘트와 바꿔치기 한다.
@@ -46,12 +50,6 @@ class FlutterbasePostModel extends ChangeNotifier {
   /// [comment] 업데이트된 코멘트
   /// - notifyListeners 를 한다.
   updateComment(FlutterbaseComment comment) {
-    if (comment == null) return;
-
-    int i = comments
-        .indexWhere((element) => element.commentId == comment.commentId);
-    comments.removeAt(i);
-    comments.insert(i, comment);
-    notifyListeners();
+    fb.updateComment(this, comment);
   }
 }

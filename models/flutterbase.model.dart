@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,9 +35,8 @@ class FlutterbaseModel extends ChangeNotifier {
               // print(engineUser);
               userDocument = await profile();
             } catch (e) {
-              // print('got profile error: ');
-              // print(e);
-              // onError(e);
+              print('got profile error: ');
+              print(e);
               alert(e);
             }
           }
@@ -90,7 +91,7 @@ class FlutterbaseModel extends ChangeNotifier {
 
   /// 관리자 이면 참을 리턴한다.
   bool get isAdmin {
-    return userDocument.isAdmin;
+    return userDocument?.isAdmin == true;
   }
 
   /// 사용자 로그아웃을 하고 `notifyListeners()` 를 한다. `user` 는 Listeners 에서 자동 업데이트된다.
@@ -230,7 +231,7 @@ class FlutterbaseModel extends ChangeNotifier {
   /// - [createdAt], [updatedAt] 도 자동 저장된다.
   Future<FlutterbasePost> postEdit(Map<String, dynamic> data) async {
     if (data == null) throw INPUT_IS_EMPTY;
-    if (data['category'] == null) throw CATEGORY_IS_EMPTY;
+
     String id = data['id'];
     data.remove('id');
 
@@ -238,10 +239,17 @@ class FlutterbaseModel extends ChangeNotifier {
     data['updatedAt'] = FieldValue.serverTimestamp();
 
     if (id == null) {
+      /// 글 생성
+
+      /// 글 새성하는 경우에는 카테고리 값이 들어와야 한다.
+      if (data['category'] == null) throw CATEGORY_IS_EMPTY;
+
+      /// 글 작성 시간
       data['createdAt'] = FieldValue.serverTimestamp();
       final ref = await _postCol.add(data);
       id = ref.documentID;
     } else {
+      /// 글 수정 또는 '삭제됨'으로 수정
       await _postDoc(id).updateData(data);
     }
     return await postGet(id);
@@ -258,20 +266,45 @@ class FlutterbaseModel extends ChangeNotifier {
   /// - `deletedAt` 에 값을 기록한다.
   ///
   /// 입력 변수 [post] 에 (call by reference) 삭제돔 정보를 업데이트한다. 즉, 부모 함수에서 따로 수정 할 필요가 없다.
-  Future<FlutterbasePost> postDelete(FlutterbasePost post) async {
-    post.title = POST_TITLE_DELETED;
-    post.content = POST_CONTENT_DELETED;
-    post.urls = [];
+  Future<FlutterbasePost> postDelete(FlutterbasePostModel postModel) async {
+    print('post: $postModel.post');
+    if (postModel.post.uid != user.uid) throw NOT_MINE;
+    if (postModel.post.deletedAt != 0) throw ALREADY_DELETED;
 
-    /// 주의 시간은 임시로 참 값만 등록한다.
-    post.deletedAt = 1;
+    // postModel.post.title = POST_TITLE_DELETED;
+    // postModel.post.content = POST_CONTENT_DELETED;
+    // postModel.post.urls = [];
 
-    return await postEdit({
-      'title': POST_TITLE_DELETED,
-      'content': POST_CONTENT_DELETED,
-      'urls': [],
-      'deletedAt': FieldValue.serverTimestamp(),
-    });
+    postModel.post.inDeleting = true;
+    postModel.notify();
+
+    print('in deting: ${postModel.post.inDeleting}');
+
+    try {
+      FlutterbasePost _deleted = await postEdit({
+        'id': postModel.post.id,
+        'title': POST_TITLE_DELETED,
+        'content': POST_CONTENT_DELETED,
+        'urls': [],
+        'deletedAt': FieldValue.serverTimestamp(),
+      });
+
+      postModel.post.replaceWith(_deleted);
+      print('updated: ');
+      postModel.notify();
+
+      // 인터넷이 너무 빨라, 로더가 보이지 않는 것을 방지
+      Timer(Duration(milliseconds: 400), () {
+        postModel.post.inDeleting = false;
+        postModel.notify();
+      });
+
+      return _deleted;
+    } catch (e) {
+      postModel.post.inDeleting = false;
+      postModel.notify();
+      throw e;
+    }
   }
 
   /// 카테고리 목록 전체를 가져온다.
@@ -378,16 +411,53 @@ class FlutterbaseModel extends ChangeNotifier {
   /// - 삭제된 도큐먼트를 리턴한다.
   /// - notifyListeners() 를 하지 않는다.
   ///
-  Future commentDelete({String postId, FlutterbaseComment comment}) async {
-    return await commentEdit(
-      postId: postId,
-      commentId: comment.commentId,
-      data: {
-        'content': COMMENT_CONTENT_DELETED,
-        'urls': [],
-        'deletedAt': FieldValue.serverTimestamp(),
-      },
-    );
+  Future commentDelete(
+      {@required FlutterbasePostModel postModel,
+      FlutterbaseComment comment}) async {
+    comment.inDeleting = true;
+    postModel.notify();
+
+    print('comment.indeleeing: ${comment.inDeleting}');
+    try {
+      FlutterbaseComment _deleted = await commentEdit(
+        postId: postModel.post.id,
+        commentId: comment.commentId,
+        data: {
+          'content': COMMENT_CONTENT_DELETED,
+          'urls': [],
+          'deletedAt': FieldValue.serverTimestamp(),
+        },
+      );
+
+      updateComment(postModel, _deleted);
+
+      print('updated');
+
+      // 인터넷이 너무 빨라, 로더가 보이지 않는 것을 방지
+      Timer(Duration(milliseconds: 500), () {
+        comment.inDeleting = false;
+        postModel.notify();
+        print('comment.indeleeing: ${comment.inDeleting}');
+      });
+    } catch (e) {
+      comment.inDeleting = false;
+      throw e;
+    }
+  }
+
+  /// 코멘트를 수정하고, 기존의 코멘트와 바꿔치기 한다.
+  ///
+  /// [comment] 업데이트된 코멘트
+  /// - notifyListeners 를 한다.
+  updateComment(FlutterbasePostModel postModel, FlutterbaseComment comment) {
+    if (comment == null) return;
+
+    int i = postModel.comments
+        .indexWhere((element) => element.commentId == comment.commentId);
+    postModel.comments.removeAt(i);
+    postModel.comments.insert(i, comment);
+    // print('commnet: $comment');
+    postModel.notify();
   }
 
   Future<FlutterbaseComment> commentGet(String postId, String commentId) async {

@@ -1,3 +1,6 @@
+import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
+
 /// 사용자 정보
 ///
 /// Collection 에 Document 가 없는 경우, 모두 null 값을 가진다.
@@ -18,6 +21,12 @@ class FlutterbaseUser {
     this.isAdmin,
   });
   factory FlutterbaseUser.fromMap(Map<dynamic, dynamic> data) {
+
+    print('user profile data: $data');
+    if ( data == null ) {
+      print('User profile is null. User need to update his profile!');
+      alert(t(UPDATE_PROFILE));
+    }
     bool isAdmin = false;
     if (data['isAdmin'] != null && data['isAdmin'] == true) isAdmin = true;
 

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.category.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
@@ -73,12 +72,6 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
       'content': content,
       'urls': post.urls,
     };
-
-    // if (widget?.id != null) {
-    //   data['id'] = post.id;
-    // }
-    // print('data:');
-    // print(data);
     return data;
   }
 

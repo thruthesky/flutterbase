@@ -86,6 +86,9 @@ const String POST_CREATE = 'post create';
 
 const String PERMISSION_DENIED = 'permission denied';
 
+
+const String UPDATE_PROFILE = 'update-profile';
+
 /// @see README
 class EngineRoutes {
   static final String postList = 'postList';

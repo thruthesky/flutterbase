@@ -70,7 +70,6 @@ class FlutterbaseCommentButtons extends StatefulWidget {
 }
 
 class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
-  bool inDelete = false;
   bool inLike = false;
   bool inDisike = false;
 
@@ -90,7 +89,7 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
 
             ////
 
-            FlutterbaseComment _comment = await openDialog(
+            FlutterbaseComment _comment = await openForumBox(
               FlutterbaseCommentEditForm(
                 postModel: postModel,
                 post: widget.post,
@@ -121,7 +120,7 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
             // /// 자신의 글이 아니면, 에러
             // if (!fb.isMine(widget.comment)) return alert(t(NOT_MINE));
 
-            FlutterbaseComment _comment = await openDialog(
+            FlutterbaseComment _comment = await openForumBox(
               FlutterbaseCommentEditForm(
                 postModel: postModel,
                 post: widget.post,
@@ -186,33 +185,25 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
           },
         ),
         FlutterbaseTextButton(
-          showSpinner: inDelete,
+          showSpinner: widget.comment.inDeleting,
           onTap: () async {
             /// 코멘트 삭제
 
-            alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
+            // alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
             // /// 삭제되면 재 삭제 불가
             // if (fb.isDeleted(widget.comment)) return alert(t(ALREADY_DELETED));
             // /// 자신의 글이 아니면, 에러
             // if (!fb.isMine(widget.comment)) return alert(t(NOT_MINE));
 
+
+
             confirm(
               title: t(CONFIRM_COMMENT_DELETE_TITLE),
               content: t(CONFIRM_COMMENT_DELETE_CONTENT),
-              onYes: () async {
-                setState(() => inDelete = true);
-                try {
-                  var comment = await fb.commentDelete(
-                      postId: widget.post.id, comment: widget.comment);
-                      postModel.updateComment(comment);
-                } catch (e) {
-                  alert(e);
-                }
-                setState(() => inDelete = false);
-              },
-              onNo: () {
-                // print('no');
-              },
+              onYes: () => fb
+                  .commentDelete(
+                      postModel: postModel, comment: widget.comment)
+                  .catchError(alert),
             );
           },
           text: t('delete'),

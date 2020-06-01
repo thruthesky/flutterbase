@@ -253,8 +253,8 @@ Map<String, Map<String, String>> textTranslations = {
     'en': 'This post has deleted alredy.'
   },
   NOT_MINE: {
-    'ko': '회원님께서 작성한 정보(데이터)가 아닙니다.',
-    'en': 'This is not your information(data).'
+    'ko': '회원님께서 작성한 글(또는 코멘트)가 아닙니다.',
+    'en': 'This is not your post(or comment).'
   },
   CANNOT_VOTE_ON_MINE: {
     'ko': '본인의 글(또는 코멘트)에 투표를 할 수 없습니다.',
@@ -324,7 +324,11 @@ Map<String, Map<String, String>> textTranslations = {
   CONFIRM_CATEGORY_DELETE_CONTENT: {
     'ko': '카테고리를 삭제하시겠습니까?',
     'en': 'Do you want to delete category?',
-  }
+  },
+  UPDATE_PROFILE: {
+    'ko': '앗! 회원 정보를 업데이트 해 주세요.',
+    'en': 'Ooh! Please update your profile.',
+  },
 };
 
 class FlutterbaseI18N {

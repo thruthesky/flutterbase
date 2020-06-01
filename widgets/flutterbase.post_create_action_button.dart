@@ -26,7 +26,7 @@ class FlutterbasePostCreateActionButton extends StatelessWidget {
       onTap: () async {
         /// 글 생성 버튼 클릭 한 경우. 수정은 아님.
         if (fb.notLoggedIn) return alert(t(LOGIN_FIRST));
-        FlutterbasePost _post = await openDialog(
+        FlutterbasePost _post = await openForumBox(
           FlutterbasePostEditForm(id: id),
         );
 

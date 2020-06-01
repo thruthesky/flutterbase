@@ -27,6 +27,9 @@ class FlutterbaseComment {
   int likes;
   int dislikes;
 
+
+  bool inDeleting = false;
+
   FlutterbaseComment({
     this.postId,
     this.commentId,
