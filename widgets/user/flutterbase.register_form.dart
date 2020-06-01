@@ -97,7 +97,7 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
         });
       }
     } catch (e) {
-      print(e);
+      // print(e);
       widget.onError(e);
       // AppService.alert(null, t(e));
     }
@@ -191,7 +191,7 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
                 // print('change $date');
               },
               onConfirm: (date) {
-                print('confirm $date');
+                // print('confirm $date');
                 String ymd =
                     date.toString().split(' ').elementAt(0).split('-').join('');
                 // print('ymd: $ymd');
@@ -211,7 +211,7 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
           ),
         ),
         FlutterbaseButton(
-          loader: inSubmit,
+          showSpinner: inSubmit,
           text: fb.notLoggedIn ? t('register submit') : t('update submit'),
           onPressed: () async {
             /// 전송 버튼

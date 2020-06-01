@@ -23,6 +23,10 @@ class FlutterbasePost {
 
   int likes;
   int dislikes;
+
+
+  /// README. Spinner 참고
+  bool inDeleting = false;
   FlutterbasePost({
     this.id,
     this.uid,

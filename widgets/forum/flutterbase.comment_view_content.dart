@@ -14,6 +14,7 @@ class FlutterbaseCommentViewContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print('comment: $comment');
     return Container(
       width: double.infinity,
       child: Container(
@@ -33,7 +34,7 @@ class FlutterbaseCommentViewContent extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text('author: ' + (comment.displayName ?? comment.uid)),
+                      Text('author: ' + comment.displayName),
                       Text('created: ' + formatTime(comment.createdAt)),
                     ],
                   ),

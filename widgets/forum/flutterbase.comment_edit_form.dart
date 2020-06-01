@@ -179,7 +179,9 @@ class _FlutterbaseCommentEditFormState
                       commentId: widget.currentComment.commentId,
                       parentCommentDepth: widget.parentComment?.depth ?? 0,
                       lastSiblingCommentOrder: widget.lastSiblingComment?.order,
-                      content: _contentController.text,
+                      data: {
+                        'content': _contentController.text,
+                      },
                     );
                     back(arguments: comment);
                     // } else {

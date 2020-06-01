@@ -9,7 +9,7 @@ import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
 
 class FlutterbaseTest {
   FlutterbaseTest() {
-    print('--> FlutterbaseTest()');
+    // print('--> FlutterbaseTest()');
 
     /// 로그인 될 때까지 기다림
     Timer(Duration(milliseconds: 400), () {
@@ -188,7 +188,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: 0, // 1단계
       lastSiblingCommentOrder: null,
-      content: 'A',
+      data: { 'content': 'A' },
     );
     eq(commentA.content, 'A');
 
@@ -203,7 +203,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: 0, // 1단계
       lastSiblingCommentOrder: commentA.order,
-      content: 'B',
+      data: { 'content': 'B' },
     );
 
     _comments = await fb.commentsGet(post.id);
@@ -217,7 +217,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: 0, // 1단계
       lastSiblingCommentOrder: B.order,
-      content: 'C',
+      data: { 'content': 'C' },
     );
 
     _comments = await fb.commentsGet(post.id);
@@ -232,7 +232,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentC.depth, // 이전 단계 depth. C 다음 이전 C.
       lastSiblingCommentOrder: commentC.order, // 이전 단계 order. C 다음이므로 이전 C.
-      content: 'CA',
+      data: { 'content': 'CA' },
     );
 
     eq(commentCA.depth, 2);
@@ -244,7 +244,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: 0, // 1단계
       lastSiblingCommentOrder: commentC.order,
-      content: 'D',
+      data: { 'content': 'D' },
     );
 
     eq(commentD.depth, 1);
@@ -257,7 +257,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentCA.depth, // 이전 단계 depth. CA 다음 이전은 CA.
       lastSiblingCommentOrder: commentCA.order, // 이전 단계 order. CA 다음이므로 이전은 CA.
-      content: 'CAA',
+      data: { 'content': 'CAA' },
     );
 
     eq(commentCAA.depth, 3);
@@ -270,7 +270,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: B.depth,
       lastSiblingCommentOrder: B.order,
-      content: 'BA',
+      data: { 'content': 'BA' },
     );
 
     eq(BA.depth, 2);
@@ -282,7 +282,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentA.depth,
       lastSiblingCommentOrder: commentA.order,
-      content: 'AA',
+      data: { 'content': 'AA' },
     );
     eq(commentAA.depth, 2);
     eq(commentAA.order,
@@ -293,7 +293,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentA.depth,
       lastSiblingCommentOrder: commentAA.order,
-      content: 'AB',
+      data: { 'content': 'AB' },
     );
 
     eq(commentAB.order,
@@ -304,7 +304,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentA.depth,
       lastSiblingCommentOrder: commentAB.order,
-      content: 'AC',
+      data: { 'content': 'AC' },
     );
 
     /// Create B -> BA -> BAA
@@ -313,7 +313,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: BA.depth,
       lastSiblingCommentOrder: BA.order,
-      content: 'BAA',
+      data: { 'content': 'BAA' },
     );
 
     /// Create B -> BA -> BAAA
@@ -322,7 +322,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: BAA.depth,
       lastSiblingCommentOrder: BAA.order,
-      content: 'BAAA',
+      data: { 'content': 'BAAA' },
     );
 
     /// Create B -> BA -> BAAB
@@ -331,7 +331,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: BAA.depth,
       lastSiblingCommentOrder: commentBAAA.order, // 이전 댓글. 부모 댓글의 것이 아님.
-      content: 'BAAB',
+      data: { 'content': 'BAAB' },
     );
 
     /// Create B -> BA -> BAAC
@@ -340,7 +340,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: BAA.depth,
       lastSiblingCommentOrder: commentBAAB.order, // 이전 댓글. 부모 댓글의 것이 아님.
-      content: 'BAAC',
+      data: { 'content': 'BAAC' },
     );
 
     /// Create B -> BA -> BAA -> BAAB -> BAABA
@@ -349,7 +349,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentBAAB.depth,
       lastSiblingCommentOrder: commentBAAB.order, // 이전 댓글. 부모 댓글의 것이 아님.
-      content: 'BAABA',
+      data: { 'content': 'BAABA' },
     );
 
     /// Create B -> BB
@@ -358,7 +358,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: B.depth,
       lastSiblingCommentOrder: commentBAAC.order, // 이전 댓글. 부모 댓글의 것이 아님.
-      content: 'BB',
+      data: { 'content': 'BB' },
     );
 
     /// 형제 중 마지막 코멘트의 order
@@ -369,35 +369,35 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: BB.depth, // 부모
       lastSiblingCommentOrder: BB.order, // 형제가 없으면, 부모
-      content: 'BBA',
+      data: { 'content': 'BBA' },
     );
 
     FlutterbaseComment BC = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: B.depth, // 부모
       lastSiblingCommentOrder: BB.order, // 형재 중 마지막
-      content: 'BC',
+      data: { 'content': 'BC' },
     );
 
     FlutterbaseComment BCA = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: BC.depth, // 부모
       lastSiblingCommentOrder: BC.order, // 형제가 없으면, 부모
-      content: 'BCA',
+      data: { 'content': 'BCA' },
     );
 
     FlutterbaseComment BD = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: B.depth, // 부모
       lastSiblingCommentOrder: BC.order, // 형제 중 마지막
-      content: 'BD',
+      data: { 'content': 'BD' },
     );
 
     FlutterbaseComment BAB = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: BA.depth, // 부모
       lastSiblingCommentOrder: BAA.order, // 형제 중 마지막
-      content: 'BAB',
+      data: { 'content': 'BAB' },
     );
 
     _comments = await fb.commentsGet(post.id);

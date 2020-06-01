@@ -78,7 +78,7 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
         ),
         FlutterbaseSpace(),
         FlutterbaseButton(
-          loader: inSubmit,
+          showSpinner: inSubmit,
           text: widget.textSubmit,
           onPressed: () async {
             if (inSubmit) return;

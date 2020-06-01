@@ -11,7 +11,7 @@ class FlutterbasePostModel extends ChangeNotifier {
   FlutterbasePostModel({
     @required this.post,
   }) {
-    print(post);
+    // print(post);
     _loadComments();
   }
 
@@ -27,7 +27,7 @@ class FlutterbasePostModel extends ChangeNotifier {
   }
 
   /// 코멘트를 코멘트 목록에 집어 넣는다.
-  /// 
+  ///
   /// order 가 작은 것이 있으면 바로 그 앞에 집어 넣으면 된다.
   addComment(FlutterbaseComment comment) {
     if (comment == null) return;
@@ -38,6 +38,20 @@ class FlutterbasePostModel extends ChangeNotifier {
     } else {
       comments.insert(index, comment);
     }
+    notifyListeners();
+  }
+
+  /// 코멘트를 수정하고, 기존의 코멘트와 바꿔치기 한다.
+  ///
+  /// [comment] 업데이트된 코멘트
+  /// - notifyListeners 를 한다.
+  updateComment(FlutterbaseComment comment) {
+    if (comment == null) return;
+
+    int i = comments
+        .indexWhere((element) => element.commentId == comment.commentId);
+    comments.removeAt(i);
+    comments.insert(i, comment);
     notifyListeners();
   }
 }

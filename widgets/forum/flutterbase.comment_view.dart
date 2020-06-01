@@ -113,10 +113,9 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
           text: t('reply'),
         ),
         FlutterbaseTextButton(
+          text: t('edit'),
           onTap: () async {
-            alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
-
-            // /// 삭제되면 수정 불가
+            // @TODO: /// 삭제되면 수정 불가
             // if (fb.isDeleted(widget.comment)) return alert(t(ALREADY_DELETED));
 
             // /// 자신의 글이 아니면, 에러
@@ -124,19 +123,16 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
 
             FlutterbaseComment _comment = await openDialog(
               FlutterbaseCommentEditForm(
+                postModel: postModel,
                 post: widget.post,
                 currentComment: widget.comment,
               ),
             );
-
-            /// TODO: 코멘트 업데이트
-            // widget.forum.updateComment(_comment, widget.post);
-            // model.notify();
+            postModel.updateComment(_comment);
           },
-          text: t('edit'),
         ),
         FlutterbaseTextButton(
-          loader: inLike,
+          showSpinner: inLike,
           text: t('Like') + ' ' + widget.comment.likes.toString(),
           onTap: () async {
             /// 이미 vote 중이면 불가
@@ -159,11 +155,11 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
               widget.comment.likes = re['likes'];
               widget.comment.dislikes = re['dislikes'];
             });
-            print(re);
+            // print(re);
           },
         ),
         FlutterbaseTextButton(
-          loader: inDisike,
+          showSpinner: inDisike,
           text: t('dislike') + ' ' + widget.comment.dislikes.toString(),
           onTap: () async {
             /// 이미 vote 중이면 불가
@@ -186,11 +182,11 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
               widget.comment.likes = re['likes'];
               widget.comment.dislikes = re['dislikes'];
             });
-            print(re);
+            // print(re);
           },
         ),
         FlutterbaseTextButton(
-          loader: inDelete,
+          showSpinner: inDelete,
           onTap: () async {
             /// 코멘트 삭제
 
@@ -206,9 +202,9 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
               onYes: () async {
                 setState(() => inDelete = true);
                 try {
-                  var re = await fb.commentDelete(widget.comment.commentId);
-                  widget.comment.content = re['content'];
-                  widget.forum.notify();
+                  var comment = await fb.commentDelete(
+                      postId: widget.post.id, comment: widget.comment);
+                      postModel.updateComment(comment);
                 } catch (e) {
                   alert(e);
                 }

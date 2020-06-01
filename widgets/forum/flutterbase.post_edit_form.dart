@@ -200,7 +200,7 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
                 //   onError: alert,
                 // ),
                 FlutterbaseButton(
-                  loader: inSubmit,
+                  showSpinner: inSubmit,
                   text: widget.post?.id == null ? CREATE_POST : UPDATE_POST,
                   onPressed: () async {
                     if (inSubmit) return;

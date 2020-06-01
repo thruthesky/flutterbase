@@ -76,7 +76,7 @@ class FlutterbasePostListViewButtons extends StatefulWidget {
 
 class _FlutterbasePostListViewButtonsState
     extends State<FlutterbasePostListViewButtons> {
-  bool inDelete = false;
+  // bool inDelete = false;
   bool inLike = false;
   bool inDisike = false;
   @override
@@ -105,7 +105,7 @@ class _FlutterbasePostListViewButtonsState
 
             /// TODO: 코멘트를 생성하고 집어 넣기.
             // forum.addComment(comment, widget.post, null);
-            
+
             postModel.addComment(comment);
 
             // forum.notify();
@@ -133,7 +133,7 @@ class _FlutterbasePostListViewButtonsState
 
             /// 글 수정 후, 카테고리가 변경되면, 변경된 카테고리로 이동한다.
             if (_post.category != forum.id) {
-              print('!_post.categories.contains(forum.id)');
+              // print('!_post.categories.contains(forum.id)');
               return open(
                 EngineRoutes.postList,
                 arguments: {'id': _post.category},
@@ -142,7 +142,7 @@ class _FlutterbasePostListViewButtonsState
           },
         ),
         FlutterbaseTextButton(
-          loader: inLike,
+          showSpinner: inLike,
           text: t('Like') + ' ' + widget.post.likes.toString(),
           onTap: () async {
             /// 이미 vote 중이면 불가
@@ -163,11 +163,11 @@ class _FlutterbasePostListViewButtonsState
               widget.post.likes = re['likes'];
               widget.post.dislikes = re['dislikes'];
             });
-            print(re);
+            // print(re);
           },
         ),
         FlutterbaseTextButton(
-          loader: inDisike,
+          showSpinner: inDisike,
           text: t('dislike') + ' ' + widget.post.dislikes.toString(),
           onTap: () async {
             /// 이미 vote 중이면 불가
@@ -189,26 +189,24 @@ class _FlutterbasePostListViewButtonsState
               widget.post.likes = re['likes'];
               widget.post.dislikes = re['dislikes'];
             });
-            print(re);
+            // print(re);
           },
         ),
         FlutterbaseTextButton(
-          loader: inDelete,
+          showSpinner: widget.post.inDeleting,
           onTap: () async {
-            alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
+            // alert('삭제된 글인지, 자신의 글이 아닌지는 fluterbase model 에서 캡슐화 한다.');
             // /// 글이 삭제되면 재 삭제 불가
             // if (fb.isDeleted(widget.post)) return alert(t(ALREADY_DELETED));
 
             // /// 자신의 글이 아니면, 에러
             // if (!fb.isMine(widget.post)) return alert(t(NOT_MINE));
-
+            // print('post: ${widget.post}');
             confirm(
               title: t(CONFIRM_POST_DELETE_TITLE),
               content: t(CONFIRM_POST_DELETE_CONTENT),
               onYes: () async {
-                setState(() => inDelete = true);
                 await forum.deletePost(widget.post);
-                setState(() => inDelete = false);
               },
               onNo: () {},
             );

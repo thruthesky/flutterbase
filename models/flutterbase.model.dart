@@ -8,6 +8,7 @@ import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.texts.dart';
+import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class FlutterbaseModel extends ChangeNotifier {
@@ -18,11 +19,11 @@ class FlutterbaseModel extends ChangeNotifier {
         _user = u;
         notifyListeners();
         if (u == null) {
-          print('EngineModel::onAuthStateChanged() user logged out');
+          // print('EngineModel::onAuthStateChanged() user logged out');
           auth.signInAnonymously();
         } else {
-          print('EngineModel::onAuthStateChanged() user logged in: $u');
-          print('Anonymous: ${u.isAnonymous}, ${u.email}');
+          // print('EngineModel::onAuthStateChanged() user logged in: $u');
+          // print('Anonymous: ${u.isAnonymous}, ${u.email}');
 
           if (loggedIn) {
             try {
@@ -174,15 +175,15 @@ class FlutterbaseModel extends ChangeNotifier {
 
       final FirebaseUser user =
           (await auth.signInWithCredential(credential)).user;
-      print("signed in " + user.displayName);
+      // print("signed in " + user.displayName);
 
       /// 파이어베이스에서 이미 로그인을 했으므로, GoogleSignIn 에서는 바로 로그아웃을 한다.
       /// GoogleSignIn 에서 로그아웃을 안하면, 다음에 로그인을 할 때, 다른 계정으로 로그인을 못한다.
       await _googleSignIn.signOut();
       return user;
     } catch (e) {
-      print('loginWithGoogleAccount::');
-      print(e);
+      // print('loginWithGoogleAccount::');
+      // print(e);
       throw e.message;
     }
   }
@@ -252,11 +253,25 @@ class FlutterbaseModel extends ChangeNotifier {
 
   /// 게시글 삭제
   ///
-  /// 입력값은 프로토콜 문서 참고
-  Future<FlutterbasePost> postDelete(String id) async {
-    // final post = await callFunction({'route': 'post.delete', 'data': id});
-    // return FlutterbasePost.fromEngineData(post);
-    return null;
+  /// - 실제로 도큐먼트를 삭제하지 않고, 제목, 내용, 사진 등을 없애거나 삭제됨으로 표시한다.
+  ///     - 즉, 삭제됨으로 업데이트를 하는 것이다.
+  /// - `deletedAt` 에 값을 기록한다.
+  ///
+  /// 입력 변수 [post] 에 (call by reference) 삭제돔 정보를 업데이트한다. 즉, 부모 함수에서 따로 수정 할 필요가 없다.
+  Future<FlutterbasePost> postDelete(FlutterbasePost post) async {
+    post.title = POST_TITLE_DELETED;
+    post.content = POST_CONTENT_DELETED;
+    post.urls = [];
+
+    /// 주의 시간은 임시로 참 값만 등록한다.
+    post.deletedAt = 1;
+
+    return await postEdit({
+      'title': POST_TITLE_DELETED,
+      'content': POST_CONTENT_DELETED,
+      'urls': [],
+      'deletedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   /// 카테고리 목록 전체를 가져온다.
@@ -310,39 +325,69 @@ class FlutterbaseModel extends ChangeNotifier {
   ///   이유는 백엔드로 부터 데이터를 가져 왔을 때, 곧바로 랜더링 준비를 하면(Model 호출 등) 클라이언트에 무리를 줄 수 있다.
   ///   미리 하지 말고 필요(랜더링)할 때, 그 때 준비해서 해당 작업을 하면 된다.
   /// * 코멘트를 백엔드로 가져 올 때, 랜더링 준비를 하지 않으므로, 여기서도 하지 않는다.
-  /// [dpeth] 는 1 부터 12 의 값이 저장되어야 한다.
-  /// 1단계 코멘트인 경우, [depth] 를 0 으로 입력하면 된다. 그러면 코드에서 +1을 해서 저장한다.
-  /// 2단계 코멘트의 경우, [depth] 를 1 로 이력하면, +1 을 해서 2로 저장한다.
+  /// [postId] 는 글 id
+  /// [commentId] 는 코멘트 Id. 생성에는 필없다.
+  /// [parentCommentDepth] 는 코멘트 깊이 단계. 수정에는 필요 없다.
+  /// 1 부터 12 의 값이 저장되어야 한다.
+  /// 1단계 코멘트인 경우, [parentCommentDepth] 를 0 으로 입력하면 된다. 그러면 코드에서 +1을 해서 저장한다.
+  /// 2단계 코멘트의 경우, [parentCommentDepth] 를 1 로 이력하면, +1 을 해서 2로 저장한다.
+  ///
+  /// [lastSiblingCommentOrder] 는 형제의 마지막 코멘트의 order. 수정에는 필요 없다.
+  /// [data.content] 글 내용
+  /// [data.urls] 는 사진 url 목록
   Future<FlutterbaseComment> commentEdit({
     @required String postId,
     String commentId,
-    @required int parentCommentDepth,
-    @required String lastSiblingCommentOrder,
-    String content,
+    int parentCommentDepth,
+    String lastSiblingCommentOrder,
+    Map<String, dynamic> data,
   }) async {
-    // +1 을 하기 전의 값을 전달한다.
-    String order = getCommentOrder(parentCommentDepth, lastSiblingCommentOrder);
-    // print('order: $order');
-
-    final Map<String, dynamic> data = {};
-
-    data['content'] = content;
-    data['uid'] = user.uid;
+    /// 코멘트 저장 값 준비
     data['updatedAt'] = FieldValue.serverTimestamp();
+    data['displayName'] = user.displayName;
 
     if (commentId == null) {
-      // create
+      /// 코멘트 생성
+
+      /// 생성할 때에만 uid 저장
+      data['uid'] = user.uid;
+
+      /// depth 와 order 값을 찾는다. +1 을 하기 전의 값을 전달한다.
+      String order =
+          getCommentOrder(parentCommentDepth, lastSiblingCommentOrder);
+
       data['createdAt'] = FieldValue.serverTimestamp();
       data['depth'] = parentCommentDepth + 1;
       data['order'] = order;
 
-      // print('Comment create data: $data');
       final ref = await _commentCol(postId).add(data);
       commentId = ref.documentID;
     } else {
-      await _postDoc(commentId).updateData(data);
+      /// 코멘트 수정
+      ///
+      /// 수정 할 때에는 간단하게 코멘트 내용만 수정 하면 된다.
+      // print('data: $data');
+      await _commentDoc(postId, commentId).updateData(data);
     }
     return await commentGet(postId, commentId);
+  }
+
+  /// 코멘트 삭제
+  ///
+  /// - 삭제되었음의 데이터를 업데이트한다.
+  /// - 삭제된 도큐먼트를 리턴한다.
+  /// - notifyListeners() 를 하지 않는다.
+  ///
+  Future commentDelete({String postId, FlutterbaseComment comment}) async {
+    return await commentEdit(
+      postId: postId,
+      commentId: comment.commentId,
+      data: {
+        'content': COMMENT_CONTENT_DELETED,
+        'urls': [],
+        'deletedAt': FieldValue.serverTimestamp(),
+      },
+    );
   }
 
   Future<FlutterbaseComment> commentGet(String postId, String commentId) async {
@@ -364,7 +409,7 @@ class FlutterbaseModel extends ChangeNotifier {
         var _re = FlutterbaseComment.fromMap(docData,
             postId: postId, commentId: doc.documentID);
 
-        print('comment content: ${_re.content}');
+        // print('comment content: ${_re.content}');
         _comments.add(_re);
       },
     );
@@ -398,15 +443,10 @@ class FlutterbaseModel extends ChangeNotifier {
     @required FlutterbaseComment parentComment,
     @required List<FlutterbaseComment> comments,
   }) {
-    // print('parent: $parentComment');
-    // print(
-    //     'parentOrder: ${parentComment.order}, parent depth: ${parentComment.depth}');
     int depth = parentComment.depth;
 
     String beginOrder = parentComment.order.substring(0, depth * 6);
     String endOrder = parentComment.order.substring((depth + 1) * 6);
-
-    // print('beginOrder: $beginOrder, endOrder: $endOrder');
 
     List<FlutterbaseComment> sibliings = [];
     for (int i = 0; i < comments.length; i++) {
@@ -414,9 +454,7 @@ class FlutterbaseModel extends ChangeNotifier {
 
       String cBeginOrder = c.order.substring(0, depth * 6);
       String cEndOrder = c.order.substring((depth + 1) * 6);
-      // print('cOrder: ${c.content} ${c.order}');
       if (beginOrder == cBeginOrder && endOrder == cEndOrder) {
-        // print('sibiling: ${c.content}, ${c.order}');
         sibliings.add(c);
       }
     }
@@ -440,8 +478,6 @@ class FlutterbaseModel extends ChangeNotifier {
     if (comments.length == 0) return null;
 
     if (parentComment == null) {
-      // 글 보기에서 덧글을 클릭한 경우, 맨 마지막 코멘트를 리턴
-      // print('last sibling: ${comments.last}');
       return comments.last;
     }
 
@@ -449,61 +485,5 @@ class FlutterbaseModel extends ChangeNotifier {
         findSiblings(parentComment: parentComment, comments: comments);
 
     return siblings.last;
-
-    // print('siblings');
-    // print(siblings);
-
-    // return null;
-
-    // int depth = parentComment.depth;
-
-    // /// 코멘트 목록에서 새 댓글을 작성하고 자 하는 부모 코멘트 위치를 찾는다.
-    // int index =
-    //     comments.indexWhere((element) => element.order == parentComment.order);
-
-    // print('dpeth: $depth, index: $index');
-    // FlutterbaseComment last = comments[index];
-
-    // /// 부모 코멘트 하위에서,
-    // /// 부모 코멘트 depth 중, 가장 작은 order 값을 가지는 코멘트를 찾는다.
-    // for (int i = index + 1; i < comments.length; i++) {
-    //   FlutterbaseComment next = comments[i];
-    //   print('${last.order} : ${next.order}');
-    //   int lastDepth = int.parse(last.order.split('.')[depth]);
-    //   int nextDepth = int.parse(next.order.split('.')[depth]);
-
-    //   /// 두번째 depth 부터는 같은 값이 있으면, 다른 부모로 간주.
-    //   if (lastDepth >= nextDepth) {
-    //     // lastDepth = cDepth;
-    //     last = next;
-    //   } else {
-    //     // order 값이 같거나 증가하면, 다른 부모이므로 탈출
-    //     break;
-    //   }
-    // }
-
-    // print('last sibling: $last');
-
-    // return last;
-  }
-
-  /// 코멘트 수정
-  ///
-  /// * 입력값은 프로토콜 문서 참고
-  /// * commentCreate() 의 설명을 참고.
-  // Future<FlutterbaseComment> commentUpdate(data) async {
-  // final comment =
-  //     await callFunction({'route': 'comment.update', 'data': data});
-  // // return comment;
-  // return FlutterbaseComment.fromEngineData(comment);
-  //   return null;
-  // }
-
-  /// 코멘트 삭제
-  ///
-  /// * 입력값은 프로토콜 문서 참고
-  Future commentDelete(String id) async {
-    // final deleted = await callFunction({'route': 'comment.delete', 'data': id});
-    // return deleted;
   }
 }

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
 
@@ -191,71 +194,31 @@ class FlutterbaseForumModel extends ChangeNotifier {
     oldPost = this.posts.firstWhere((p) => p.id == oldPost.id);
 
     if (updatedPost.category == id) {
-      print('replace');
+      // print('replace');
       oldPost.replaceWith(updatedPost);
     } else {
-      print('remove');
+      // print('remove');
       posts.removeWhere((p) => p.id == updatedPost.id);
     }
     notify();
   }
 
+  ///
   deletePost(FlutterbasePost post) async {
+    post.inDeleting = true;
+    notify();
     try {
-      final re = await fb.postDelete(post.id);
-      post.title = re.title;
-      post.content = re.content;
+      await fb.postDelete(post);
       notify();
     } catch (e) {
       onError(e);
     }
+
+    // 인터넷이 너무 빨라, 로더가 보이지 않는 것을 방지
+    Timer(Duration(milliseconds: 300), () {
+      post.inDeleting = false;
+      notify();
+    });
   }
 
-  /// 글의 코멘트 목록에 코멘트를 하나 끼워 넣는다.
-  ///
-  /// 코멘트 생성 시에 가짜(임시 코멘트) 정보를 넣을 수도 있다.
-  ///
-  /// @example
-  /// ```dart
-  ///   Provider.of<EngineForumModel>(context, listen: false)
-  ///     .addComment(
-  ///      commentToAdd, post, parentCommentId);
-  /// ```
-  /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
-  // addComment(
-  //     FlutterbaseComment comment, FlutterbasePost post, String parentId) {
-  //   if (comment == null) return;
-
-  //   /// 현재 최신 글 목록(캐시를 한다면, 캐시 데이터가 아닌 실 데이터)의 코멘트 목록을 가져와서 업데이트 한다.
-  //   /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
-  //   post = this.posts.firstWhere((p) => p.id == post.id);
-
-  //   if (parentId != null) {
-  //     var i = comments.indexWhere((c) => c.id == parentId);
-  //     if (i == -1) {
-  //       print(
-  //           'addComment() critical error. finding comment. This should never happened');
-  //       return;
-  //     }
-  //     comments.insert(i + 1, comment);
-  //   } else {
-  //     comments.insert(0, comment);
-  //   }
-  //   notify();
-  // }
-
-  /// 코멘트를 수정하고, 기존의 코멘트와 바꿔치기 한다.
-  ///
-  /// [comment] 업데이트된 코멘트
-  // updateComment(FlutterbaseComment comment, FlutterbasePost post) {
-  //   if (comment == null) return;
-
-  //   /// @see `README 캐시를 하는 경우 글/코멘트 수정 삭제` 참고
-  //   post = this.posts.firstWhere((p) => p.id == post.id);
-
-  //   int i = post.comments.indexWhere((element) => element.id == comment.commentId);
-  //   post.comments.removeAt(i);
-  //   post.comments.insert(i, comment);
-  //   notify();
-  // }
 }
