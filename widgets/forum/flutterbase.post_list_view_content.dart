@@ -36,7 +36,7 @@ class FlutterbasePostListViewContent extends StatelessWidget {
                       '${post.title}',
                       style: TextStyle(fontSize: 24),
                     ),
-                    Text('author: ' + (post.displayName ?? post.uid ?? '')),
+                    Text('author: ' + post.displayName),
                     Text('created: $formatted'),
                   ],
                 ),

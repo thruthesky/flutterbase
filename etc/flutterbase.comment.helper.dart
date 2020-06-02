@@ -24,11 +24,12 @@ class FlutterbaseComment {
   String displayName;
   String photoUrl;
 
-  int likes;
-  int dislikes;
+  int like;
+  int dislike;
 
 
   bool inDeleting = false;
+  bool inVoting = false;
 
   FlutterbaseComment({
     this.postId,
@@ -43,8 +44,8 @@ class FlutterbaseComment {
     this.urls,
     this.displayName,
     this.photoUrl,
-    this.likes,
-    this.dislikes,
+    this.like,
+    this.dislike,
   });
 
   /// 글 ID 와 코멘트 ID 를 데이터에 추가한다.
@@ -78,8 +79,8 @@ class FlutterbaseComment {
 
       displayName: data['displayName'] ?? '',
       photoUrl: data['photoUrl'] ?? '',
-      likes: data['likes'] ?? 0,
-      dislikes: data['dislikes'] ?? 0,
+      like: data['like'] ?? 0,
+      dislike: data['dislike'] ?? 0,
       order: data['order'],
       depth: data['depth'],
     );

@@ -22,9 +22,13 @@ class FlutterbaseTest {
 
   run() async {
     // await testRegister();
-    // await testComment();
 
-    await testFindSiblings();
+    // 코멘트를 테스트하려면, 상황에 맞는 글 아이디를 적용해야 한다.
+    // await testComment();
+    // 형제를 찾기 위해서는, 수동으로 상황에 맞는 글 아이디를 적용해야 한다.
+    // await testFindSiblings();
+
+    await testVote();
     showResult();
   }
 
@@ -300,7 +304,8 @@ class FlutterbaseTest {
         '99999.99997.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
 
     /// Create A -> AC
-    FlutterbaseComment commentAC = await fb.commentEdit(
+    // FlutterbaseComment commentAC = 
+    await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: commentA.depth,
       lastSiblingCommentOrder: commentAB.order,
@@ -441,5 +446,61 @@ class FlutterbaseTest {
       }
     }
     eq(done, true);
+  }
+
+
+  testVote() async {
+
+    /// 임시 게시판 생성
+    FlutterbasePost post = await createTestPost();
+    // print('post: $post');
+
+    /// 추천
+    // var like = 
+    await fb.vote(post: post, voteFor: 'like');
+    // print('like vote: $like');
+
+    // 추천
+    // var likeAgain = 
+    await fb.vote(post: post, voteFor: 'like');
+    // print('like vote again: $likeAgain');
+
+
+    // 추천
+    // var likeAgain2 = 
+    await fb.vote(post: post, voteFor: 'like');
+    // print('like vote again 2: $likeAgain2');
+
+
+    // 비추천
+    var dislike = await fb.vote(post: post, voteFor: 'dislike');
+    // print('dislike: $dislike');
+
+    eq(dislike['like'], 0);
+    eq(dislike['dislike'], 1);
+
+
+    /// 코멘트 생성
+    
+    /// Create Comment A
+    FlutterbaseComment A = await fb.commentEdit(
+      postId: post.id,
+      parentCommentDepth: 0, // 1단계
+      lastSiblingCommentOrder: null,
+      data: { 'content': 'A' },
+    );
+    
+    var re = await fb.vote(post: post, comment: A, voteFor: 'dislike');
+    eq(re['dislike'], 1);
+
+
+    re = await fb.vote(post: post, comment: A, voteFor: 'like');
+    eq(re['like'], 1);
+    eq(re['dislike'], 0);
+
+    re = await fb.vote(post: post, comment: A, voteFor: 'like');
+    eq(re['like'], 0);
+    eq(re['dislike'], 0);
+
   }
 }

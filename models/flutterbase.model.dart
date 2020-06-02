@@ -218,6 +218,11 @@ class FlutterbaseModel extends ChangeNotifier {
     return _commentCol(postId).document(commentId);
   }
 
+  CollectionReference get _likeCol => store.collection('likes');
+  DocumentReference _likeDoc(String id) {
+    return _likeCol.document(id);
+  }
+
   CollectionReference get _categoryCol => store.collection('categories');
   DocumentReference _categoryDoc(String id) {
     return _categoryCol.document(id);
@@ -236,13 +241,21 @@ class FlutterbaseModel extends ChangeNotifier {
     data.remove('id');
 
     data['uid'] = user.uid;
+    data['displayName'] = user.displayName;
+
+    /// TODO: 사진 첨부
+    data['photoURL'] = '';
     data['updatedAt'] = FieldValue.serverTimestamp();
 
     if (id == null) {
       /// 글 생성
 
-      /// 글 새성하는 경우에는 카테고리 값이 들어와야 한다.
+      /// 글 생성하는 경우에는 카테고리 값이 들어와야 한다.
       if (data['category'] == null) throw CATEGORY_IS_EMPTY;
+
+      /// 글 생성하는 경우, vote 초기화
+      data['like'] = 0;
+      data['dislike'] = 0;
 
       /// 글 작성 시간
       data['createdAt'] = FieldValue.serverTimestamp();
@@ -340,8 +353,100 @@ class FlutterbaseModel extends ChangeNotifier {
     await _categoryDoc(id).delete();
   }
 
-  Future vote(data) async {
-    // return await callFunction({'route': 'post.like', 'data': data});
+  /// 추천/비추천을 한다.
+  ///
+  /// [post] 는 테스트를 할 때 사용한다. 테스트 할 때, [postModel] 값을 지정 할 수 없다.
+  ///
+  /// - 삭제된 글이면 vote 불가
+  /// - 이미 vote 중이면 불가
+  Future vote({
+    FlutterbasePostModel postModel,
+    FlutterbasePost post,
+    FlutterbaseComment comment,
+    String voteFor,
+  }) async {
+    var doc; // 추천을 하는 글 또는 코멘트
+    DocumentReference docRef; // doc 의 Reference
+
+    /// [postModel] 이 `null` 이면, [post] 의 것을 vote 한다.
+    if (postModel != null) {
+      doc = postModel.post;
+      docRef = _postDoc(postModel.post.id);
+    } else {
+      doc = post;
+      docRef = _postDoc(post.id);
+    }
+
+    /// [comment] 가 `null` 이 아니면, 코멘트를 vote 하는 것이다.
+    if (comment != null) {
+      docRef = _commentDoc(doc.id, comment.commentId);
+      doc = comment; // 코멘트를 doc 에 저장
+    }
+
+    /// vote 중이면 리턴
+    if (doc.inVoting) return;
+
+    /// 추천 표시
+    if (postModel != null) {
+      doc.inVoting = true;
+      postModel.notify();
+    }
+
+    String likeId = '${docRef.documentID}-${user.uid}';
+    DocumentReference likeRef = _likeDoc(likeId);
+    final increment = FieldValue.increment(1);
+    final decrement = FieldValue.increment(-1);
+
+    Map<String, dynamic> newLikeData = {};
+
+    final WriteBatch batch = Firestore.instance.batch();
+
+    /// 먼저 vote 를 했는지 확인. /likes/post_id_or_comment_id-uid/{ id: doc.id, uid: uid, vote: like or dislike }
+
+    /// Race condition timing 을 줄이기 위해서 likes 도큐먼트를 먼저 읽고, 글/코멘트를 읽어야 한다.
+    DocumentSnapshot snapshot = await likeRef.get();
+    if (!snapshot.exists) {
+      /// 처음 추천하는 경우
+      /// 즉, 처음 vote 를 한다면, (문서가 존재하지 않는다면), vote 하고 1 증가.
+      newLikeData = {'id': docRef.documentID, 'uid': user.uid, 'vote': voteFor};
+
+      batch.setData(likeRef, newLikeData);
+      batch.setData(docRef, {voteFor: increment}, merge: true);
+
+      // await likeDoc.setData(newData);
+    } else {
+      var likeData = snapshot.data;
+
+      /// 동일한 vote
+      if (likeData['vote'] == voteFor) {
+        batch.delete(likeRef);
+        batch.setData(docRef, {voteFor: decrement}, merge: true);
+      } else {
+        /// 다른 vote
+        newLikeData = {
+          'id': docRef.documentID,
+          'uid': user.uid,
+          'vote': voteFor
+        };
+        batch.setData(likeRef, newLikeData);
+        String otherVote = voteFor == 'like' ? 'dislike' : 'like';
+        batch.setData(docRef, {voteFor: increment, otherVote: decrement},
+            merge: true);
+      }
+    }
+
+    await batch.commit();
+
+    var re = (await docRef.get()).data;
+
+    if (postModel != null) {
+      doc.inVoting = false;
+      doc.like = re['like'];
+      doc.dislike = re['dislike'];
+      postModel.notify();
+    }
+
+    return re;
   }
 
   /// 코멘트 생성
@@ -379,11 +484,18 @@ class FlutterbaseModel extends ChangeNotifier {
     data['updatedAt'] = FieldValue.serverTimestamp();
     data['displayName'] = user.displayName;
 
+    /// TODO: 사진 첨부
+    data['photoURL'] = '';
+
     if (commentId == null) {
       /// 코멘트 생성
 
       /// 생성할 때에만 uid 저장
       data['uid'] = user.uid;
+
+      /// 생성 할 때, vote 초기화
+      data['like'] = 0;
+      data['dislike'] = 0;
 
       /// depth 와 order 값을 찾는다. +1 을 하기 전의 값을 전달한다.
       String order =
@@ -433,14 +545,15 @@ class FlutterbaseModel extends ChangeNotifier {
 
       print('updated');
 
-      // 인터넷이 너무 빨라, 로더가 보이지 않는 것을 방지
-      Timer(Duration(milliseconds: 500), () {
+      // 인터넷이 너무 빨라, 로더가 빨리 끝나 보이지 않는 것을 방지
+      Timer(Duration(milliseconds: 400), () {
         comment.inDeleting = false;
         postModel.notify();
         print('comment.indeleeing: ${comment.inDeleting}');
       });
     } catch (e) {
       comment.inDeleting = false;
+      postModel.notify();
       throw e;
     }
   }
@@ -555,5 +668,19 @@ class FlutterbaseModel extends ChangeNotifier {
         findSiblings(parentComment: parentComment, comments: comments);
 
     return siblings.last;
+  }
+
+  /// 내가 작성한 도큐먼트이면 true 를 리턴한다.
+  bool myDoc(dynamic doc) {
+    if ( notLoggedIn ) return false;
+    if (doc.uid == null) return false;
+    if (doc.uid != user.uid) return false;
+    return true;
+  }
+
+  /// 삭제된 도큐먼트이면 true 를 리턴한다.
+  bool deleted(dynamic doc) {
+    if (doc.deletedAt == 0) return false;
+    return true;
   }
 }

@@ -1,9 +1,6 @@
 import 'package:fluttercms/flutterbase/etc/flutterbase.app.localization.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.texts.dart';
-import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
 
 import '../widgets/flutterbase.text.dart';
 import 'dart:math';
@@ -117,12 +114,6 @@ void _back({arguments}) {
 /// @example async( onError: alert );
 /// @example alert(e) - where `e` can be an Error Object.
 alert(dynamic title, {String content}) {
-  /// 제목만 있고 내용이 없으면, 제목을 내용으로 표시한다.
-  if (content == null) {
-    content = title;
-    title = null;
-  }
-
   /// title 이 문자열이고,
   if (title is String) {
     /// textTranslations 에 존재 하는 것이면 t 한다.
@@ -143,6 +134,12 @@ alert(dynamic title, {String content}) {
   } else {
     /// 내용이 문자열이 아니면, t() 한다.
     content = t(content);
+  }
+
+  /// 제목만 있고 내용이 없으면, 제목을 내용으로 표시한다.
+  if (content == null) {
+    content = title;
+    title = null;
   }
 
   showPlatformDialog(
@@ -202,7 +199,7 @@ confirm({String title, String content, Function onNo, Function onYes}) {
           FlatButton(
             child: T('no'),
             onPressed: () {
-              if ( onNo != null ) onNo();
+              if (onNo != null) onNo();
               _back();
             },
           ),

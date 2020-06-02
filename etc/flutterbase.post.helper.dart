@@ -21,12 +21,16 @@ class FlutterbasePost {
   String displayName;
   String photoUrl;
 
-  int likes;
-  int dislikes;
+  int like;
+  int dislike;
 
 
   /// README. Spinner 참고
   bool inDeleting = false;
+  bool inVoting = false;
+
+
+
   FlutterbasePost({
     this.id,
     this.uid,
@@ -40,8 +44,8 @@ class FlutterbasePost {
     this.urls,
     this.displayName,
     this.photoUrl,
-    this.likes,
-    this.dislikes,
+    this.like,
+    this.dislike,
   });
   factory FlutterbasePost.fromMap(Map<dynamic, dynamic> data, {@required String id}) {
     int createdAt = 0;
@@ -75,10 +79,10 @@ class FlutterbasePost {
       // urls: data['urls'] != null
       //     ? List<dynamic>.from(data['urls'])
       //     : [], // To preved 'fixed-length' error.
-      // displayName: data['displayName'],
+      displayName: isEmpty(data['displayName']) ? '' : data['displayName'],
       // photoUrl: data['photoUrl'],
-      // likes: data['likes'],
-      // dislikes: data['dislikes'],
+      like: data['like'] ?? 0,
+      dislike: data['dislike'] ?? 0,
     );
   }
 
@@ -102,6 +106,6 @@ class FlutterbasePost {
 
   @override
   String toString() {
-    return "id: $id, uid: $uid, category: $category, title: $title, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt";
+    return "id: $id, uid: $uid, category: $category, title: $title, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, like: $like, dislike: $dislike";
   }
 }

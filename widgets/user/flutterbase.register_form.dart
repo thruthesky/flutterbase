@@ -7,6 +7,7 @@ import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.button.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
+import 'package:validators/validators.dart';
 
 class FlutterbaseRegisterFrom extends StatefulWidget {
   FlutterbaseRegisterFrom({
@@ -199,7 +200,8 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
                   _birthdayController.text = ymd;
                 });
               },
-              currentTime: DateTime.parse(isEmpty(_birthdayController.text)
+              currentTime: DateTime.parse(
+                (isEmpty(_birthdayController.text) || !isNumeric(_birthdayController.text) )
                   ? '20000101'
                   : _birthdayController.text),
               locale: enumValueFromString(appLanguageCode(), LocaleType.values),
