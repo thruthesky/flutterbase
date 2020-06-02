@@ -77,7 +77,7 @@ class FlutterbaseAppBar extends StatelessWidget with PreferredSizeWidget {
             builder: (context, url, child) {
               return FlutterbaseUserPhoto(url, onTap: onTapUserPhoto);
             },
-            selector: (_, model) => model.user?.photoUrl,
+            selector: (_, model) => model.userDocument?.photoUrl,
           ),
         AppTitleMenuIcon(
           visible: scaffold.hasEndDrawer,

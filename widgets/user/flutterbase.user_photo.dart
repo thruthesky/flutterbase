@@ -15,7 +15,7 @@ class FlutterbaseUserPhoto extends StatelessWidget {
   final Function onTap;
   @override
   Widget build(BuildContext context) {
-    // print('url: $url');
+    print('FlutterbaseUserPhoto() url: $url');
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => onTap(),
@@ -28,7 +28,6 @@ class FlutterbaseUserPhoto extends StatelessWidget {
           height: 44,
           child: (isEmpty(url) ||
                   url == DELETED_PHOTO ||
-
                   /// 사진이 http 로 시작하는 문자열이 아니면, NetworkCacheImage 에서 부하 에러가 난다.
                   ///
                   url.indexOf('http') != 0)

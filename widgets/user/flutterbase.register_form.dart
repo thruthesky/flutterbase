@@ -1,12 +1,15 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.button.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
+import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.upload_icon.dart';
+import 'package:fluttercms/flutterbase/widgets/user/flutterbase.register_user_photo.dart';
+import 'package:fluttercms/flutterbase/widgets/user/flutterbase.upload_progress_bar.dart';
 import 'package:validators/validators.dart';
 
 class FlutterbaseRegisterFrom extends StatefulWidget {
@@ -25,6 +28,8 @@ class FlutterbaseRegisterFrom extends StatefulWidget {
 }
 
 class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
+  FlutterbaseUser user = FlutterbaseUser();
+
   int progress = 0;
   bool inSubmit = false;
   bool inLoading = false;
@@ -35,7 +40,6 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
   final TextEditingController _birthdayController = TextEditingController();
 
   /// Gets user registration data from the form
-  /// TODO - form validation
   getFormData() {
     final String email = _emailController.text;
     final String password = _passwordController.text;
@@ -43,7 +47,7 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
     final String phoneNumber = _phoneNumberController.text;
     final String birthday = _birthdayController.text;
 
-    /// 여기서 부터. 회원 정보에서 displayName, phoneNumber, photoURL 이... Auth 에 저장되고, Firestore 에 저장되지 않는지 확인.
+    /// 여기서 부터. 회원 정보에서 displayName, phoneNumber, photoUrl 이... Auth 에 저장되고, Firestore 에 저장되지 않는지 확인.
     /// 회원 정보 수정. Auth 에 있는 값과 Firestore 에 있는 값을 모두 잘 수정하는지 확인.
     ///
     final data = {
@@ -59,11 +63,10 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
       data['password'] = password;
 
       /// 회원 가입을 할 때에는 사진이 `Anonymous` 로 업로드 되어져있는데,
-      ///   - 그 사진의 URL 을 `Enginef`로 전달하고
-      ///   - `Enginef`에서 해당 사용자의 `Firebase Auth` 에 기록을 한다.
-      // if (user.urls != null && user.urls.length > 0) {
-      //   data['photoURL'] = user.urls[0];
-      // }
+      ///   - 그 사진이 `userDocument.photoUrl` 과 `user.urls` 에도 저장되어져 있다.
+      if (user.urls != null && user.urls.length > 0) {
+        data['photoUrl'] = user.urls[0];
+      }
     }
     return data;
   }
@@ -74,21 +77,13 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
       loadProfile();
     }
 
-    // Timer(Duration(milliseconds: 100), () {
-    //   int i = randomInt(10000000, 99999999);
-    //   _emailController.text = 'email$i@gmail.com';
-    //   _passwordController.text = 'pw!,$i';
-    //   _nicknameController.text = 'my nick';
-    //   _phoneNumberController.text = '+8210$i';
-    //   _birthdayController.text = '20100123';
-    // });
     super.initState();
   }
 
   loadProfile() async {
     setState(() => inLoading = true);
     try {
-      FlutterbaseUser user = await fb.profile();
+      user = await fb.profile();
       print(user);
       if (mounted) {
         setState(() {
@@ -110,34 +105,43 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        // EngineUploadIcon(
-        //   user,
-        //   onProgress: (p) {
-        //     /// 업로드 Percentage 표시
-        //     setState(() {
-        //       progress = p;
-        //     });
-        //   },
-        //   onUploadComplete: (String url) async {
-        //     /// 사진 업로드
-        //     try {
-        //       /// 사진을 업로드하면, `Enginef` 에 바로 저장을 해 버린다. 즉, 전송 버튼을 누르지 않아도 이미 업데이트가 되어져 버린다.
-        //       await fb.userUpdate({'photoURL': url});
-        //       setState(() {});
-        //     } catch (e) {
-        //       widget.onError(e);
-        //       // AppService.alert(null, t(e));
-        //     }
-        //   },
-        //   onError: (e) => widget.onError(e),
-        //   icon: EngineRegisterUserPhoto(
-        //     user,
-        //     onError: (e) => widget.onError(e),
-        //   ),
-        // ),
-        // EngineProgressBar(progress),
-        // EnginePageSpace(),
-        // if (inLoading) PlatformCircularProgressIndicator(),
+        FlutterbaseUploadIcon(
+          user,
+          onProgress: (p) {
+            /// 업로드 Percentage 표시
+            setState(() {
+              progress = p;
+            });
+          },
+          onUploadComplete: (String url) async {
+            print('uploaded url: $url');
+
+            /// 사진 업로드
+            try {
+              /// 회원 가입을 이미 한 경우, 회원 정보 페이지 이면,
+              /// 사진을 업로드하면, 바로 수정. 즉, 전송 버튼을 누르지 않아도 이미 업데이트가 되어져 버린다.
+              if (fb.loggedIn) {
+                await fb.profileUpdate({'photoUrl': url});
+                print('userDocument.photoUrl: ${fb.userDocument.photoUrl}');
+                setState(() { /** FlutterbaseModel Provider 받지 않아서 state 갱신 */});
+              } {
+                fb.userDocument.photoUrl = url;
+                fb.notify();
+              }
+            } catch (e) {
+              widget.onError(e);
+            }
+
+          },
+          onError: (e) => widget.onError(e),
+          icon: FlutterbaseRegisterUserPhoto(
+            user,
+            onError: (e) => widget.onError(e),
+          ),
+        ),
+        FlutterbaseUploadProgressBar(progress),
+        FlutterbasePageSpace(),
+        if (inLoading) PlatformCircularProgressIndicator(),
         fb.notLoggedIn
             ? TextField(
                 controller: _emailController,
@@ -200,8 +204,8 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
                   _birthdayController.text = ymd;
                 });
               },
-              currentTime: DateTime.parse(
-                (isEmpty(_birthdayController.text) || !isNumeric(_birthdayController.text) )
+              currentTime: DateTime.parse((isEmpty(_birthdayController.text) ||
+                      !isNumeric(_birthdayController.text))
                   ? '20000101'
                   : _birthdayController.text),
               locale: enumValueFromString(appLanguageCode(), LocaleType.values),

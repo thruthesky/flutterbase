@@ -13,13 +13,20 @@ import 'package:fluttercms/flutterbase/etc/flutterbase.texts.dart';
 import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+/// 앱의 전체 영역에서 사용되는 state 관리 모델
+///
+/// TODO: 이 모델에는 이런 저런 여러가지 함수가 포함되어져 있는데 이로 인해서 코드가 난잡 해 졌다.
+///   - state 에 꼭 필요한 정보만 담고,
+///   - 그 외에는 별도의 서비스 파일로 분리해야한다.
+///   그래야 깔끔하게 정리가 될 것 같다.
+///
 class FlutterbaseModel extends ChangeNotifier {
   FlutterbaseModel() {
     /// 사용자가 로그인/로그아웃을 할 때 `user` 를 업데이트하고 notifyListeners() 를 호출.
     (() {
       auth.onAuthStateChanged.listen((FirebaseUser u) async {
         _user = u;
-        notifyListeners();
+        notify();
         if (u == null) {
           // print('EngineModel::onAuthStateChanged() user logged out');
           auth.signInAnonymously();
@@ -27,6 +34,7 @@ class FlutterbaseModel extends ChangeNotifier {
           // print('EngineModel::onAuthStateChanged() user logged in: $u');
           // print('Anonymous: ${u.isAnonymous}, ${u.email}');
 
+          /// 실제 사용자로 로그인을 한 경우, Anonymous 는 제외
           if (loggedIn) {
             try {
               // print('@TODO: get user data');
@@ -34,11 +42,16 @@ class FlutterbaseModel extends ChangeNotifier {
               // print('engineUser: ');
               // print(engineUser);
               userDocument = await profile();
+              notify();
             } catch (e) {
               print('got profile error: ');
               print(e);
               alert(e);
             }
+          } else {
+            /// 로그 아웃을 한 경우 (Anonymous 로 로그인 한 경우 포함)
+            userDocument = FlutterbaseUser();
+            notify();
           }
         }
       });
@@ -75,7 +88,7 @@ class FlutterbaseModel extends ChangeNotifier {
   FirebaseUser get user => _user;
 
   /// 사용자 도큐먼트 값을 가진다.
-  FlutterbaseUser userDocument;
+  FlutterbaseUser userDocument = FlutterbaseUser();
 
   /// 사용자가 로그인을 했으면 참을 리턴
   ///
@@ -94,10 +107,14 @@ class FlutterbaseModel extends ChangeNotifier {
     return userDocument?.isAdmin == true;
   }
 
+  notify() {
+    notifyListeners();
+  }
+
   /// 사용자 로그아웃을 하고 `notifyListeners()` 를 한다. `user` 는 Listeners 에서 자동 업데이트된다.
   logout() async {
     await auth.signOut();
-    notifyListeners();
+    notify();
   }
 
   /// 회원 가입을 한다.
@@ -121,19 +138,53 @@ class FlutterbaseModel extends ChangeNotifier {
     await _userDoc(user.uid).setData(data);
   }
 
+  /// 사용자 정보 업데이트
+  ///
+  /// `Firebase Auth` 에도 등록하고, `Firestore users` Collection 에도 등록한다.
+  ///
   Future<void> profileUpdate(Map<String, dynamic> data) async {
-    if (notLoggedIn) throw LOGIN_FIRST;
-    if (data['email'] != null) throw EMAIL_CANNOT_BY_CHANGED;
-    // print('profileUpdate email: ${data['email']}');
+    /// 로그인을 하지 않은 경우, 즉, 비 회원이 회원 가입 페이지에 있는 경우,
+    if (notLoggedIn) {
+      // /// 비 회원이 사진을 업로드하는 경우, Anonymous 계정에 업로드를 한다.
+      // if (data['photoUrl'] != null || data['photoUrl'] == DELETED_PHOTO) {
+      //   // final up = UserUpdateInfo();
+      //   // up.photoUrl = data['photoUrl'];
+      //   // await user.updateProfile(up);
+      //   // await user.reload();
+      //   // print('user.photoUrl: ${user.photoUrl}');
+      //   userDocument.photoUrl = data['photoUrl'];
+      //   notify();
+      //   return;
+      // } else {
+      /// 비 회원이, 사진이 아닌 다른 정보를 업데이트 하면 에러
+      throw LOGIN_FIRST;
+      // }
+    }
 
+    /// 이메일 변경 불가
+    if (data['email'] != null) throw EMAIL_CANNOT_BY_CHANGED;
+
+    /// 닉네임, 사진은 `Firebase Auth` 에 업데이트
     if (data['displayName'] != null || data['photoUrl'] != null) {
       final up = UserUpdateInfo();
-      up.displayName = data['displayName'];
-      up.photoUrl = data['photoUrl'];
+      if (data['displayName'] != null) {
+        up.displayName = data['displayName'];
+      }
+      if (data['photoUrl'] != null) {
+        up.photoUrl = data['photoUrl'];
+      }
       await user.updateProfile(up);
     }
+
+    /// 사용자 도큐먼트 정보 업데이트
     await _userDoc(user.uid).setData(data, merge: true);
+
+    /// 사용자 도큐먼트 정보 갱신
+    userDocument = await profile();
+
+    /// Firebase Auth 정보 갱신
     await user.reload();
+    notify();
   }
 
   /// 로그인을 한다.
@@ -153,7 +204,7 @@ class FlutterbaseModel extends ChangeNotifier {
       email: email.trim(),
       password: password,
     );
-    notifyListeners();
+    notify();
     return result.user;
   }
 
@@ -244,7 +295,7 @@ class FlutterbaseModel extends ChangeNotifier {
     data['displayName'] = user.displayName;
 
     /// TODO: 사진 첨부
-    data['photoURL'] = '';
+    data['photoUrl'] = '';
     data['updatedAt'] = FieldValue.serverTimestamp();
 
     if (id == null) {
@@ -386,67 +437,80 @@ class FlutterbaseModel extends ChangeNotifier {
     /// vote 중이면 리턴
     if (doc.inVoting) return;
 
-    /// 추천 표시
-    if (postModel != null) {
-      doc.inVoting = true;
-      postModel.notify();
-    }
+    try {
+      /// 추천 표시
+      if (postModel != null) {
+        doc.inVoting = true;
+        postModel.notify();
+      }
 
-    String likeId = '${docRef.documentID}-${user.uid}';
-    DocumentReference likeRef = _likeDoc(likeId);
-    final increment = FieldValue.increment(1);
-    final decrement = FieldValue.increment(-1);
+      String likeId = '${docRef.documentID}-${user.uid}';
+      DocumentReference likeRef = _likeDoc(likeId);
+      final increment = FieldValue.increment(1);
+      final decrement = FieldValue.increment(-1);
 
-    Map<String, dynamic> newLikeData = {};
+      Map<String, dynamic> newLikeData = {};
 
-    final WriteBatch batch = Firestore.instance.batch();
+      final WriteBatch batch = Firestore.instance.batch();
 
-    /// 먼저 vote 를 했는지 확인. /likes/post_id_or_comment_id-uid/{ id: doc.id, uid: uid, vote: like or dislike }
+      /// 먼저 vote 를 했는지 확인. /likes/post_id_or_comment_id-uid/{ id: doc.id, uid: uid, vote: like or dislike }
 
-    /// Race condition timing 을 줄이기 위해서 likes 도큐먼트를 먼저 읽고, 글/코멘트를 읽어야 한다.
-    DocumentSnapshot snapshot = await likeRef.get();
-    if (!snapshot.exists) {
-      /// 처음 추천하는 경우
-      /// 즉, 처음 vote 를 한다면, (문서가 존재하지 않는다면), vote 하고 1 증가.
-      newLikeData = {'id': docRef.documentID, 'uid': user.uid, 'vote': voteFor};
-
-      batch.setData(likeRef, newLikeData);
-      batch.setData(docRef, {voteFor: increment}, merge: true);
-
-      // await likeDoc.setData(newData);
-    } else {
-      var likeData = snapshot.data;
-
-      /// 동일한 vote
-      if (likeData['vote'] == voteFor) {
-        batch.delete(likeRef);
-        batch.setData(docRef, {voteFor: decrement}, merge: true);
-      } else {
-        /// 다른 vote
+      /// Race condition timing 을 줄이기 위해서 likes 도큐먼트를 먼저 읽고, 글/코멘트를 읽어야 한다.
+      DocumentSnapshot snapshot = await likeRef.get();
+      if (!snapshot.exists) {
+        /// 처음 추천하는 경우
+        /// 즉, 처음 vote 를 한다면, (문서가 존재하지 않는다면), vote 하고 1 증가.
         newLikeData = {
           'id': docRef.documentID,
           'uid': user.uid,
           'vote': voteFor
         };
+
         batch.setData(likeRef, newLikeData);
-        String otherVote = voteFor == 'like' ? 'dislike' : 'like';
-        batch.setData(docRef, {voteFor: increment, otherVote: decrement},
-            merge: true);
+        batch.setData(docRef, {voteFor: increment}, merge: true);
+
+        // await likeDoc.setData(newData);
+      } else {
+        var likeData = snapshot.data;
+
+        /// 동일한 vote
+        if (likeData['vote'] == voteFor) {
+          batch.delete(likeRef);
+          batch.setData(docRef, {voteFor: decrement}, merge: true);
+        } else {
+          /// 다른 vote
+          newLikeData = {
+            'id': docRef.documentID,
+            'uid': user.uid,
+            'vote': voteFor
+          };
+          batch.setData(likeRef, newLikeData);
+          String otherVote = voteFor == 'like' ? 'dislike' : 'like';
+          batch.setData(docRef, {voteFor: increment, otherVote: decrement},
+              merge: true);
+        }
       }
+
+      await batch.commit();
+
+      var re = (await docRef.get()).data;
+
+      if (postModel != null) {
+        doc.inVoting = false;
+        doc.like = re['like'];
+        doc.dislike = re['dislike'];
+        postModel.notify();
+      }
+
+      return re;
+    } catch (e) {
+      /// doc.inVoting 을 false 로 하고, notifyListeners() 를 위해서 에러를 캡쳐 한 것이다.
+      if (postModel != null) {
+        doc.inVoting = false;
+        postModel.notify();
+      }
+      throw e;
     }
-
-    await batch.commit();
-
-    var re = (await docRef.get()).data;
-
-    if (postModel != null) {
-      doc.inVoting = false;
-      doc.like = re['like'];
-      doc.dislike = re['dislike'];
-      postModel.notify();
-    }
-
-    return re;
   }
 
   /// 코멘트 생성
@@ -485,7 +549,7 @@ class FlutterbaseModel extends ChangeNotifier {
     data['displayName'] = user.displayName;
 
     /// TODO: 사진 첨부
-    data['photoURL'] = '';
+    data['photoUrl'] = '';
 
     if (commentId == null) {
       /// 코멘트 생성
@@ -672,7 +736,7 @@ class FlutterbaseModel extends ChangeNotifier {
 
   /// 내가 작성한 도큐먼트이면 true 를 리턴한다.
   bool myDoc(dynamic doc) {
-    if ( notLoggedIn ) return false;
+    if (notLoggedIn) return false;
     if (doc.uid == null) return false;
     if (doc.uid != user.uid) return false;
     return true;
