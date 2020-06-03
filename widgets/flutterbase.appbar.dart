@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/models/flutterbase.model.dart';
+import 'package:fluttercms/flutterbase/widgets/flutterbase.appbar.menu_icon.dart';
 import 'package:fluttercms/flutterbase/widgets/user/flutterbase.user_photo.dart';
 import 'package:provider/provider.dart';
 
@@ -79,37 +80,11 @@ class FlutterbaseAppBar extends StatelessWidget with PreferredSizeWidget {
             },
             selector: (_, model) => model.userDocument?.photoUrl,
           ),
-        AppTitleMenuIcon(
+        AppBarMenuIcon(
           visible: scaffold.hasEndDrawer,
           onTap: () => _openAppDrawer(scaffold),
         ),
       ],
-    );
-  }
-}
-
-class AppTitleMenuIcon extends StatelessWidget {
-  AppTitleMenuIcon({this.visible, this.onTap});
-
-  final bool visible;
-  final Function onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 64.0,
-      child: Visibility(
-        visible: visible,
-        child: FlatButton(
-          child: Icon(
-            Icons.menu,
-            size: 30,
-            color: Colors.white,
-            // key: Key(AppService.key.drawerOpen),
-          ),
-          onPressed: onTap,
-        ),
-      ),
     );
   }
 }

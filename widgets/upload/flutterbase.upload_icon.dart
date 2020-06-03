@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/services/flutterbase.storage.service.dart';
@@ -41,7 +43,13 @@ class FlutterbaseUploadIcon extends StatelessWidget {
     @required this.onError,
     this.icon,
     Key key,
-  }) : super(key: key);
+  }) : super(key: key) {
+    
+    if (doc.urls == null || !(doc.urls is List)) {
+      Timer(Duration(milliseconds: 500),
+          () => alert('doc.urls is not a List in FlutterbaseUploadIcon'));
+    }
+  }
 
   /// 사용자 도큐먼트 또는 글/코멘트 도큐먼트 등
   final doc;

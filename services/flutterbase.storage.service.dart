@@ -1,15 +1,15 @@
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/settings.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-
 
 /// 사진(파일)을 `Storage`에 올리고, 삭제 등 전반 적인 관리를 한다.
 ///
@@ -37,7 +37,12 @@ import 'package:permission_handler/permission_handler.dart';
 class FlutterbaseStorage {
   StorageUploadTask uploadTask;
   var doc;
-  FlutterbaseStorage(this.doc);
+  FlutterbaseStorage(this.doc) {
+    if (doc.urls == null || !(doc.urls is List)) {
+      Timer(Duration(milliseconds: 500),
+          () => alert('doc.urls is not a List in FluterbaseStorage'));
+    }
+  }
 
   /// 사진을 선택하고 업로드 한다.
   ///

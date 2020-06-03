@@ -16,7 +16,8 @@ class FlutterbaseComment {
   /// [inLoading] is used only for [post.tempComment] to indiate whether the comment in submission to backend.
   bool inLoading;
 
-  List<dynamic> urls;
+  /// 파일 업로드에서 초기화 필요함. .fromMap() 을 호출 하지 않는 경우 필요.
+  List<dynamic> urls = [];
 
   /// 글 쓴이 이름과 photoURL
   ///
@@ -73,9 +74,9 @@ class FlutterbaseComment {
       updatedAt: updatedAt,
       deletedAt: deletedAt,
 
-      // urls: data['urls'] != null
-      //     ? List<dynamic>.from(data['urls'])
-      //     : [], // To preved 'fixed-length' error.
+      urls: data['urls'] != null
+          ? List<dynamic>.from(data['urls'])
+          : [], // To preved 'fixed-length' error.
 
       displayName: data['displayName'] ?? '',
       photoUrl: data['photoUrl'] ?? '',

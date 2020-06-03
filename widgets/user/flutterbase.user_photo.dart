@@ -15,7 +15,7 @@ class FlutterbaseUserPhoto extends StatelessWidget {
   final Function onTap;
   @override
   Widget build(BuildContext context) {
-    print('FlutterbaseUserPhoto() url: $url');
+    // print('FlutterbaseUserPhoto() url: $url');
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => onTap(),

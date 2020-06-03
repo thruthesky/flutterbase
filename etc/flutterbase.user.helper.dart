@@ -37,9 +37,9 @@ class FlutterbaseUser {
     this.isAdmin,
   });
   factory FlutterbaseUser.fromMap(Map<dynamic, dynamic> data) {
-    print('user profile data: $data');
+    // print('user profile data: $data');
     if (data == null) {
-      print('User profile is null. User need to update his profile!');
+      // print('User profile is null. User need to update his profile!');
       alert(t(UPDATE_PROFILE));
       return FlutterbaseUser();
     }

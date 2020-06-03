@@ -8,6 +8,9 @@ import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.button.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
+import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.display_uploaded_image.dart';
+import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.upload_icon.dart';
+import 'package:fluttercms/flutterbase/widgets/user/flutterbase.upload_progress_bar.dart';
 
 class FlutterbasePostEditForm extends StatefulWidget {
   FlutterbasePostEditForm({this.id, this.post});
@@ -19,7 +22,7 @@ class FlutterbasePostEditForm extends StatefulWidget {
 }
 
 class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
-  FlutterbasePost post = FlutterbasePost();
+  FlutterbasePost post = FlutterbasePost.fromMap({}, id: null);
   int progress = 0;
   bool inSubmit = false;
 
@@ -109,6 +112,7 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
 
   @override
   Widget build(BuildContext context) {
+    print('doc: $post');
     return Scaffold(
       appBar: AppBar(
         title: T(title),
@@ -168,30 +172,30 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
                 hintText: t('input content'),
               ),
             ),
-            FlutterbaseSpace(),
-            // EngineProgressBar(0),
-            // EngineDisplayUploadedImages(
-            //   post,
-            //   editable: true,
-            // ),
             // FlutterbaseSpace(),
-            // EngineProgressBar(progress),
+            // EngineProgressBar(0),
+            FlutterbaseDisplayUploadedImages(
+              post,
+              editable: true,
+            ),
+            FlutterbaseSpace(),
+            FlutterbaseUploadProgressBar(progress),
             FlutterbaseSpace(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                // EngineUploadIcon(
-                //   post,
-                //   onProgress: (p) {
-                //     setState(() {
-                //       progress = p;
-                //     });
-                //   },
-                //   onUploadComplete: (String url) {
-                //     setState(() {});
-                //   },
-                //   onError: alert,
-                // ),
+                FlutterbaseUploadIcon(
+                  post,
+                  onProgress: (p) {
+                    setState(() {
+                      progress = p;
+                    });
+                  },
+                  onUploadComplete: (String url) {
+                    setState(() {});
+                  },
+                  onError: alert,
+                ),
                 FlutterbaseButton(
                   showSpinner: inSubmit,
                   text: widget.post?.id == null ? CREATE_POST : UPDATE_POST,

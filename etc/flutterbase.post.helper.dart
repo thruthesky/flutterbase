@@ -13,7 +13,9 @@ class FlutterbasePost {
   String uid;
   String id;
   // List<dynamic> comments;
-  List<dynamic> urls;
+
+  /// 파일 업로드에서 초기화 필요함. .fromMap() 을 호출 하지 않는 경우 필요.
+  List<dynamic> urls = [];
 
   /// 글 쓴이 이름과 photoURL
   ///
@@ -24,12 +26,9 @@ class FlutterbasePost {
   int like;
   int dislike;
 
-
   /// README. Spinner 참고
   bool inDeleting = false;
   bool inVoting = false;
-
-
 
   FlutterbasePost({
     this.id,
@@ -47,7 +46,8 @@ class FlutterbasePost {
     this.like,
     this.dislike,
   });
-  factory FlutterbasePost.fromMap(Map<dynamic, dynamic> data, {@required String id}) {
+  factory FlutterbasePost.fromMap(Map<dynamic, dynamic> data,
+      {@required String id}) {
     int createdAt = 0;
     if (!isEmpty(data['createdAt'])) {
       createdAt = data['createdAt'].millisecondsSinceEpoch;
@@ -76,11 +76,11 @@ class FlutterbasePost {
       updatedAt: updatedAt,
       deletedAt: deletedAt,
       // comments: data['comments'],
-      // urls: data['urls'] != null
-      //     ? List<dynamic>.from(data['urls'])
-      //     : [], // To preved 'fixed-length' error.
+      urls: data['urls'] != null
+          ? List<dynamic>.from(data['urls'])
+          : [], // To preved 'fixed-length' error.
       displayName: isEmpty(data['displayName']) ? '' : data['displayName'],
-      // photoUrl: data['photoUrl'],
+      photoUrl: data['photoUrl'] ?? '',
       like: data['like'] ?? 0,
       dislike: data['dislike'] ?? 0,
     );
@@ -106,6 +106,6 @@ class FlutterbasePost {
 
   @override
   String toString() {
-    return "id: $id, uid: $uid, category: $category, title: $title, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, like: $like, dislike: $dislike";
+    return "id: $id, uid: $uid, category: $category, title: $title, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, like: $like, dislike: $dislike, urls: $urls";
   }
 }

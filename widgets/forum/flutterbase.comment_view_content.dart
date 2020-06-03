@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
+import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.display_uploaded_image.dart';
 import 'package:fluttercms/flutterbase/widgets/user/flutterbase.user_photo.dart';
 import 'package:time_formatter/time_formatter.dart';
 
@@ -41,9 +42,9 @@ class FlutterbaseCommentViewContent extends StatelessWidget {
                 ),
               ],
             ),
-            // EngineDisplayUploadedImages(
-            //   comment,
-            // ),
+            FlutterbaseDisplayUploadedImages(
+              comment,
+            ),
             Text(comment.content),
           ],
         ),

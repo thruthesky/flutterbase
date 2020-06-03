@@ -10,6 +10,9 @@ import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
 import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.comment_view_content.dart';
 import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.post_list_view_content.dart';
+import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.display_uploaded_image.dart';
+import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.upload_icon.dart';
+import 'package:fluttercms/flutterbase/widgets/user/flutterbase.upload_progress_bar.dart';
 
 class FlutterbaseCommentEditForm extends StatefulWidget {
   FlutterbaseCommentEditForm({
@@ -129,18 +132,18 @@ class _FlutterbaseCommentEditFormState
         children: <Widget>[
           Row(
             children: <Widget>[
-              // EngineUploadIcon(
-              //   widget.currentComment,
-              //   onProgress: (p) {
-              //     setState(() {
-              //       progress = p;
-              //     });
-              //   },
-              //   onUploadComplete: (String url) {
-              //     setState(() {});
-              //   },
-              //   onError: alert,
-              // ),
+              FlutterbaseUploadIcon(
+                widget.currentComment,
+                onProgress: (p) {
+                  setState(() {
+                    progress = p;
+                  });
+                },
+                onUploadComplete: (String url) {
+                  setState(() {});
+                },
+                onError: alert,
+              ),
               Expanded(
                 child: TextField(
                   keyboardType: TextInputType.multiline,
@@ -199,11 +202,11 @@ class _FlutterbaseCommentEditFormState
             ],
           ),
           Container(height: 100, color: Colors.black45),
-          // EngineProgressBar(progress),
-          // EngineDisplayUploadedImages(
-          //   widget.currentComment,
-          //   editable: true,
-          // ),
+          FlutterbaseUploadProgressBar(progress),
+          FlutterbaseDisplayUploadedImages(
+            widget.currentComment,
+            editable: true,
+          ),
         ],
       ),
       body: Container(

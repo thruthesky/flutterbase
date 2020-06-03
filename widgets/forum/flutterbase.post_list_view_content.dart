@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
+import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.display_uploaded_image.dart';
 
 class FlutterbasePostListViewContent extends StatelessWidget {
   const FlutterbasePostListViewContent(
@@ -49,9 +50,9 @@ class FlutterbasePostListViewContent extends StatelessWidget {
             padding: EdgeInsets.all(8.0),
             child: Text('${post.content}'),
           ),
-          // EngineDisplayUploadedImages(
-          //   post,
-          // ),
+          FlutterbaseDisplayUploadedImages(
+            post,
+          ),
         ],
       ),
     );

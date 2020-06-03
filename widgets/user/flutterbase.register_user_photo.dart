@@ -30,7 +30,6 @@ class _FlutterbaseRegisterUserPhotoState extends State<FlutterbaseRegisterUserPh
   bool inDelete = false;
   @override
   Widget build(BuildContext context) {
-    /// `Firebase Auth` 의 `photoUrl` 을 바로 보여준다.
     String url = fb.userDocument?.photoUrl;
     bool hasPhoto = url != null && url != DELETED_PHOTO;
 

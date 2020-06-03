@@ -84,7 +84,7 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
     setState(() => inLoading = true);
     try {
       user = await fb.profile();
-      print(user);
+      // print(user);
       if (mounted) {
         setState(() {
           _nicknameController.text = user.displayName;
