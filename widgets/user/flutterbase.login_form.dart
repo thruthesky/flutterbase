@@ -1,23 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.button.dart';
+import 'package:fluttercms/flutterbase/widgets/flutterbase.circle.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
+import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
+import 'package:fluttercms/flutterbase/widgets/flutterbase.text_button.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FlutterbaseLoginForm extends StatefulWidget {
   FlutterbaseLoginForm({
-    this.hintEmail = 'Email',
-    this.hintPassword = 'Password',
-    this.textSubmit = 'Submit',
-    this.hintGoogleSignIn = 'Google Sign In',
     @required this.onLogin,
     @required this.onError,
   });
 
-  final String hintEmail;
-  final String hintPassword;
-  final String textSubmit;
-  final String hintGoogleSignIn;
   final Function onLogin;
   final Function onError;
 
@@ -58,14 +54,26 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
+        FlutterbaseCircle(
+          padding: EdgeInsets.all(24.0),
+          color: Theme.of(context).accentColor,
+          child: Icon(
+            Icons.verified_user,
+            size: 112,
+            color: Theme.of(context).buttonColor,
+          ),
+        ),
+        FlutterbaseBigSpace(),
+        FlutterbaseBigSpace(),
         TextField(
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           onSubmitted: (text) {},
           decoration: InputDecoration(
-            hintText: widget.hintEmail,
+            hintText: t('input email'),
           ),
         ),
         FlutterbaseSpace(),
@@ -73,37 +81,88 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
           controller: _passwordController,
           onSubmitted: (text) {},
           decoration: InputDecoration(
-            hintText: widget.hintPassword,
+            hintText: t('input password'),
           ),
         ),
-        FlutterbaseSpace(),
-        FlutterbaseButton(
-          showSpinner: inSubmit,
-          text: widget.textSubmit,
-          onPressed: () async {
-            if (inSubmit) return;
-            setState(() => inSubmit = true);
-            final data = getFormData();
-            try {
-              final user = await fb.login(data['email'], data['password']);
-              widget.onLogin(user);
-            } catch (e) {
-              widget.onError(e);
-            }
-            setState(() => inSubmit = false);
-          },
+        FlutterbaseBigSpace(),
+        FittedBox(
+          child: FlutterbaseTextButton(
+            showSpinner: inSubmit,
+            text: t(LOGIN_BUTTON),
+            onTap: () async {
+              if (inSubmit) return;
+              setState(() => inSubmit = true);
+              final data = getFormData();
+              try {
+                final user = await fb.login(data['email'], data['password']);
+                widget.onLogin(user);
+              } catch (e) {
+                widget.onError(e);
+              }
+              setState(() => inSubmit = false);
+            },
+          ),
         ),
-        RaisedButton(
-          onPressed: () async {
-            try {
-              final user = await _handleSignIn();
-              print(user);
-            } catch (e) {
-              widget.onError(e);
-            }
-          },
-          child: Text(widget.hintGoogleSignIn),
+        Divider(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            FlutterbaseTextButton(
+              text: t(LOST_PASSWORD_BUTTON),
+            ),
+            FlutterbaseTextButton(
+              text: t(REGISTER_TITLE),
+            ),
+          ],
         ),
+        FlutterbaseBigSpace(),
+        FlutterbaseBigSpace(),
+        T(OR_LOGIN_WITH),
+        FlutterbaseBigSpace(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            GestureDetector(
+              child: FaIcon(
+                FontAwesomeIcons.googlePlus,
+                size: 46,
+                color: Colors.red,
+              ),
+              onTap: () async {
+                try {
+                  final user = await _handleSignIn();
+                  print(user);
+                } catch (e) {
+                  widget.onError(e);
+                }
+              },
+            ),
+            FlutterbasePageSpace(),
+            FaIcon(
+              FontAwesomeIcons.facebook,
+              size: 46,
+              color: Colors.indigo,
+            ),
+            FlutterbasePageSpace(),
+            FlutterbaseCircle(
+              elevation: 0,
+              color: Theme.of(context).accentColor,
+              child: FaIcon(FontAwesomeIcons.twitter,
+                  size: 30, color: Theme.of(context).buttonColor),
+            ),
+          ],
+        ),
+        // RaisedButton(
+        //   onPressed: () async {
+        //     try {
+        //       final user = await _handleSignIn();
+        //       print(user);
+        //     } catch (e) {
+        //       widget.onError(e);
+        //     }
+        //   },
+        //   child: T('Google Sign In'),
+        // ),
       ],
     );
   }

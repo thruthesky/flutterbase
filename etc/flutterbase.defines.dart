@@ -88,6 +88,18 @@ const String PERMISSION_DENIED = 'permission denied';
 
 
 const String UPDATE_PROFILE = 'update-profile';
+const String UPDATE_PROFILE_BUTTON = 'update-profile-button';
+const String REGISTER_BUTTON = 'register-button';
+const String PROFILE_UPDATE_TITLE = 'profile-update-title';
+const String REGISTER_TITLE = 'register-title';
+
+const String APP_TITLE = 'app-title';
+
+
+const String LOGIN_BUTTON = 'login-button';
+const String LOST_PASSWORD_BUTTON = 'lost-password-button';
+const String OR_LOGIN_WITH = 'or-login-with';
+
 
 /// @see README
 class EngineRoutes {

@@ -329,6 +329,32 @@ Map<String, Map<String, String>> textTranslations = {
     'ko': '앗! 회원 정보를 업데이트 해 주세요.',
     'en': 'Ooh! Please update your profile.',
   },
+  UPDATE_PROFILE_BUTTON: {'ko': '프로필 업데이트', 'en': 'Update Profile'},
+  REGISTER_BUTTON: {'ko': '회원 가입', 'en': 'Register'},
+  REGISTER_TITLE: {
+    'ko': '회원 가입',
+    'en': 'Register',
+  },
+  PROFILE_UPDATE_TITLE: {
+    'ko': '회원 정보',
+    'en': 'User Profile',
+  },
+  APP_TITLE: {
+    'ko': '한국 플러터 커뮤니티',
+    'en': 'Flutter Korea'
+  },
+  LOGIN_BUTTON: {
+    'ko': '로그인',
+    'en': 'Login'
+  },
+  LOST_PASSWORD_BUTTON: {
+    'ko': '비밀번호를 잊으셨나요?',
+    'en': 'Lost password?'
+  },
+  OR_LOGIN_WITH: {
+    'ko': '소셜 로그인을 할 수 있습니다.',
+    'en': 'Or login with'
+  },
 };
 
 class FlutterbaseI18N {

@@ -9,18 +9,18 @@ class AppBarMenuIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 64.0,
-      child: Visibility(
-        visible: visible,
-        child: FlatButton(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+          child: Container(
+            padding: EdgeInsets.only(left: 8.0, right: 16.0),
+        child: Visibility(
+          visible: visible,
           child: Icon(
             Icons.menu,
             size: 30,
-            color: Colors.white,
             // key: Key(AppService.key.drawerOpen),
           ),
-          onPressed: onTap,
         ),
       ),
     );

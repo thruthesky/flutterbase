@@ -19,20 +19,23 @@ class FlutterbaseUserPhoto extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => onTap(),
-      child: Material(
-        shape: CircleBorder(),
-        clipBehavior: Clip.hardEdge,
-        color: Colors.blueAccent,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: (isEmpty(url) ||
-                  url == DELETED_PHOTO ||
-                  /// 사진이 http 로 시작하는 문자열이 아니면, NetworkCacheImage 에서 부하 에러가 난다.
-                  ///
-                  url.indexOf('http') != 0)
-              ? Image.asset('lib/flutterbase/assets/images/user-icon.png')
-              : FlutterbaseImage(url),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Material(
+          shape: CircleBorder(),
+          clipBehavior: Clip.hardEdge,
+          color: Colors.blueAccent,
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: (isEmpty(url) ||
+                    url == DELETED_PHOTO ||
+                    /// 사진이 http 로 시작하는 문자열이 아니면, NetworkCacheImage 에서 부하 에러가 난다.
+                    ///
+                    url.indexOf('http') != 0)
+                ? Image.asset('lib/flutterbase/assets/images/user-icon.png')
+                : FlutterbaseImage(url),
+          ),
         ),
       ),
     );

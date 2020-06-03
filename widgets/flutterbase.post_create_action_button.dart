@@ -19,9 +19,10 @@ class FlutterbasePostCreateActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Icon(Icons.add),
+        child: Icon(Icons.create),
       ),
       onTap: () async {
         /// 글 생성 버튼 클릭 한 경우. 수정은 아님.

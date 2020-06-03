@@ -7,6 +7,7 @@ import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.button.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
+import 'package:fluttercms/flutterbase/widgets/flutterbase.text_button.dart';
 import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.upload_icon.dart';
 import 'package:fluttercms/flutterbase/widgets/user/flutterbase.register_user_photo.dart';
 import 'package:fluttercms/flutterbase/widgets/user/flutterbase.upload_progress_bar.dart';
@@ -123,15 +124,15 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
               if (fb.loggedIn) {
                 await fb.profileUpdate({'photoUrl': url});
                 print('userDocument.photoUrl: ${fb.userDocument.photoUrl}');
-                setState(() { /** FlutterbaseModel Provider 받지 않아서 state 갱신 */});
-              } {
+                setState(() {/** FlutterbaseModel Provider 받지 않아서 state 갱신 */});
+              }
+              {
                 fb.userDocument.photoUrl = url;
                 fb.notify();
               }
             } catch (e) {
               widget.onError(e);
             }
-
           },
           onError: (e) => widget.onError(e),
           icon: FlutterbaseRegisterUserPhoto(
@@ -139,8 +140,26 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
             onError: (e) => widget.onError(e),
           ),
         ),
-        FlutterbaseUploadProgressBar(progress),
-        FlutterbasePageSpace(),
+        Visibility(
+          visible: progress > 0,
+          child: Column(
+            children: <Widget>[
+              FlutterbaseBigSpace(),
+              Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: 100,
+                  ),
+                  Expanded(child: FlutterbaseUploadProgressBar(progress)),
+                  SizedBox(
+                    width: 100,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        FlutterbaseBigSpace(),
         if (inLoading) PlatformCircularProgressIndicator(),
         fb.notLoggedIn
             ? TextField(
@@ -178,70 +197,91 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
           ),
         ),
         FlutterbaseSpace(),
-        TextField(
-          controller: _birthdayController,
-          onSubmitted: (text) {},
-          decoration: InputDecoration(
-            hintText: t('input birthday'),
-          ),
+        Row(
+          children: <Widget>[
+            Flexible(
+              flex: 2,
+              child: TextField(
+                controller: _birthdayController,
+                onSubmitted: (text) {},
+                decoration: InputDecoration(
+                  hintText: t('input birthday'),
+                ),
+              ),
+            ),
+            Flexible(
+              child: FlatButton(
+                onPressed: () {
+                  DatePicker.showDatePicker(
+                    context,
+                    showTitleActions: true,
+                    minTime: DateTime(1940, 1, 1),
+                    maxTime: DateTime(2020, 1, 1),
+                    onChanged: (date) {
+                      // print('change $date');
+                    },
+                    onConfirm: (date) {
+                      // print('confirm $date');
+                      String ymd = date
+                          .toString()
+                          .split(' ')
+                          .elementAt(0)
+                          .split('-')
+                          .join('');
+                      // print('ymd: $ymd');
+                      setState(() {
+                        _birthdayController.text = ymd;
+                      });
+                    },
+                    currentTime: DateTime.parse(
+                        (isEmpty(_birthdayController.text) ||
+                                !isNumeric(_birthdayController.text))
+                            ? '20000101'
+                            : _birthdayController.text),
+                    locale: enumValueFromString(
+                        appLanguageCode(), LocaleType.values),
+                  );
+                },
+                child: T(
+                  SHOW_DATE_PICKER,
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ),
+            ),
+          ],
         ),
-        FlatButton(
-          onPressed: () {
-            DatePicker.showDatePicker(
-              context,
-              showTitleActions: true,
-              minTime: DateTime(1940, 1, 1),
-              maxTime: DateTime(2020, 1, 1),
-              onChanged: (date) {
-                // print('change $date');
+        FlutterbaseBigSpace(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            FlutterbaseTextButton(
+              showSpinner: inSubmit,
+              text: fb.notLoggedIn ? t(REGISTER_BUTTON) : t(UPDATE_PROFILE_BUTTON),
+              onTap: () async {
+                /// 전송 버튼
+                if (inSubmit) return;
+                if (_birthdayController.text.length != 8) {
+                  alert(t(BIRTHDAY_8_DIGITS));
+                  return;
+                }
+                setState(() => inSubmit = true);
+                final data = getFormData();
+                try {
+                  if (fb.notLoggedIn) {
+                    await fb.register(data);
+                    widget.onRegisterSuccess();
+                  } else {
+                    await fb.profileUpdate(data);
+                    widget.onUpdateSuccess();
+                  }
+                } catch (e) {
+                  widget.onError(e);
+                }
+                setState(() => inSubmit = false);
               },
-              onConfirm: (date) {
-                // print('confirm $date');
-                String ymd =
-                    date.toString().split(' ').elementAt(0).split('-').join('');
-                // print('ymd: $ymd');
-                setState(() {
-                  _birthdayController.text = ymd;
-                });
-              },
-              currentTime: DateTime.parse((isEmpty(_birthdayController.text) ||
-                      !isNumeric(_birthdayController.text))
-                  ? '20000101'
-                  : _birthdayController.text),
-              locale: enumValueFromString(appLanguageCode(), LocaleType.values),
-            );
-          },
-          child: T(
-            SHOW_DATE_PICKER,
-            style: TextStyle(color: Colors.blue),
-          ),
-        ),
-        FlutterbaseButton(
-          showSpinner: inSubmit,
-          text: fb.notLoggedIn ? t('register submit') : t('update submit'),
-          onPressed: () async {
-            /// 전송 버튼
-            if (inSubmit) return;
-            if (_birthdayController.text.length != 8) {
-              alert(t(BIRTHDAY_8_DIGITS));
-              return;
-            }
-            setState(() => inSubmit = true);
-            final data = getFormData();
-            try {
-              if (fb.notLoggedIn) {
-                await fb.register(data);
-                widget.onRegisterSuccess();
-              } else {
-                await fb.profileUpdate(data);
-                widget.onUpdateSuccess();
-              }
-            } catch (e) {
-              widget.onError(e);
-            }
-            setState(() => inSubmit = false);
-          },
-          // child: fb.notLoggedIn ? T('register submit') : T('update submit'),
+              // child: fb.notLoggedIn ? T('register submit') : T('update submit'),
+            ),
+          ],
         ),
       ],
     );

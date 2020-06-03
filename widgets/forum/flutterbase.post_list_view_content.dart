@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
+import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
 import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.display_uploaded_image.dart';
+import 'package:time_formatter/time_formatter.dart';
 
 class FlutterbasePostListViewContent extends StatelessWidget {
   const FlutterbasePostListViewContent(
@@ -16,8 +18,7 @@ class FlutterbasePostListViewContent extends StatelessWidget {
     // print('FlutterbasePostItem content: $post');
     // String dt = DateTime.fromMillisecondsSinceEpoch(post.createdAt).toLocal().toString();
 
-    // String formatted = formatTime(post.createdAt);
-    int formatted = post.createdAt;
+    String formatted = formatTime(post.createdAt);
     return Container(
       width: double.infinity,
       child: Column(
@@ -37,13 +38,19 @@ class FlutterbasePostListViewContent extends StatelessWidget {
                       '${post.title}',
                       style: TextStyle(fontSize: 24),
                     ),
-                    Text('author: ' + post.displayName),
-                    Text('created: $formatted'),
+                    Divider(),
+                    Row(
+                      children: <Widget>[
+                        Text('By: ' + post.displayName, style: TextStyle(fontStyle: FontStyle.italic),),
+                        Text('  ($formatted)', style: TextStyle(fontStyle: FontStyle.italic),),
+                      ],
+                    ),
                   ],
                 ),
               )
             ],
           ),
+          FlutterbaseSpace(),
           Container(
             width: double.infinity,
             color: Colors.black12,

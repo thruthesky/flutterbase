@@ -72,7 +72,6 @@ class FlutterbaseAppBar extends StatelessWidget with PreferredSizeWidget {
       elevation: elevation == null ? Platform.isIOS ? 0.0 : 1.0 : elevation,
       backgroundColor: backgroundColor,
       actions: <Widget>[
-        if (actions != null) actions,
         if (displayUserPhoto)
           Selector<FlutterbaseModel, String>(
             builder: (context, url, child) {
@@ -80,6 +79,7 @@ class FlutterbaseAppBar extends StatelessWidget with PreferredSizeWidget {
             },
             selector: (_, model) => model.userDocument?.photoUrl,
           ),
+        if (actions != null) actions,
         AppBarMenuIcon(
           visible: scaffold.hasEndDrawer,
           onTap: () => _openAppDrawer(scaffold),
