@@ -11,7 +11,7 @@ import '../../widgets/flutterbase.text_button.dart';
 import '../../widgets/upload/flutterbase.display_uploaded_image.dart';
 import '../../widgets/upload/flutterbase.upload_icon.dart';
 import '../../widgets/user/flutterbase.upload_progress_bar.dart';
-import 'package:fluttercms/widgets/app.padding.dart';
+import '../../widgets/flutterbase.page_padding.dart';
 
 class FlutterbasePostEditForm extends StatefulWidget {
   FlutterbasePostEditForm({this.id, this.post});
@@ -94,7 +94,7 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
       appBar: AppBar(
         title: T(title),
       ),
-      body: AppPadding(
+      body: FlutterbasePagePadding(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

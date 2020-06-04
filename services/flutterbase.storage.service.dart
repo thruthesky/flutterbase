@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import '../etc/flutterbase.defines.dart';
 import '../etc/flutterbase.globals.dart';
-import 'package:fluttercms/settings.dart';
+import '../../settings.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';

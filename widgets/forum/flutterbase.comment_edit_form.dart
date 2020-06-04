@@ -13,7 +13,7 @@ import '../../widgets/forum/flutterbase.post_list_view_content.dart';
 import '../../widgets/upload/flutterbase.display_uploaded_image.dart';
 import '../../widgets/upload/flutterbase.upload_icon.dart';
 import '../../widgets/user/flutterbase.upload_progress_bar.dart';
-import 'package:fluttercms/widgets/app.padding.dart';
+import '../../widgets/flutterbase.page_padding.dart';
 
 class FlutterbaseCommentEditForm extends StatefulWidget {
   FlutterbaseCommentEditForm({
@@ -78,7 +78,7 @@ class _FlutterbaseCommentEditFormState
         title: T('edit comment'),
       ),
       bottomNavigationBar: SafeArea(
-        child: AppPadding(
+        child: FlutterbasePagePadding(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
