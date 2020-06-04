@@ -1,9 +1,13 @@
-
 import 'package:flutter/material.dart';
+import '../../etc/flutterbase.globals.dart';
 import '../../services/flutterbase.forum.service.dart';
 import '../../etc/flutterbase.post.helper.dart';
 
 class FlutterbaseLatestPosts extends StatefulWidget {
+  FlutterbaseLatestPosts({this.route});
+
+  String route;
+
   @override
   _FlutterbaseLatestPostsState createState() => _FlutterbaseLatestPostsState();
 }
@@ -34,6 +38,10 @@ class _FlutterbaseLatestPostsState extends State<FlutterbaseLatestPosts> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text('${posts[index].title}'),
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              open(widget.route, arguments: {'post': posts[index]});
+            },
           );
         });
   }
