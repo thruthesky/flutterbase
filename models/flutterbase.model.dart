@@ -754,4 +754,7 @@ class FlutterbaseModel extends ChangeNotifier {
     if (doc.deletedAt == 0) return false;
     return true;
   }
+
+
+  
 }
