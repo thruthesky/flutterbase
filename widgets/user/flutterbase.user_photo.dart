@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.image.dart';
+import '../../etc/flutterbase.defines.dart';
+import '../../etc/flutterbase.globals.dart';
+import '../../widgets/flutterbase.image.dart';
 
 class FlutterbaseUserPhoto extends StatelessWidget {
   const FlutterbaseUserPhoto(

@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.circle.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.text_button.dart';
+import '../../etc/flutterbase.defines.dart';
+import '../../etc/flutterbase.globals.dart';
+import '../../widgets/flutterbase.circle.dart';
+import '../../widgets/flutterbase.space.dart';
+import '../../widgets/flutterbase.text.dart';
+import '../../widgets/flutterbase.text_button.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FlutterbaseLoginForm extends StatefulWidget {

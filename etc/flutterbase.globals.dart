@@ -1,6 +1,6 @@
-import 'package:fluttercms/flutterbase/etc/flutterbase.app.localization.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.texts.dart';
+import '../etc/flutterbase.app.localization.dart';
+import '../etc/flutterbase.defines.dart';
+import '../etc/flutterbase.texts.dart';
 
 import '../widgets/flutterbase.text.dart';
 import 'dart:math';

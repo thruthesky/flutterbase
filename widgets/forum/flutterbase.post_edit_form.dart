@@ -1,17 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.category.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.button.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.text_button.dart';
-import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.display_uploaded_image.dart';
-import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.upload_icon.dart';
-import 'package:fluttercms/flutterbase/widgets/user/flutterbase.upload_progress_bar.dart';
+import '../../etc/flutterbase.category.helper.dart';
+import '../../etc/flutterbase.defines.dart';
+import '../../etc/flutterbase.globals.dart';
+import '../../etc/flutterbase.post.helper.dart';
+import '../../widgets/flutterbase.space.dart';
+import '../../widgets/flutterbase.text.dart';
+import '../../widgets/flutterbase.text_button.dart';
+import '../../widgets/upload/flutterbase.display_uploaded_image.dart';
+import '../../widgets/upload/flutterbase.upload_icon.dart';
+import '../../widgets/user/flutterbase.upload_progress_bar.dart';
 import 'package:fluttercms/widgets/app.padding.dart';
 
 class FlutterbasePostEditForm extends StatefulWidget {

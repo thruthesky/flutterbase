@@ -2,9 +2,9 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
-import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
+import '../etc/flutterbase.globals.dart';
+import '../etc/flutterbase.post.helper.dart';
+import '../models/flutterbase.post.model.dart';
 
 /// `Firestore` 에 직접 접속해서  목록을 가져오기 위해서 사용.
 ///

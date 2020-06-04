@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
-import 'package:fluttercms/flutterbase/models/flutterbase.forum_list.model.dart';
-import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.text_button.dart';
-import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.comment_edit_form.dart';
-import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.comment_view.dart';
-import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.post_edit_form.dart';
-import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.post_list_view_content.dart';
+import '../../etc/flutterbase.comment.helper.dart';
+import '../../etc/flutterbase.defines.dart';
+import '../../etc/flutterbase.globals.dart';
+import '../../etc/flutterbase.post.helper.dart';
+import '../../models/flutterbase.forum_list.model.dart';
+import '../../models/flutterbase.post.model.dart';
+import '../../widgets/flutterbase.text_button.dart';
+import '../../widgets/forum/flutterbase.comment_edit_form.dart';
+import '../../widgets/forum/flutterbase.comment_view.dart';
+import '../../widgets/forum/flutterbase.post_edit_form.dart';
+import '../../widgets/forum/flutterbase.post_list_view_content.dart';
 import 'package:provider/provider.dart';
 
 class FlutterbasePostListView extends StatefulWidget {

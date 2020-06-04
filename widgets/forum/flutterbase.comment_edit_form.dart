@@ -2,17 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
-import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
-import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.comment_view_content.dart';
-import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.post_list_view_content.dart';
-import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.display_uploaded_image.dart';
-import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.upload_icon.dart';
-import 'package:fluttercms/flutterbase/widgets/user/flutterbase.upload_progress_bar.dart';
+import '../../etc/flutterbase.comment.helper.dart';
+import '../../etc/flutterbase.globals.dart';
+import '../../etc/flutterbase.post.helper.dart';
+import '../../models/flutterbase.post.model.dart';
+import '../../widgets/flutterbase.space.dart';
+import '../../widgets/flutterbase.text.dart';
+import '../../widgets/forum/flutterbase.comment_view_content.dart';
+import '../../widgets/forum/flutterbase.post_list_view_content.dart';
+import '../../widgets/upload/flutterbase.display_uploaded_image.dart';
+import '../../widgets/upload/flutterbase.upload_icon.dart';
+import '../../widgets/user/flutterbase.upload_progress_bar.dart';
 import 'package:fluttercms/widgets/app.padding.dart';
 
 class FlutterbaseCommentEditForm extends StatefulWidget {

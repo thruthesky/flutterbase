@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
-import 'package:fluttercms/flutterbase/models/flutterbase.forum_list.model.dart';
-import 'package:fluttercms/flutterbase/widgets/forum/flutterbase.post_edit_form.dart';
+import '../etc/flutterbase.defines.dart';
+import '../etc/flutterbase.globals.dart';
+import '../etc/flutterbase.post.helper.dart';
+import '../models/flutterbase.forum_list.model.dart';
+import '../widgets/forum/flutterbase.post_edit_form.dart';
 
 class FlutterbasePostCreateActionButton extends StatelessWidget {
   FlutterbasePostCreateActionButton({

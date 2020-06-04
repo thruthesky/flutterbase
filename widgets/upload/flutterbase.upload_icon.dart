@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/services/flutterbase.storage.service.dart';
+import '../../etc/flutterbase.globals.dart';
+import '../../services/flutterbase.storage.service.dart';
 import 'package:image_picker/image_picker.dart';
 
 /// 업로드 아이콘을 표히사고 클릭을 하면 사진 업로드를 한다.

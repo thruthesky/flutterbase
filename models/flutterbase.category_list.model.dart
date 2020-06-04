@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.category.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
+import '../etc/flutterbase.category.helper.dart';
+import '../etc/flutterbase.globals.dart';
 
 class FlutterbaseCategoryListModel extends ChangeNotifier {
   FlutterbaseCategoryListModel() {

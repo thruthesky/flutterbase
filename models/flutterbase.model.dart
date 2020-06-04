@@ -2,16 +2,18 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.category.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.texts.dart';
-import 'package:fluttercms/flutterbase/models/flutterbase.post.model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+
+import 'package:firebase_auth/firebase_auth.dart';
+import '../etc/flutterbase.category.helper.dart';
+import '../etc/flutterbase.comment.helper.dart';
+import '../etc/flutterbase.defines.dart';
+import '../etc/flutterbase.globals.dart';
+import '../etc/flutterbase.post.helper.dart';
+import '../etc/flutterbase.user.helper.dart';
+import '../etc/flutterbase.texts.dart';
+import '../models/flutterbase.post.model.dart';
 
 /// 앱의 전체 영역에서 사용되는 state 관리 모델
 ///

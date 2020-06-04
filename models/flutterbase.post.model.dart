@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
+import '../etc/flutterbase.comment.helper.dart';
+import '../etc/flutterbase.globals.dart';
+import '../etc/flutterbase.post.helper.dart';
 
 /// 글 하나에 대한 Model
 ///

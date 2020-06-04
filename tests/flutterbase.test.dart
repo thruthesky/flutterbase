@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.comment.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
+import '../etc/flutterbase.comment.helper.dart';
+import '../etc/flutterbase.defines.dart';
+import '../etc/flutterbase.globals.dart';
+import '../etc/flutterbase.post.helper.dart';
+import '../etc/flutterbase.user.helper.dart';
 
 class FlutterbaseTest {
   FlutterbaseTest() {

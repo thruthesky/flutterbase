@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
-import 'package:fluttercms/flutterbase/etc/flutterbase.user.helper.dart';
-import 'package:fluttercms/flutterbase/services/flutterbase.storage.service.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.button.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.circle.dart';
-import 'package:fluttercms/flutterbase/widgets/flutterbase.image.dart';
+import '../../etc/flutterbase.defines.dart';
+import '../../etc/flutterbase.globals.dart';
+import '../../etc/flutterbase.user.helper.dart';
+import '../../services/flutterbase.storage.service.dart';
+import '../../widgets/flutterbase.circle.dart';
+import '../../widgets/flutterbase.image.dart';
 
 ///
 ///
