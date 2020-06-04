@@ -100,6 +100,18 @@ const String LOGIN_BUTTON = 'login-button';
 const String LOST_PASSWORD_BUTTON = 'lost-password-button';
 const String OR_LOGIN_WITH = 'or-login-with';
 
+const String LIKE = 'like';
+const String DISLIKE = 'dislike';
+const String DELETE = 'delete';
+const String REPLY = 'reply';
+const String EDIT = 'edit';
+const String SELECT_CATEGORY = 'select category';
+
+
+const String INPUT_TITLE = 'input title';
+const String INPUT_CONTENT = 'input content';
+const String SHARE = 'share';
+
 
 /// @see README
 class EngineRoutes {

@@ -29,7 +29,7 @@ class FlutterbaseCommentView extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(8.0),
-      color: Colors.black12,
+      // color: Colors.black12,
       child: Column(
         children: <Widget>[
           Column(
@@ -53,13 +53,7 @@ class FlutterbaseCommentButtons extends StatefulWidget {
     this.post,
     this.forum,
     this.comment,
-    // this.onReply,
-    // this.onUpdate,
-    // this.onDelete,
   });
-  // final Function onReply;
-  // final Function onUpdate;
-  // final Function onDelete;
   final FlutterbasePost post;
   final FlutterbaseForumModel forum;
   final FlutterbaseComment comment;
@@ -85,10 +79,6 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
           onTap: () async {
             /// 코멘트 보기에서 Reply 버튼을 클릭한 경우, 코멘트 수정 창을 열고, 결과를 리턴 받음.
 
-            /// last sibling 찾기
-
-            ////
-
             FlutterbaseComment _comment = await openForumBox(
               FlutterbaseCommentEditForm(
                 postModel: postModel,
@@ -109,11 +99,11 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
 
             postModel.addComment(_comment);
           },
-          text: t('reply'),
+          text: t(REPLY),
         ),
         if (fb.myDoc(widget.comment) && !fb.deleted(widget.comment))
           FlutterbaseTextButton(
-            text: t('edit'),
+            text: t(EDIT),
             onTap: () async {
               // @TODO: /// 삭제되면 수정 불가
               // if (fb.isDeleted(widget.comment)) return alert(t(ALREADY_DELETED));
@@ -133,23 +123,23 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
           ),
         FlutterbaseTextButton(
           showSpinner: widget.comment.inVoting,
-          text: t('Like') + ' ' + widget.comment.like.toString(),
+          text: t(LIKE) + '(' + widget.comment.like.toString() + ')',
           onTap: () => fb
               .vote(
                 postModel: postModel,
                 comment: widget.comment,
-                voteFor: 'like',
+                voteFor: LIKE,
               )
               .catchError(alert),
         ),
         FlutterbaseTextButton(
           showSpinner: widget.comment.inVoting,
-          text: t('dislike') + ' ' + widget.comment.dislike.toString(),
+          text: t(DISLIKE) + '(' + widget.comment.dislike.toString() + ')',
           onTap: () => fb
               .vote(
                 postModel: postModel,
                 comment: widget.comment,
-                voteFor: 'dislike',
+                voteFor: DISLIKE,
               )
               .catchError(alert),
         ),
@@ -163,7 +153,7 @@ class _FlutterbaseCommentButtonsState extends State<FlutterbaseCommentButtons> {
                   .commentDelete(postModel: postModel, comment: widget.comment)
                   .catchError(alert),
             ),
-            text: t('delete'),
+            text: t(DELETE),
           ),
       ],
     );

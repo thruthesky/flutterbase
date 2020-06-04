@@ -8,9 +8,11 @@ import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.button.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.text.dart';
+import 'package:fluttercms/flutterbase/widgets/flutterbase.text_button.dart';
 import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.display_uploaded_image.dart';
 import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.upload_icon.dart';
 import 'package:fluttercms/flutterbase/widgets/user/flutterbase.upload_progress_bar.dart';
+import 'package:fluttercms/widgets/app.padding.dart';
 
 class FlutterbasePostEditForm extends StatefulWidget {
   FlutterbasePostEditForm({this.id, this.post});
@@ -78,29 +80,6 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
     return data;
   }
 
-  // bool get isCreate => widget.id != null;
-  // bool get isUpdate => !isCreate;
-
-  // List<dynamic> _categorySelected = [];
-  // Iterable<Widget> get categoryChips sync* {
-  //   for (var cat in categories) {
-  //     yield FilterChip(
-  //       label: T(cat.id),
-  //       selected: _categorySelected.contains(cat.id),
-  //       onSelected: (selected) {
-  //         setState(() {
-  //           if (selected) {
-  //             _categorySelected.add(cat.id);
-  //           } else {
-  //             _categorySelected.remove(cat.id);
-  //           }
-  //         });
-  //       },
-  //       selectedColor: Theme.of(context).primaryColorDark,
-  //     );
-  //   }
-  // }
-
   String get title {
     if (widget.id != null)
       return widget.id;
@@ -112,68 +91,48 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
 
   @override
   Widget build(BuildContext context) {
-    print('doc: $post');
     return Scaffold(
       appBar: AppBar(
         title: T(title),
       ),
-      body: Center(
+      body: AppPadding(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // categories == null
-            //     ? PlatformCircularProgressIndicator()
-            //     : Wrap(
-            //         spacing: 6.0,
-            //         runSpacing: 0.0,
-            //         children: categoryChips.toList(),
-            //       ),
-
             if (categories != null)
-              DropdownButton<String>(
-                  value: dropdownValue,
-                  icon: Icon(Icons.arrow_downward),
-                  iconSize: 24,
-                  elevation: 16,
-                  style: TextStyle(color: Colors.deepPurple),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (String newValue) {
-                    setState(() {
-                      dropdownValue = newValue;
-                    });
-                  },
-                  items: categories
-                      .map<DropdownMenuItem<String>>((FlutterbaseCategory cat) {
-                    return DropdownMenuItem<String>(
-                      value: cat.id,
-                      child: Text(cat.title),
-                    );
-                  }).toList()),
-
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  T(SELECT_CATEGORY),
+                  FlutterbasePostEditCategories(
+                      categories: categories,
+                      defaultValue: dropdownValue,
+                      onChanged: (String newValue) {
+                        setState(() {
+                          dropdownValue = newValue;
+                        });
+                      }),
+                ],
+              ),
             Divider(),
             TextField(
               controller: _titleController,
               onSubmitted: (text) {},
               decoration: InputDecoration(
-                hintText: t('input title'),
+                hintText: t(INPUT_TITLE),
               ),
             ),
             FlutterbaseSpace(),
             TextField(
               controller: _contentController,
               keyboardType: TextInputType.multiline,
+              minLines: 10,
               maxLines: null,
               onSubmitted: (text) {},
               decoration: InputDecoration(
-                hintText: t('input content'),
+                hintText: t(INPUT_CONTENT),
               ),
             ),
-            // FlutterbaseSpace(),
-            // EngineProgressBar(0),
             FlutterbaseDisplayUploadedImages(
               post,
               editable: true,
@@ -196,15 +155,14 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
                   },
                   onError: alert,
                 ),
-                FlutterbaseButton(
+                FlutterbaseTextButton(
                   showSpinner: inSubmit,
-                  text: widget.post?.id == null ? CREATE_POST : UPDATE_POST,
-                  onPressed: () async {
+                  text: t(widget.post?.id == null ? CREATE_POST : UPDATE_POST),
+                  onTap: () async {
                     if (inSubmit) return;
                     setState(() => inSubmit = true);
                     try {
                       FlutterbasePost p = await fb.postEdit(getFormData());
-                      // print('created: $p');
                       back(arguments: p);
                     } catch (e) {
                       alert(e);
@@ -218,5 +176,39 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
         ),
       ),
     );
+  }
+}
+
+class FlutterbasePostEditCategories extends StatelessWidget {
+  FlutterbasePostEditCategories({
+    @required this.categories,
+    @required this.defaultValue,
+    @required this.onChanged,
+  });
+
+  final List<FlutterbaseCategory> categories;
+  final String defaultValue;
+  final Function onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+        value: defaultValue,
+        icon: Icon(Icons.arrow_downward),
+        iconSize: 24,
+        elevation: 16,
+        style: TextStyle(color: Colors.deepPurple),
+        underline: Container(
+          height: 2,
+          color: Colors.deepPurpleAccent,
+        ),
+        onChanged: onChanged,
+        items:
+            categories.map<DropdownMenuItem<String>>((FlutterbaseCategory cat) {
+          return DropdownMenuItem<String>(
+            value: cat.id,
+            child: Text(cat.title),
+          );
+        }).toList());
   }
 }

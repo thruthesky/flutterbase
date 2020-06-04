@@ -55,7 +55,7 @@ class _FlutterbaseRegisterUserPhotoState
             child: Icon(Icons.photo_camera),
           ),
         ),
-        Positioned(
+        if ( hasPhoto ) Positioned(
           width: 40,
           height: 40,
           right: 0,

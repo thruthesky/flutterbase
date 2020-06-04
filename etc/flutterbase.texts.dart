@@ -123,6 +123,10 @@ Map<String, Map<String, String>> textTranslations = {
     'ko': '새소식',
     'en': 'News',
   },
+  SHARE: {
+    'ko': '정보공유',
+    'en': 'Share'
+  },
   NO_TITLE: {
     'ko': '제목이 없습니다.',
     'en': 'This post have no title.',
@@ -220,15 +224,15 @@ Map<String, Map<String, String>> textTranslations = {
     'ko': '카테고리 수정',
     'en': 'Update Category',
   },
-  'reply': {
-    'ko': '댓글 작성',
+  REPLY: {
+    'ko': '댓글',
     'en': 'Reply',
   },
-  'edit': {
+  EDIT: {
     'ko': '수정',
     'en': 'Edit',
   },
-  'delete': {
+  DELETE: {
     'ko': '삭제',
     'en': 'Delete',
   },
@@ -339,21 +343,29 @@ Map<String, Map<String, String>> textTranslations = {
     'ko': '회원 정보',
     'en': 'User Profile',
   },
-  APP_TITLE: {
-    'ko': '한국 플러터 커뮤니티',
-    'en': 'Flutter Korea'
+  APP_TITLE: {'ko': '한국 플러터 커뮤니티', 'en': 'Flutter Korea'},
+  LOGIN_BUTTON: {'ko': '로그인', 'en': 'Login'},
+  LOST_PASSWORD_BUTTON: {'ko': '비밀번호를 잊으셨나요?', 'en': 'Lost password?'},
+  OR_LOGIN_WITH: {'ko': '소셜 로그인을 할 수 있습니다.', 'en': 'Or login with'},
+  LIKE: {
+    'ko': '찬성',
+    'en': 'Likes',
   },
-  LOGIN_BUTTON: {
-    'ko': '로그인',
-    'en': 'Login'
+  DISLIKE: {
+    'ko': '반대',
+    'en': 'Disikes',
   },
-  LOST_PASSWORD_BUTTON: {
-    'ko': '비밀번호를 잊으셨나요?',
-    'en': 'Lost password?'
+  SELECT_CATEGORY: {
+    'ko': '카테고리 선택',
+    'en': 'Select Category',
   },
-  OR_LOGIN_WITH: {
-    'ko': '소셜 로그인을 할 수 있습니다.',
-    'en': 'Or login with'
+  INPUT_TITLE: {
+    'ko': '제목을 입력하세요.',
+    'en': 'Input title',
+  },
+  INPUT_CONTENT: {
+    'ko': '내용을 입력하세요.',
+    'en': 'Input content',
   },
 };
 

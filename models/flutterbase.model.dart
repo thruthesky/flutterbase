@@ -164,6 +164,9 @@ class FlutterbaseModel extends ChangeNotifier {
     /// 이메일 변경 불가
     if (data['email'] != null) throw EMAIL_CANNOT_BY_CHANGED;
 
+    /// null 값이 저장되면 안된다.
+    if (data.containsKey('email')) data.remove('email');
+
     /// 닉네임, 사진은 `Firebase Auth` 에 업데이트
     if (data['displayName'] != null || data['photoUrl'] != null) {
       final up = UserUpdateInfo();
@@ -173,7 +176,13 @@ class FlutterbaseModel extends ChangeNotifier {
       if (data['photoUrl'] != null) {
         up.photoUrl = data['photoUrl'];
       }
+
       await user.updateProfile(up);
+
+      /// Firebase Auth 정보 갱신
+      await user.reload();
+      _user = await auth.currentUser();
+
     }
 
     /// 사용자 도큐먼트 정보 업데이트
@@ -182,8 +191,6 @@ class FlutterbaseModel extends ChangeNotifier {
     /// 사용자 도큐먼트 정보 갱신
     userDocument = await profile();
 
-    /// Firebase Auth 정보 갱신
-    await user.reload();
     notify();
   }
 
@@ -295,7 +302,7 @@ class FlutterbaseModel extends ChangeNotifier {
     data['displayName'] = user.displayName;
 
     /// TODO: 사진 첨부
-    data['photoUrl'] = '';
+    data['photoUrl'] = user.photoUrl;
     data['updatedAt'] = FieldValue.serverTimestamp();
 
     if (id == null) {
@@ -523,10 +530,6 @@ class FlutterbaseModel extends ChangeNotifier {
   /// - updatedAt
   /// - deletedAt (삭제 할 때에만 )
   ///
-  /// * postCreate(), postUpdate() 와는 달리 자동으로 FlutterbaseComment 로 변환하지 않는다.
-  ///   이유는 백엔드로 부터 데이터를 가져 왔을 때, 곧바로 랜더링 준비를 하면(Model 호출 등) 클라이언트에 무리를 줄 수 있다.
-  ///   미리 하지 말고 필요(랜더링)할 때, 그 때 준비해서 해당 작업을 하면 된다.
-  /// * 코멘트를 백엔드로 가져 올 때, 랜더링 준비를 하지 않으므로, 여기서도 하지 않는다.
   /// [postId] 는 글 id
   /// [commentId] 는 코멘트 Id. 생성에는 필없다.
   /// [parentCommentDepth] 는 코멘트 깊이 단계. 수정에는 필요 없다.
@@ -549,7 +552,9 @@ class FlutterbaseModel extends ChangeNotifier {
     data['displayName'] = user.displayName;
 
     /// TODO: 사진 첨부
-    data['photoUrl'] = '';
+    data['photoUrl'] = user.photoUrl;
+
+    // print('data: $data');
 
     if (commentId == null) {
       /// 코멘트 생성

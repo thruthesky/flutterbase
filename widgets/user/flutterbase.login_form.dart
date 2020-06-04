@@ -129,6 +129,7 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
                 color: Colors.red,
               ),
               onTap: () async {
+                return alert('not supported yet');
                 try {
                   final user = await _handleSignIn();
                   print(user);

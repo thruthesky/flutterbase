@@ -14,8 +14,7 @@ class FlutterbasePost {
   String id;
   // List<dynamic> comments;
 
-  /// 파일 업로드에서 초기화 필요함. .fromMap() 을 호출 하지 않는 경우 필요.
-  List<dynamic> urls = [];
+  List<dynamic> urls;
 
   /// 글 쓴이 이름과 photoURL
   ///
@@ -45,7 +44,11 @@ class FlutterbasePost {
     this.photoUrl,
     this.like,
     this.dislike,
-  });
+  }) {
+    /// 초기화
+    /// 파일 업로드에서 초기화 필요함. .fromMap() 을 호출 하지 않는 경우 필요.
+    if (urls == null) urls = [];
+  }
   factory FlutterbasePost.fromMap(Map<dynamic, dynamic> data,
       {@required String id}) {
     int createdAt = 0;

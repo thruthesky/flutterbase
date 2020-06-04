@@ -77,16 +77,18 @@ class _FlutterbasePostListViewButtonsState
     return Row(
       children: <Widget>[
         FlutterbaseTextButton(
-          text: t('Reply'),
+          text: t(REPLY),
           onTap: () async {
             /// 글에서 Reply 버튼을 클릭한 경우
             ///
             /// 글이 삭제되어도 코멘트를 달 수 있다.
+            FlutterbaseComment nc = FlutterbaseComment();
+            // print('nc: $nc');
             FlutterbaseComment comment = await openForumBox(
               FlutterbaseCommentEditForm(
                 postModel: postModel,
                 post: widget.post,
-                currentComment: FlutterbaseComment(),
+                currentComment: nc,
                 lastSiblingComment: fb.findLastSiblingComment(
                     parentComment: null, comments: postModel.comments),
               ),
@@ -102,7 +104,7 @@ class _FlutterbasePostListViewButtonsState
         ),
         if (fb.myDoc(widget.post) && !fb.deleted(widget.post))
           FlutterbaseTextButton(
-            text: t('Edit'),
+            text: t(EDIT),
             onTap: () async {
               FlutterbasePost _post = await openForumBox(
                   FlutterbasePostEditForm(post: widget.post));
@@ -120,27 +122,27 @@ class _FlutterbasePostListViewButtonsState
           ),
         FlutterbaseTextButton(
           showSpinner: widget.post.inVoting,
-          text: t('Like') + ' ' + widget.post.like.toString(),
+          text: t(LIKE) + '(' + widget.post.like.toString() +')',
           onTap: () => fb
               .vote(
                 postModel: postModel,
-                voteFor: 'like',
+                voteFor: LIKE,
               )
               .catchError(alert),
         ),
         FlutterbaseTextButton(
           showSpinner: widget.post.inVoting,
-          text: t('dislike') + ' ' + widget.post.dislike.toString(),
+          text: t(DISLIKE) + '(' + widget.post.dislike.toString()+')',
           onTap: () => fb
               .vote(
                 postModel: postModel,
-                voteFor: 'dislike',
+                voteFor: DISLIKE,
               )
               .catchError(alert),
         ),
         if (!fb.deleted(widget.post))
           FlutterbaseTextButton(
-            text: t('Delete'),
+            text: t(DELETE),
             showSpinner: widget.post.inDeleting,
             onTap: () => confirm(
               title: t(CONFIRM_POST_DELETE_TITLE),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.post.helper.dart';
 import 'package:fluttercms/flutterbase/widgets/flutterbase.space.dart';
 import 'package:fluttercms/flutterbase/widgets/upload/flutterbase.display_uploaded_image.dart';
+import 'package:fluttercms/flutterbase/widgets/user/flutterbase.user_photo.dart';
 import 'package:time_formatter/time_formatter.dart';
 
 class FlutterbasePostListViewContent extends StatelessWidget {
@@ -15,8 +17,8 @@ class FlutterbasePostListViewContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (post == null) return SizedBox.shrink();
-    // print('FlutterbasePostItem content: $post');
-    // String dt = DateTime.fromMillisecondsSinceEpoch(post.createdAt).toLocal().toString();
+
+    // print(post);
 
     String formatted = formatTime(post.createdAt);
     return Container(
@@ -26,10 +28,11 @@ class FlutterbasePostListViewContent extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              // EngineUserPhoto(
-              //   post.photoUrl,
-              //   onTap: () => alert('tap'),
-              // ),
+              FlutterbaseUserPhoto(
+                post.photoUrl,
+                onTap: () => alert('tap'),
+              ),
+              FlutterbaseSpace(),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,11 +41,22 @@ class FlutterbasePostListViewContent extends StatelessWidget {
                       '${post.title}',
                       style: TextStyle(fontSize: 24),
                     ),
-                    Divider(),
                     Row(
                       children: <Widget>[
-                        Text('By: ' + post.displayName, style: TextStyle(fontStyle: FontStyle.italic),),
-                        Text('  ($formatted)', style: TextStyle(fontStyle: FontStyle.italic),),
+                        Text(
+                          'By: ' + post.displayName,
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          '  ($formatted)',
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 12,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -53,8 +67,8 @@ class FlutterbasePostListViewContent extends StatelessWidget {
           FlutterbaseSpace(),
           Container(
             width: double.infinity,
-            color: Colors.black12,
-            padding: EdgeInsets.all(8.0),
+            color: Color(0xfff3f3f3),
+            padding: EdgeInsets.all(12.0),
             child: Text('${post.content}'),
           ),
           FlutterbaseDisplayUploadedImages(

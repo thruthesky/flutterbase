@@ -16,8 +16,7 @@ class FlutterbaseComment {
   /// [inLoading] is used only for [post.tempComment] to indiate whether the comment in submission to backend.
   bool inLoading;
 
-  /// 파일 업로드에서 초기화 필요함. .fromMap() 을 호출 하지 않는 경우 필요.
-  List<dynamic> urls = [];
+  List<dynamic> urls;
 
   /// 글 쓴이 이름과 photoURL
   ///
@@ -27,7 +26,6 @@ class FlutterbaseComment {
 
   int like;
   int dislike;
-
 
   bool inDeleting = false;
   bool inVoting = false;
@@ -47,7 +45,11 @@ class FlutterbaseComment {
     this.photoUrl,
     this.like,
     this.dislike,
-  });
+  }) {
+    /// 초기화
+    /// 파일 업로드에서 초기화 필요함. .fromMap() 을 호출 하지 않는 경우 필요.
+    if (urls == null) urls = [];
+  }
 
   /// 글 ID 와 코멘트 ID 를 데이터에 추가한다.
   factory FlutterbaseComment.fromMap(Map<dynamic, dynamic> data,
