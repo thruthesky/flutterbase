@@ -291,11 +291,6 @@ Query Scope: Collection
   위 세가지 방법 중 하나로 Index 를 생성합니다.
 
 
-* 관리자 지정하기
-  * 사용자 도큐먼트에서 `isAdmin` 속성을 true 로 주면 관리자가 됩니다.
-  * 예) `users/user-id/{ ..., isAdmin: true }`
-  * 참고로, Firestore 에서 Document Filtering(검색) 기능을 통해서, 검색하면 된다. Document 필드 중 email 또는 uid 이 없다면, displayName 으로 검색하면 됩니다.
-
 
 * Sign-in Method 지정
 
@@ -303,7 +298,7 @@ Query Scope: Collection
   * Anonymous
   * Google
 
-와 같이 Enable 한다.
+와 같이 Enable 합니다.
 
 * Storage 를 생성(또는 준비)합니다.
   * 참고: Storage 의 경우 권한 지정이 로그인 사용자로 지정되는데, 권한 지정이 좀 더 세밀하게 지정될 필요가 있습니다. 이 부분은 현재 [Issue](https://github.com/thruthesky/flutterbase/issues/3) 로 생성되어져 있습니다.
@@ -330,6 +325,16 @@ Query Scope: Collection
 </array>
 ```
 
+
+* 관리자 지정하기
+  * 사용자 도큐먼트에서 `isAdmin` 속성을 true 로 주면 관리자가 됩니다.
+  * 예) `users/user-id/{ ..., isAdmin: true }`
+  * 참고로, Firestore 에서 Document Filtering(검색) 기능을 통해서, 검색하면 된다. Document 필드 중 email 또는 uid 이 없다면, displayName 으로 검색하면 됩니다.
+
+
+* 게시판 카테고리 생성
+  * 관리자 지정 후, 다시 로그인을 하면, 메뉴에서 관리자 페이지로 진입 할 수 있습니다.
+  * 기본적으로 `discussion`, `qna` 두 개의 카테고리를 생성하면 됩니다.
 
 
 
