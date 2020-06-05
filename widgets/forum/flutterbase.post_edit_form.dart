@@ -95,83 +95,85 @@ class _FlutterbasePostEditFormState extends State<FlutterbasePostEditForm> {
         title: T(title),
       ),
       body: FlutterbasePagePadding(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            if (categories != null)
+        child: SingleChildScrollView(
+                  child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              if (categories != null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    T(SELECT_CATEGORY),
+                    FlutterbasePostEditCategories(
+                        categories: categories,
+                        defaultValue: dropdownValue,
+                        onChanged: (String newValue) {
+                          setState(() {
+                            dropdownValue = newValue;
+                          });
+                        }),
+                  ],
+                ),
+              Divider(),
+              TextField(
+                controller: _titleController,
+                onSubmitted: (text) {},
+                decoration: InputDecoration(
+                  hintText: t(INPUT_TITLE),
+                ),
+              ),
+              FlutterbaseSpace(),
+              TextField(
+                controller: _contentController,
+                keyboardType: TextInputType.multiline,
+                minLines: 10,
+                maxLines: null,
+                onSubmitted: (text) {},
+                decoration: InputDecoration(
+                  hintText: t(INPUT_CONTENT),
+                ),
+              ),
+              FlutterbaseDisplayUploadedImages(
+                post,
+                editable: true,
+              ),
+              FlutterbaseSpace(),
+              FlutterbaseUploadProgressBar(progress),
+              FlutterbaseSpace(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  T(SELECT_CATEGORY),
-                  FlutterbasePostEditCategories(
-                      categories: categories,
-                      defaultValue: dropdownValue,
-                      onChanged: (String newValue) {
-                        setState(() {
-                          dropdownValue = newValue;
-                        });
-                      }),
+                  FlutterbaseUploadIcon(
+                    post,
+                    onProgress: (p) {
+                      setState(() {
+                        progress = p;
+                      });
+                    },
+                    onUploadComplete: (String url) {
+                      setState(() {});
+                    },
+                    onError: alert,
+                  ),
+                  FlutterbaseTextButton(
+                    showSpinner: inSubmit,
+                    text: t(widget.post?.id == null ? CREATE_POST : UPDATE_POST),
+                    onTap: () async {
+                      if (inSubmit) return;
+                      setState(() => inSubmit = true);
+                      try {
+                        FlutterbasePost p = await fb.postEdit(getFormData());
+                        back(arguments: p);
+                      } catch (e) {
+                        alert(e);
+                        setState(() => inSubmit = false);
+                      }
+                    },
+                  ),
                 ],
               ),
-            Divider(),
-            TextField(
-              controller: _titleController,
-              onSubmitted: (text) {},
-              decoration: InputDecoration(
-                hintText: t(INPUT_TITLE),
-              ),
-            ),
-            FlutterbaseSpace(),
-            TextField(
-              controller: _contentController,
-              keyboardType: TextInputType.multiline,
-              minLines: 10,
-              maxLines: null,
-              onSubmitted: (text) {},
-              decoration: InputDecoration(
-                hintText: t(INPUT_CONTENT),
-              ),
-            ),
-            FlutterbaseDisplayUploadedImages(
-              post,
-              editable: true,
-            ),
-            FlutterbaseSpace(),
-            FlutterbaseUploadProgressBar(progress),
-            FlutterbaseSpace(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                FlutterbaseUploadIcon(
-                  post,
-                  onProgress: (p) {
-                    setState(() {
-                      progress = p;
-                    });
-                  },
-                  onUploadComplete: (String url) {
-                    setState(() {});
-                  },
-                  onError: alert,
-                ),
-                FlutterbaseTextButton(
-                  showSpinner: inSubmit,
-                  text: t(widget.post?.id == null ? CREATE_POST : UPDATE_POST),
-                  onTap: () async {
-                    if (inSubmit) return;
-                    setState(() => inSubmit = true);
-                    try {
-                      FlutterbasePost p = await fb.postEdit(getFormData());
-                      back(arguments: p);
-                    } catch (e) {
-                      alert(e);
-                      setState(() => inSubmit = false);
-                    }
-                  },
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

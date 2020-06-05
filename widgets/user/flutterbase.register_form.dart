@@ -159,6 +159,7 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
           ),
         ),
         FlutterbaseBigSpace(),
+        FlutterbaseBigSpace(),
         if (inLoading) PlatformCircularProgressIndicator(),
         fb.notLoggedIn
             ? TextField(

@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import '../../widgets/flutterbase.space.dart';
 import '../../etc/flutterbase.comment.helper.dart';
 import '../../etc/flutterbase.globals.dart';
 import '../../etc/flutterbase.post.helper.dart';
 import '../../models/flutterbase.post.model.dart';
-import '../../widgets/flutterbase.space.dart';
 import '../../widgets/flutterbase.text.dart';
 import '../../widgets/forum/flutterbase.comment_view_content.dart';
 import '../../widgets/forum/flutterbase.post_list_view_content.dart';
@@ -157,7 +157,7 @@ class _FlutterbaseCommentEditFormState
         ),
       ),
       body: Container(
-        color: Colors.black38,
+        // color: Colors.black38,
         child: SafeArea(
           child: Padding(
             padding: EdgeInsets.all(10.0),
@@ -166,6 +166,7 @@ class _FlutterbaseCommentEditFormState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   FlutterbasePostListViewContent(widget.post),
+                  FlutterbaseSpace(),
                   Column(
                     children: <Widget>[
                       if (widget.postModel.comments != null)

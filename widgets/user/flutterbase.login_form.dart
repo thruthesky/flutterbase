@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../widgets/flutterbase.space.dart';
 import '../../etc/flutterbase.defines.dart';
 import '../../etc/flutterbase.globals.dart';
 import '../../widgets/flutterbase.circle.dart';
-import '../../widgets/flutterbase.space.dart';
 import '../../widgets/flutterbase.text.dart';
 import '../../widgets/flutterbase.text_button.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -53,118 +53,123 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        FlutterbaseCircle(
-          padding: EdgeInsets.all(24.0),
-          color: Theme.of(context).accentColor,
-          child: Icon(
-            Icons.verified_user,
-            size: 112,
-            color: Theme.of(context).buttonColor,
-          ),
-        ),
-        FlutterbaseBigSpace(),
-        FlutterbaseBigSpace(),
-        TextField(
-          controller: _emailController,
-          keyboardType: TextInputType.emailAddress,
-          onSubmitted: (text) {},
-          decoration: InputDecoration(
-            hintText: t('input email'),
-          ),
-        ),
-        FlutterbaseSpace(),
-        TextField(
-          controller: _passwordController,
-          onSubmitted: (text) {},
-          decoration: InputDecoration(
-            hintText: t('input password'),
-          ),
-        ),
-        FlutterbaseBigSpace(),
-        FittedBox(
-          child: FlutterbaseTextButton(
-            showSpinner: inSubmit,
-            text: t(LOGIN_BUTTON),
-            onTap: () async {
-              if (inSubmit) return;
-              setState(() => inSubmit = true);
-              final data = getFormData();
-              try {
-                final user = await fb.login(data['email'], data['password']);
-                widget.onLogin(user);
-              } catch (e) {
-                widget.onError(e);
-              }
-              setState(() => inSubmit = false);
-            },
-          ),
-        ),
-        Divider(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            FlutterbaseTextButton(
-              text: t(LOST_PASSWORD_BUTTON),
+    return SingleChildScrollView(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          FlutterbaseBigSpace(),
+          FlutterbaseBigSpace(),
+          FlutterbaseBigSpace(),
+          FlutterbaseCircle(
+            padding: EdgeInsets.all(24.0),
+            color: Theme.of(context).accentColor,
+            child: Icon(
+              Icons.verified_user,
+              size: 112,
+              color: Theme.of(context).buttonColor,
             ),
-            FlutterbaseTextButton(
-              text: t(REGISTER_TITLE),
+          ),
+          FlutterbaseBigSpace(),
+          FlutterbaseBigSpace(),
+          FlutterbaseBigSpace(),
+          TextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            onSubmitted: (text) {},
+            decoration: InputDecoration(
+              hintText: t('input email'),
             ),
-          ],
-        ),
-        FlutterbaseBigSpace(),
-        FlutterbaseBigSpace(),
-        T(OR_LOGIN_WITH),
-        FlutterbaseBigSpace(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            GestureDetector(
-              child: FaIcon(
-                FontAwesomeIcons.googlePlus,
-                size: 46,
-                color: Colors.red,
-              ),
+          ),
+          FlutterbaseSpace(),
+          TextField(
+            controller: _passwordController,
+            onSubmitted: (text) {},
+            decoration: InputDecoration(
+              hintText: t('input password'),
+            ),
+          ),
+          FlutterbaseBigSpace(),
+          FittedBox(
+            child: FlutterbaseTextButton(
+              showSpinner: inSubmit,
+              text: t(LOGIN_BUTTON),
               onTap: () async {
-                return alert('not supported yet');
+                if (inSubmit) return;
+                setState(() => inSubmit = true);
+                final data = getFormData();
                 try {
-                  final user = await _handleSignIn();
-                  print(user);
+                  final user = await fb.login(data['email'], data['password']);
+                  widget.onLogin(user);
                 } catch (e) {
                   widget.onError(e);
                 }
+                setState(() => inSubmit = false);
               },
             ),
-            FlutterbasePageSpace(),
-            FaIcon(
-              FontAwesomeIcons.facebook,
-              size: 46,
-              color: Colors.indigo,
-            ),
-            FlutterbasePageSpace(),
-            FlutterbaseCircle(
-              elevation: 0,
-              color: Theme.of(context).accentColor,
-              child: FaIcon(FontAwesomeIcons.twitter,
-                  size: 30, color: Theme.of(context).buttonColor),
-            ),
-          ],
-        ),
-        // RaisedButton(
-        //   onPressed: () async {
-        //     try {
-        //       final user = await _handleSignIn();
-        //       print(user);
-        //     } catch (e) {
-        //       widget.onError(e);
-        //     }
-        //   },
-        //   child: T('Google Sign In'),
-        // ),
-      ],
+          ),
+          Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              FlutterbaseTextButton(
+                text: t(LOST_PASSWORD_BUTTON),
+              ),
+              FlutterbaseTextButton(
+                text: t(REGISTER_TITLE),
+              ),
+            ],
+          ),
+          FlutterbaseBigSpace(),
+          FlutterbaseBigSpace(),
+          T(OR_LOGIN_WITH),
+          FlutterbaseBigSpace(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              GestureDetector(
+                child: FaIcon(
+                  FontAwesomeIcons.googlePlus,
+                  size: 46,
+                  color: Colors.red,
+                ),
+                onTap: () async {
+                  return alert('not supported yet');
+                  try {
+                    final user = await _handleSignIn();
+                    print(user);
+                  } catch (e) {
+                    widget.onError(e);
+                  }
+                },
+              ),
+              FlutterbasePageSpace(),
+              FaIcon(
+                FontAwesomeIcons.facebook,
+                size: 46,
+                color: Colors.indigo,
+              ),
+              FlutterbasePageSpace(),
+              FlutterbaseCircle(
+                elevation: 0,
+                color: Theme.of(context).accentColor,
+                child: FaIcon(FontAwesomeIcons.twitter,
+                    size: 30, color: Theme.of(context).buttonColor),
+              ),
+            ],
+          ),
+          // RaisedButton(
+          //   onPressed: () async {
+          //     try {
+          //       final user = await _handleSignIn();
+          //       print(user);
+          //     } catch (e) {
+          //       widget.onError(e);
+          //     }
+          //   },
+          //   child: T('Google Sign In'),
+          // ),
+        ],
+      ),
     );
   }
 }
