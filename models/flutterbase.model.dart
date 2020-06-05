@@ -39,11 +39,8 @@ class FlutterbaseModel extends ChangeNotifier {
           /// 실제 사용자로 로그인을 한 경우, Anonymous 는 제외
           if (loggedIn) {
             try {
-              // print('@TODO: get user data');
-              // engineUser = await userProfile();
-              // print('engineUser: ');
-              // print(engineUser);
               userDocument = await profile();
+              print('userDocument: $userDocument, email: ${user.email}');
               notify();
             } catch (e) {
               print('got profile error: ');
