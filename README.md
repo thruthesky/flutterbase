@@ -309,19 +309,32 @@ Query Scope: Collection
 * 프로젝트에 필요한 패키지들을 pubspec.yaml 에 추가합니다.
   * 참고: [FlutterCMS pubspec.yaml](https://github.com/thruthesky/fluttercms/blob/master/pubspec.yaml) 에서 Dependency 를 복사하면 됩니다.
 
-* iOS의 Info.plist 에서 권한 문자열 지정 하시면 됩니다.
-  * 참고: [FlutterCMS Info.plist](https://github.com/thruthesky/fluttercms/blob/master/ios/Runner/Info.plist) 에서 `XXXXXDescription` 들을 복사하면 됩니다.
-
-
-* 다국어 언어 설정
-  * Info.plist 에 아래와 같이 추가하면 됩니다.
+* 아래와 같이 iOS의 Info.plist 에서 권한 문자열 지정 하시면 됩니다.
 
 ```
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to the Camera to take images for posting on its forum and updating user profile.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app requires access to the Contact.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires access to the microphone.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to the Photo Library to display images</string>
+```
+
+참고: [FlutterCMS Info.plist](https://github.com/thruthesky/fluttercms/blob/master/ios/Runner/Info.plist) 에서 `XXXXXDescription` 복사
+  
+* 다국어 언어 설정
+  * Info.plist 에 아래와 같이 추가하면 됩니다.
+  * 참고: [FlutterCMS Info.plist](https://github.com/thruthesky/fluttercms/blob/master/ios/Runner/Info.plist) 
+
+```
+<key>CFBundleLocalizations</key>
 <array>
-  <string>en</string>
-  <string>ko</string>
-  <string>ja</string>
-  <string>zh</string>
+	<string>en</string>
+	<string>ko</string>
+	<string>ja</string>
+	<string>zh</string>
 </array>
 ```
 
@@ -329,7 +342,9 @@ Query Scope: Collection
 * 관리자 지정하기
   * 사용자 도큐먼트에서 `isAdmin` 속성을 true 로 주면 관리자가 됩니다.
   * 예) `users/user-id/{ ..., isAdmin: true }`
-  * 참고로, Firestore 에서 Document Filtering(검색) 기능을 통해서, 검색하면 된다. Document 필드 중 email 또는 uid 이 없다면, displayName 으로 검색하면 됩니다.
+  * 참고
+    * Firestore 에서 Document Filtering(검색) 기능을 통해서, 검색하면 된다. Document 필드 중 email 또는 uid 이 없다면, displayName 으로 검색하면 됩니다.
+    * 먼저 앱을 실행하고, 회원 가입을 한 다음, 그 회원의 user document 를 수정하는 것이 편합니다.
 
 
 * 게시판 카테고리 생성
@@ -348,3 +363,44 @@ Query Scope: Collection
   * [Flutterbase Security Test](https://github.com/thruthesky/flutterbase-security-test) 를 참고.
   * `Flutterbase` 의 dart 코드는 mocking 을 하지 않아도, 테스트 할 수 있는 방법이 있지만,
   * `Firestore Security Test`에서는 mocking 말고는 방법이 없습니다. 그래서 mocking 으로 권한 테스트합니다.
+
+
+
+
+## 수정
+
+* 설치가 끝났으면 실제 코드 작성하면 됩니다.
+
+
+### 라우팅
+
+* 라우팅은 원하시는데로 하면 되지만, [Flutter CMS](https://github.com/thruthesky/fluttercms/) 예제에서는 Named Router 를 사용합니다.
+
+
+* Flutter CMS 의 라우팅 예제를 보시면 이해를 하는데 도움이 될 것입니다.
+  * [Flutter CMS Routing Definitions](https://github.com/thruthesky/fluttercms/blob/master/lib/services/app.defines.dart)
+  * [Flutter CMS Routing](https://github.com/thruthesky/fluttercms/blob/master/lib/services/app.router.dart)
+
+
+### App Bar
+
+* FlutterbaseAppBar 위젯이 있는데, 이를 복사해서 쓰거나 그대로 쓰면 됩니다.
+
+### 회원 기능
+
+* 먼저, [Flutter CMS 회원 가입 페이지](https://github.com/thruthesky/fluttercms/blob/master/lib/pages/register/register.page.dart)에서 코드를 복사해서, 회원 가입을 하면 됩니다.
+
+* 그리고, [Flutter CMS 회원 로그인 페이지](https://github.com/thruthesky/fluttercms/blob/master/lib/pages/login/login.page.dart)에서 로그인을 하면 됩니다.
+
+* 사진 업로드
+  * 회원 가입 또는 수정에서 사진을 업로드 할 수 있으며, 타이틀 바에 사진을 표시 할 수 있습니다.
+
+### 게시판 기능
+
+* 게시글 목록
+* 게시글 작성
+* 게시글 수정
+* 코멘트 작성
+* 코멘트 수정
+
+
