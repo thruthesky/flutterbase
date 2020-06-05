@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import '../../../flutterbase/etc/flutterbase.defines.dart';
+import '../../widgets/flutterbase.space.dart';
 import '../../etc/flutterbase.comment.helper.dart';
 import '../../etc/flutterbase.globals.dart';
 import '../../etc/flutterbase.post.helper.dart';
 import '../../models/flutterbase.post.model.dart';
-import '../../widgets/flutterbase.space.dart';
 import '../../widgets/flutterbase.text.dart';
 import '../../widgets/forum/flutterbase.comment_view_content.dart';
 import '../../widgets/forum/flutterbase.post_list_view_content.dart';
@@ -15,7 +16,7 @@ import '../../widgets/upload/flutterbase.upload_icon.dart';
 import '../../widgets/user/flutterbase.upload_progress_bar.dart';
 import '../../widgets/flutterbase.page_padding.dart';
 
-class FlutterbaseCommentEditForm extends StatefulWidget {
+class FlutterbaseCommentEditForm extends StatelessWidget {
   FlutterbaseCommentEditForm({
     @required this.postModel,
     @required this.post,
@@ -42,16 +43,82 @@ class FlutterbaseCommentEditForm extends StatefulWidget {
   final FlutterbaseComment lastSiblingComment;
 
   @override
-  _FlutterbaseCommentEditFormState createState() =>
-      _FlutterbaseCommentEditFormState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: T(COMMENT_EDIT_TITLE),
+      ),
+      body: Container(
+        // color: Colors.black38,
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Stack(
+              children: <Widget>[
+                SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      FlutterbasePostListViewContent(post),
+                      FlutterbaseSpace(),
+                      Column(
+                        children: <Widget>[
+                          if (postModel.comments != null)
+                            for (var c in postModel.comments) ...[
+                              FlutterbaseCommentViewContent(comment: c),
+                              FlutterbaseSpace()
+                            ],
+                        ],
+                      ),
+                      SizedBox(height: 200)
+                    ],
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: FlutterbaseCommentEditFormInputBox(
+                    post: post,
+                    currentComment: currentComment,
+                    parentComment: parentComment,
+                    lastSiblingComment: lastSiblingComment,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class _FlutterbaseCommentEditFormState
-    extends State<FlutterbaseCommentEditForm> {
-  final TextEditingController _contentController = TextEditingController();
+class FlutterbaseCommentEditFormInputBox extends StatefulWidget {
+  FlutterbaseCommentEditFormInputBox({
+    this.parentComment,
+    this.currentComment,
+    this.post,
+    this.lastSiblingComment,
+  });
 
-  bool inSubmit = false;
-  int progress = 0;
+  final FlutterbasePost post;
+  final FlutterbaseComment currentComment;
+
+  /// When user creates a new comment, [parentComment] will be set.
+  final FlutterbaseComment parentComment;
+
+  /// 새 코멘트를 작성하는 경우, 부모 코멘트의 자식 중 order 가 가장 낮은 코멘트.
+  final FlutterbaseComment lastSiblingComment;
+
+  @override
+  _FlutterbaseCommentEditFormInputBoxState createState() =>
+      _FlutterbaseCommentEditFormInputBoxState();
+}
+
+class _FlutterbaseCommentEditFormInputBoxState
+    extends State<FlutterbaseCommentEditFormInputBox> {
+  final TextEditingController _contentController = TextEditingController();
 
   bool get isCreate {
     return widget.currentComment?.commentId == null;
@@ -71,13 +138,14 @@ class _FlutterbaseCommentEditFormState
     super.initState();
   }
 
+  bool inSubmit = false;
+  int progress = 0;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: T('edit comment'),
-      ),
-      bottomNavigationBar: SafeArea(
+    return Container(
+      color: Theme.of(context).backgroundColor,
+      child: SafeArea(
         child: FlutterbasePagePadding(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -153,31 +221,6 @@ class _FlutterbaseCommentEditFormState
                 editable: true,
               ),
             ],
-          ),
-        ),
-      ),
-      body: Container(
-        color: Colors.black38,
-        child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  FlutterbasePostListViewContent(widget.post),
-                  Column(
-                    children: <Widget>[
-                      if (widget.postModel.comments != null)
-                        for (var c in widget.postModel.comments) ...[
-                          FlutterbaseCommentViewContent(comment: c),
-                          FlutterbaseSpace()
-                        ],
-                    ],
-                  ),
-                ],
-              ),
-            ),
           ),
         ),
       ),

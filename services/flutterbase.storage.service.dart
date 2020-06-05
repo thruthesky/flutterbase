@@ -144,8 +144,8 @@ class FlutterbaseStorage {
     /// Unique file name for the file
     String filePath = 'images/${DateTime.now()}.jpg';
 
-    print(filePath);
-    print(file);
+    // print(filePath);
+    // print(file);
     uploadTask = _storage.ref().child(filePath).putFile(file);
     double uploadPercentage = 0;
 

@@ -136,8 +136,15 @@ class FlutterbaseModel extends ChangeNotifier {
     if (re == null || re.user == null) throw FAILED_TO_REGISTER;
     data.remove('password');
 
+
+    data.remove('email');
+    data.remove('password');
     data['uid'] = re.user.uid;
-    await _userDoc(user.uid).setData(data);
+
+    await profileUpdate(data);
+
+    // data['uid'] = re.user.uid;
+    // await _userDoc(user.uid).setData(data);
   }
 
   /// 사용자 정보 업데이트
@@ -185,6 +192,8 @@ class FlutterbaseModel extends ChangeNotifier {
       await user.reload();
       _user = await auth.currentUser();
 
+      data.remove('displayName');
+      data.remove('photoUrl');
     }
 
     /// 사용자 도큐먼트 정보 업데이트
@@ -556,7 +565,7 @@ class FlutterbaseModel extends ChangeNotifier {
     /// TODO: 사진 첨부
     data['photoUrl'] = user.photoUrl;
 
-    // print('data: $data');
+    print('comment edit data: $data');
 
     if (commentId == null) {
       /// 코멘트 생성
@@ -754,4 +763,7 @@ class FlutterbaseModel extends ChangeNotifier {
     if (doc.deletedAt == 0) return false;
     return true;
   }
+
+
+
 }

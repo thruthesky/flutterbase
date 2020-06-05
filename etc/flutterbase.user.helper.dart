@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../etc/flutterbase.defines.dart';
 import '../etc/flutterbase.globals.dart';
 
@@ -17,10 +19,10 @@ import '../etc/flutterbase.globals.dart';
 ///   - `Flutter(Dart) Firebase Auth 패키지` 에서 `UserUpdateInfo()` 에서 `photUrl` 로 쓴다.
 /// 
 class FlutterbaseUser {
-  String email;
-  String displayName;
-  String phoneNumber;
-  String photoUrl;
+  // String email;
+  // String displayName;
+  // String phoneNumber;
+  // String photoUrl;
   int birthday;
   bool isAdmin;
 
@@ -29,10 +31,10 @@ class FlutterbaseUser {
   /// 서버에 저장되지 않는다.
   List<dynamic> urls = [];
   FlutterbaseUser({
-    this.email,
-    this.displayName,
-    this.phoneNumber,
-    this.photoUrl,
+    // this.email,
+    // this.displayName,
+    // this.phoneNumber,
+    // this.photoUrl,
     this.birthday,
     this.isAdmin,
   });
@@ -56,10 +58,10 @@ class FlutterbaseUser {
     }
 
     return FlutterbaseUser(
-      email: data['email'],
-      displayName: data['displayName'],
-      phoneNumber: data['phoneNumber'],
-      photoUrl: data['photoUrl'],
+      // email: user.email,
+      // displayName: user.displayName,
+      // phoneNumber: data['phoneNumber'],
+      // photoUrl: data['photoUrl'],
       birthday: birthday,
       isAdmin: isAdmin,
     );
@@ -67,6 +69,6 @@ class FlutterbaseUser {
 
   @override
   String toString() {
-    return "email: $email\ndisplayName:$displayName\nphoneNumber:$phoneNumber\nphotoUrl:$photoUrl\nbirthday:$birthday";
+    return "isAdmin: $isAdmin, birthday:$birthday";
   }
 }

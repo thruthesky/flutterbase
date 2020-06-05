@@ -30,7 +30,7 @@ class _FlutterbaseRegisterUserPhotoState
   bool inDelete = false;
   @override
   Widget build(BuildContext context) {
-    String url = fb.userDocument?.photoUrl;
+    String url = fb.user?.photoUrl;
     bool hasPhoto = url != null && url != DELETED_PHOTO;
 
     // print('hasPhoto: $hasPhoto, $url');

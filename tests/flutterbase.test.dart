@@ -21,14 +21,16 @@ class FlutterbaseTest {
   int errorCount = 0;
 
   run() async {
-    // await testRegister();
+      /// 테스트를 할 때에는 로그아웃을 한 상태에서 한다.
+      /// 화면에 에러가 표시 될 수 있지만, 테스트만 성공하면 된다.
+    await testUser();
 
     // 코멘트를 테스트하려면, 상황에 맞는 글 아이디를 적용해야 한다.
     // await testComment();
     // 형제를 찾기 위해서는, 수동으로 상황에 맞는 글 아이디를 적용해야 한다.
     // await testFindSiblings();
 
-    await testVote();
+    // await testVote();
     showResult();
   }
 
@@ -67,7 +69,10 @@ class FlutterbaseTest {
     print('____[ FAIL/$errorCount ]: $v');
   }
 
-  testRegister() async {
+
+  /// 테스트를 할 때에는 로그아웃을 한 상태에서 한다.
+  /// 화면에 에러가 표시 될 수 있지만, 테스트만 성공하면 된다.
+  testUser() async {
     try {
       await fb.register(null);
     } catch (e) {
@@ -130,17 +135,25 @@ class FlutterbaseTest {
       'email': 'user$n@test.com',
       'password': 'p,!$n,',
       'displayName': 'd',
+      'photoUrl': 'https://photo.com/my-photo.jpg',
       'birthday': 19731016
     };
     try {
       await fb.register(registerData);
+      FlutterbaseUser u = await fb.profile();
+      // print('u: $u');
+
+      eq(fb.user.email, 'user$n@test.com');
+      eq(fb.user.displayName, 'd');
+      eq(fb.user.photoUrl, 'https://photo.com/my-photo.jpg');
+      eq(u.birthday, 19731016);
     } catch (e) {
       fail('must succeed on register');
     }
 
     try {
       FlutterbaseUser u = await fb.profile();
-      eq(u.email, registerData['email']);
+      // eq(u.email, registerData['email']);
       eq(u.birthday, registerData['birthday']);
     } catch (e) {
       fail('error on profile: $e');
@@ -151,10 +164,19 @@ class FlutterbaseTest {
     } catch (e) {
       eq(e, EMAIL_CANNOT_BY_CHANGED);
     }
+
     try {
-      await fb.profileUpdate({'displayName': 'new name'});
+      await fb.profileUpdate(
+        {
+          'displayName': 'new name',
+          'photoUrl': 'https://non.com/a.jpg',
+          'birthday': 12345
+        },
+      );
       FlutterbaseUser u = await fb.profile();
-      eq(u.displayName, 'new name');
+      eq(u.birthday, 12345);
+      eq(fb.user.displayName, 'new name');
+      eq(fb.user.photoUrl, 'https://non.com/a.jpg');
     } catch (e) {
       fail('must success');
     }
@@ -192,7 +214,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: 0, // 1단계
       lastSiblingCommentOrder: null,
-      data: { 'content': 'A' },
+      data: {'content': 'A'},
     );
     eq(commentA.content, 'A');
 
@@ -207,7 +229,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: 0, // 1단계
       lastSiblingCommentOrder: commentA.order,
-      data: { 'content': 'B' },
+      data: {'content': 'B'},
     );
 
     _comments = await fb.commentsGet(post.id);
@@ -221,7 +243,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: 0, // 1단계
       lastSiblingCommentOrder: B.order,
-      data: { 'content': 'C' },
+      data: {'content': 'C'},
     );
 
     _comments = await fb.commentsGet(post.id);
@@ -236,7 +258,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentC.depth, // 이전 단계 depth. C 다음 이전 C.
       lastSiblingCommentOrder: commentC.order, // 이전 단계 order. C 다음이므로 이전 C.
-      data: { 'content': 'CA' },
+      data: {'content': 'CA'},
     );
 
     eq(commentCA.depth, 2);
@@ -248,7 +270,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: 0, // 1단계
       lastSiblingCommentOrder: commentC.order,
-      data: { 'content': 'D' },
+      data: {'content': 'D'},
     );
 
     eq(commentD.depth, 1);
@@ -261,7 +283,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentCA.depth, // 이전 단계 depth. CA 다음 이전은 CA.
       lastSiblingCommentOrder: commentCA.order, // 이전 단계 order. CA 다음이므로 이전은 CA.
-      data: { 'content': 'CAA' },
+      data: {'content': 'CAA'},
     );
 
     eq(commentCAA.depth, 3);
@@ -274,7 +296,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: B.depth,
       lastSiblingCommentOrder: B.order,
-      data: { 'content': 'BA' },
+      data: {'content': 'BA'},
     );
 
     eq(BA.depth, 2);
@@ -286,7 +308,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentA.depth,
       lastSiblingCommentOrder: commentA.order,
-      data: { 'content': 'AA' },
+      data: {'content': 'AA'},
     );
     eq(commentAA.depth, 2);
     eq(commentAA.order,
@@ -297,19 +319,19 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentA.depth,
       lastSiblingCommentOrder: commentAA.order,
-      data: { 'content': 'AB' },
+      data: {'content': 'AB'},
     );
 
     eq(commentAB.order,
         '99999.99997.99999.99999.99999.99999.99999.99999.99999.99999.99999.99999');
 
     /// Create A -> AC
-    // FlutterbaseComment commentAC = 
+    // FlutterbaseComment commentAC =
     await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: commentA.depth,
       lastSiblingCommentOrder: commentAB.order,
-      data: { 'content': 'AC' },
+      data: {'content': 'AC'},
     );
 
     /// Create B -> BA -> BAA
@@ -318,7 +340,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: BA.depth,
       lastSiblingCommentOrder: BA.order,
-      data: { 'content': 'BAA' },
+      data: {'content': 'BAA'},
     );
 
     /// Create B -> BA -> BAAA
@@ -327,7 +349,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: BAA.depth,
       lastSiblingCommentOrder: BAA.order,
-      data: { 'content': 'BAAA' },
+      data: {'content': 'BAAA'},
     );
 
     /// Create B -> BA -> BAAB
@@ -336,7 +358,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: BAA.depth,
       lastSiblingCommentOrder: commentBAAA.order, // 이전 댓글. 부모 댓글의 것이 아님.
-      data: { 'content': 'BAAB' },
+      data: {'content': 'BAAB'},
     );
 
     /// Create B -> BA -> BAAC
@@ -345,7 +367,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: BAA.depth,
       lastSiblingCommentOrder: commentBAAB.order, // 이전 댓글. 부모 댓글의 것이 아님.
-      data: { 'content': 'BAAC' },
+      data: {'content': 'BAAC'},
     );
 
     /// Create B -> BA -> BAA -> BAAB -> BAABA
@@ -354,7 +376,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: commentBAAB.depth,
       lastSiblingCommentOrder: commentBAAB.order, // 이전 댓글. 부모 댓글의 것이 아님.
-      data: { 'content': 'BAABA' },
+      data: {'content': 'BAABA'},
     );
 
     /// Create B -> BB
@@ -363,7 +385,7 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: B.depth,
       lastSiblingCommentOrder: commentBAAC.order, // 이전 댓글. 부모 댓글의 것이 아님.
-      data: { 'content': 'BB' },
+      data: {'content': 'BB'},
     );
 
     /// 형제 중 마지막 코멘트의 order
@@ -374,35 +396,35 @@ class FlutterbaseTest {
       postId: post.id,
       parentCommentDepth: BB.depth, // 부모
       lastSiblingCommentOrder: BB.order, // 형제가 없으면, 부모
-      data: { 'content': 'BBA' },
+      data: {'content': 'BBA'},
     );
 
     FlutterbaseComment BC = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: B.depth, // 부모
       lastSiblingCommentOrder: BB.order, // 형재 중 마지막
-      data: { 'content': 'BC' },
+      data: {'content': 'BC'},
     );
 
     FlutterbaseComment BCA = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: BC.depth, // 부모
       lastSiblingCommentOrder: BC.order, // 형제가 없으면, 부모
-      data: { 'content': 'BCA' },
+      data: {'content': 'BCA'},
     );
 
     FlutterbaseComment BD = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: B.depth, // 부모
       lastSiblingCommentOrder: BC.order, // 형제 중 마지막
-      data: { 'content': 'BD' },
+      data: {'content': 'BD'},
     );
 
     FlutterbaseComment BAB = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: BA.depth, // 부모
       lastSiblingCommentOrder: BAA.order, // 형제 중 마지막
-      data: { 'content': 'BAB' },
+      data: {'content': 'BAB'},
     );
 
     _comments = await fb.commentsGet(post.id);
@@ -448,29 +470,25 @@ class FlutterbaseTest {
     eq(done, true);
   }
 
-
   testVote() async {
-
     /// 임시 게시판 생성
     FlutterbasePost post = await createTestPost();
     // print('post: $post');
 
     /// 추천
-    // var like = 
+    // var like =
     await fb.vote(post: post, voteFor: 'like');
     // print('like vote: $like');
 
     // 추천
-    // var likeAgain = 
+    // var likeAgain =
     await fb.vote(post: post, voteFor: 'like');
     // print('like vote again: $likeAgain');
 
-
     // 추천
-    // var likeAgain2 = 
+    // var likeAgain2 =
     await fb.vote(post: post, voteFor: 'like');
     // print('like vote again 2: $likeAgain2');
-
 
     // 비추천
     var dislike = await fb.vote(post: post, voteFor: 'dislike');
@@ -479,20 +497,18 @@ class FlutterbaseTest {
     eq(dislike['like'], 0);
     eq(dislike['dislike'], 1);
 
-
     /// 코멘트 생성
-    
+
     /// Create Comment A
     FlutterbaseComment A = await fb.commentEdit(
       postId: post.id,
       parentCommentDepth: 0, // 1단계
       lastSiblingCommentOrder: null,
-      data: { 'content': 'A' },
+      data: {'content': 'A'},
     );
-    
+
     var re = await fb.vote(post: post, comment: A, voteFor: 'dislike');
     eq(re['dislike'], 1);
-
 
     re = await fb.vote(post: post, comment: A, voteFor: 'like');
     eq(re['like'], 1);
@@ -501,6 +517,5 @@ class FlutterbaseTest {
     re = await fb.vote(post: post, comment: A, voteFor: 'like');
     eq(re['like'], 0);
     eq(re['dislike'], 0);
-
   }
 }

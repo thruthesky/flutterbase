@@ -86,11 +86,13 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
       user = await fb.profile();
       // print(user);
       if (mounted) {
-        setState(() {
-          _nicknameController.text = user.displayName;
-          _phoneNumberController.text = user.phoneNumber;
-          _birthdayController.text = user.birthday.toString();
-        });
+        setState(
+          () {
+            _nicknameController.text = fb.user.displayName;
+            _phoneNumberController.text = fb.user.phoneNumber;
+            _birthdayController.text = user.birthday.toString();
+          },
+        );
       }
     } catch (e) {
       // print(e);
@@ -122,11 +124,11 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
               /// 사진을 업로드하면, 바로 수정. 즉, 전송 버튼을 누르지 않아도 이미 업데이트가 되어져 버린다.
               if (fb.loggedIn) {
                 await fb.profileUpdate({'photoUrl': url});
-                print('userDocument.photoUrl: ${fb.userDocument.photoUrl}');
+                print('fb.user.photoUrl: ${fb.user.photoUrl}');
                 setState(() {/** FlutterbaseModel Provider 받지 않아서 state 갱신 */});
               }
               {
-                fb.userDocument.photoUrl = url;
+                // fb.userDocument.photoUrl = url;
                 fb.notify();
               }
             } catch (e) {
@@ -158,6 +160,7 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
             ],
           ),
         ),
+        FlutterbaseBigSpace(),
         FlutterbaseBigSpace(),
         if (inLoading) PlatformCircularProgressIndicator(),
         fb.notLoggedIn
@@ -234,7 +237,8 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
                     },
                     currentTime: DateTime.parse(
                         (isEmpty(_birthdayController.text) ||
-                                !isNumeric(_birthdayController.text))
+                                !isNumeric(_birthdayController.text) ||
+                                _birthdayController.text.length != 8)
                             ? '20000101'
                             : _birthdayController.text),
                     locale: enumValueFromString(
@@ -255,7 +259,9 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
           children: <Widget>[
             FlutterbaseTextButton(
               showSpinner: inSubmit,
-              text: fb.notLoggedIn ? t(REGISTER_BUTTON) : t(UPDATE_PROFILE_BUTTON),
+              text: fb.notLoggedIn
+                  ? t(REGISTER_BUTTON)
+                  : t(UPDATE_PROFILE_BUTTON),
               onTap: () async {
                 /// 전송 버튼
                 if (inSubmit) return;

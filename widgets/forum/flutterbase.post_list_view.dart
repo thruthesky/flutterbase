@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import '../../widgets/flutterbase.space.dart';
 import '../../etc/flutterbase.comment.helper.dart';
 import '../../etc/flutterbase.defines.dart';
 import '../../etc/flutterbase.globals.dart';
@@ -30,23 +32,29 @@ class _FlutterbasePostListViewState extends State<FlutterbasePostListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FlutterbasePostModel>(builder: (context, model, child) {
-      return Column(children: <Widget>[
-        FlutterbasePostListViewContent(widget.post),
-        FlutterbasePostListViewButtons(widget.post),
-        Column(
+    return Consumer<FlutterbasePostModel>(
+      builder: (context, model, child) {
+        return Column(
           children: <Widget>[
-            if (model.comments != null)
-              for (var c in model.comments)
-                FlutterbaseCommentView(
-                  widget.post,
-                  c,
-                  key: ValueKey(c.commentId ?? randomString()),
-                ),
+            FlutterbasePostListViewContent(widget.post),
+            FlutterbasePostListViewButtons(widget.post),
+            Column(
+              children: <Widget>[
+                if (model.inLoading) PlatformCircularProgressIndicator(),
+                if (model.inLoading == false && model.comments != null)
+                  for (var c in model.comments)
+                    FlutterbaseCommentView(
+                      widget.post,
+                      c,
+                      key: ValueKey(c.commentId ?? randomString()),
+                    ),
+              ],
+            ),
+            FlutterbaseBigSpace(),
           ],
-        ),
-      ]);
-    });
+        );
+      },
+    );
   }
 }
 
@@ -122,7 +130,7 @@ class _FlutterbasePostListViewButtonsState
           ),
         FlutterbaseTextButton(
           showSpinner: widget.post.inVoting,
-          text: t(LIKE) + '(' + widget.post.like.toString() +')',
+          text: t(LIKE) + '(' + widget.post.like.toString() + ')',
           onTap: () => fb
               .vote(
                 postModel: postModel,
@@ -132,7 +140,7 @@ class _FlutterbasePostListViewButtonsState
         ),
         FlutterbaseTextButton(
           showSpinner: widget.post.inVoting,
-          text: t(DISLIKE) + '(' + widget.post.dislike.toString()+')',
+          text: t(DISLIKE) + '(' + widget.post.dislike.toString() + ')',
           onTap: () => fb
               .vote(
                 postModel: postModel,
