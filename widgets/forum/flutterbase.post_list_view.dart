@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import '../../widgets/flutterbase.space.dart';
 import '../../etc/flutterbase.comment.helper.dart';
 import '../../etc/flutterbase.defines.dart';
@@ -39,7 +40,8 @@ class _FlutterbasePostListViewState extends State<FlutterbasePostListView> {
             FlutterbasePostListViewButtons(widget.post),
             Column(
               children: <Widget>[
-                if (model.comments != null)
+                if (model.inLoading) PlatformCircularProgressIndicator(),
+                if (model.inLoading == false && model.comments != null)
                   for (var c in model.comments)
                     FlutterbaseCommentView(
                       widget.post,

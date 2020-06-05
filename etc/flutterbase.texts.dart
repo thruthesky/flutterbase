@@ -123,10 +123,7 @@ Map<String, Map<String, String>> textTranslations = {
     'ko': '새소식',
     'en': 'News',
   },
-  SHARE: {
-    'ko': '정보공유',
-    'en': 'Share'
-  },
+  SHARE: {'ko': '정보공유', 'en': 'Share'},
   NO_TITLE: {
     'ko': '제목이 없습니다.',
     'en': 'This post have no title.',
@@ -246,7 +243,7 @@ Map<String, Map<String, String>> textTranslations = {
   },
   SHOW_DATE_PICKER: {
     'ko': '날짜 선택',
-    'en': 'Show date picker',
+    'en': 'Date picker',
   },
   POST_CREATE: {
     'ko': '글 작성',
@@ -366,6 +363,10 @@ Map<String, Map<String, String>> textTranslations = {
   INPUT_CONTENT: {
     'ko': '내용을 입력하세요.',
     'en': 'Input content',
+  },
+  COMMENT_EDIT_TITLE: {
+    'ko': '댓글 작성',
+    'en': 'Comment Edit',
   },
 };
 

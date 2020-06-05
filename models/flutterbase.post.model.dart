@@ -11,22 +11,26 @@ class FlutterbasePostModel extends ChangeNotifier {
   FlutterbasePostModel({
     @required this.post,
   }) {
-    // print(post);
     _loadComments();
   }
 
+
+
   FlutterbasePost post;
   List<FlutterbaseComment> comments = [];
+
+  bool inLoading = false;
 
   notify() {
     notifyListeners();
   }
 
+
   _loadComments() async {
-    // print('_loadComments()');
+    inLoading = true;
+    /// TODO: Error handling
     comments = await fb.commentsGet(post.id);
-    // print('comments');
-    // print(comments);
+    inLoading = false;
     notify();
   }
 

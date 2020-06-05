@@ -54,7 +54,7 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-          child: Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           FlutterbaseBigSpace(),
@@ -143,17 +143,27 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
                 },
               ),
               FlutterbasePageSpace(),
-              FaIcon(
-                FontAwesomeIcons.facebook,
-                size: 46,
-                color: Colors.indigo,
+              GestureDetector(
+                child: FaIcon(
+                  FontAwesomeIcons.facebook,
+                  size: 46,
+                  color: Colors.indigo,
+                ),
+                onTap: () {
+                  return alert('not supported yet');
+                },
               ),
               FlutterbasePageSpace(),
-              FlutterbaseCircle(
-                elevation: 0,
-                color: Theme.of(context).accentColor,
-                child: FaIcon(FontAwesomeIcons.twitter,
-                    size: 30, color: Theme.of(context).buttonColor),
+              GestureDetector(
+                child: FlutterbaseCircle(
+                  elevation: 0,
+                  color: Theme.of(context).accentColor,
+                  child: FaIcon(FontAwesomeIcons.twitter,
+                      size: 30, color: Theme.of(context).buttonColor),
+                ),
+                onTap: () {
+                  return alert('no supported yet');
+                },
               ),
             ],
           ),
