@@ -28,14 +28,7 @@
 
 ## 설치
 
-* Flutter 앱에 `Flutterbase` 를 추가하는 경우를 설명합니다.
-
-
-* 먼저, `Flutterbase` 를 다운로드하여, `lib/flutterbase` 폴더에 추가합니다.
-  * `git clone https://github.com/thruthesky/flutterbase lib/flutterbase`
-
-* 파이어베이스 프로젝트에서 iOS 앱을 추가하고, iOS 에 설정을 합니다.
-* 파이어베이스 프로젝트에서 Android 앱을 추가하고, Android 설정을 합니다.
+### Firebase 설정
 
 * Firestore 를 생성하고 다음의 Rules 를 적용합니다.
 
@@ -303,11 +296,40 @@ Query Scope: Collection
 * Storage 를 생성(또는 준비)합니다.
   * 참고: Storage 의 경우 권한 지정이 로그인 사용자로 지정되는데, 권한 지정이 좀 더 세밀하게 지정될 필요가 있습니다. 이 부분은 현재 [Issue](https://github.com/thruthesky/flutterbase/issues/3) 로 생성되어져 있습니다.
 
+
+
+### Git fork 하는 경우
+
+* 만약, 새로운 프로젝트를 시작하려 할 때, [Flutter CMS](https://github.com/thruthesky/fluttercms/)를 fork 한 다음 수정해서 사용하시면 됩니다.
+
+* 이 때, Info.plist 를 바꾸는 등 몇 가지 설정을 해 주면 됩니다.
+
+
+
+### 기존에 존재하는 프로젝트에 설정하는 경우
+
+
+
+* 먼저, `Flutterbase` 를 다운로드하여, `lib/flutterbase` 폴더에 추가합니다.
+  * `git clone https://github.com/thruthesky/flutterbase lib/flutterbase`
+
+* 파이어베이스 프로젝트에서 iOS 앱을 추가하고, iOS 에 설정을 합니다.
+* 파이어베이스 프로젝트에서 Android 앱을 추가하고, Android 설정을 합니다.
+
+
+
 * 그리고 프로젝트 루트 폴더에 `settigns.dart` 를 생성하고 `storageLink` 를 설정합니다.
   * 참고: [FlutterCMS settings.dart](https://github.com/thruthesky/fluttercms/blob/master/lib/settings.dart)
 
 * 프로젝트에 필요한 패키지들을 pubspec.yaml 에 추가합니다.
   * 참고: [FlutterCMS pubspec.yaml](https://github.com/thruthesky/fluttercms/blob/master/pubspec.yaml) 에서 Dependency 를 복사하면 됩니다.
+
+  * 사용자 아이콘을 pubspec.yaml 에 등록합니다.
+
+```
+  assets:    
+    - lib/flutterbase/assets/images/user-icon.png
+```
 
 * 아래와 같이 iOS의 Info.plist 에서 권한 문자열 지정 하시면 됩니다.
 
@@ -370,6 +392,13 @@ Query Scope: Collection
 ## 수정
 
 * 설치가 끝났으면 실제 코드 작성하면 됩니다.
+* 필요한 부분을 복사해서 사용하시면 됩니다.
+
+
+### 모델
+
+* Flutterbase 모델을 main.dart 에서 Provide 한다.
+* 
 
 
 ### 라우팅
