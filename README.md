@@ -309,14 +309,19 @@ Query Scope: Collection
 ### 기존에 존재하는 프로젝트에 설정하는 경우
 
 
+#### Flutterbaes 추가
 
 * 먼저, `Flutterbase` 를 다운로드하여, `lib/flutterbase` 폴더에 추가합니다.
   * `git clone https://github.com/thruthesky/flutterbase lib/flutterbase`
+
+
+#### Flutter 에 Android, iOS 앱 설정
 
 * 파이어베이스 프로젝트에서 iOS 앱을 추가하고, iOS 에 설정을 합니다.
 * 파이어베이스 프로젝트에서 Android 앱을 추가하고, Android 설정을 합니다.
 
 
+#### 프로젝트 설정
 
 * 그리고 프로젝트 루트 폴더에 `settigns.dart` 를 생성하고 `storageLink` 를 설정합니다.
   * 참고: [FlutterCMS settings.dart](https://github.com/thruthesky/fluttercms/blob/master/lib/settings.dart)
@@ -346,6 +351,8 @@ Query Scope: Collection
 
 참고: [FlutterCMS Info.plist](https://github.com/thruthesky/fluttercms/blob/master/ios/Runner/Info.plist) 에서 `XXXXXDescription` 복사
   
+##### 다국어 설정
+
 * 다국어 언어 설정
   * Info.plist 에 아래와 같이 추가하면 됩니다.
   * 참고: [FlutterCMS Info.plist](https://github.com/thruthesky/fluttercms/blob/master/ios/Runner/Info.plist) 
@@ -360,6 +367,7 @@ Query Scope: Collection
 </array>
 ```
 
+#### 관리자 설정
 
 * 관리자 지정하기
   * 사용자 도큐먼트에서 `isAdmin` 속성을 true 로 주면 관리자가 됩니다.
@@ -368,6 +376,8 @@ Query Scope: Collection
     * Firestore 에서 Document Filtering(검색) 기능을 통해서, 검색하면 된다. Document 필드 중 email 또는 uid 이 없다면, displayName 으로 검색하면 됩니다.
     * 먼저 앱을 실행하고, 회원 가입을 한 다음, 그 회원의 user document 를 수정하는 것이 편합니다.
 
+
+#### 카테고리 설정
 
 * 게시판 카테고리 생성
   * 관리자 지정 후, 다시 로그인을 하면, 메뉴에서 관리자 페이지로 진입 할 수 있습니다.
