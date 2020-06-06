@@ -298,11 +298,11 @@ Query Scope: Collection
 
 
 
-### Git fork 하는 경우
+### 새로운 프로젝트를 시작하려는 경우,
 
-* 만약, 새로운 프로젝트를 시작하려 할 때, [Flutter CMS](https://github.com/thruthesky/fluttercms/)를 fork 한 다음 수정해서 사용하시면 됩니다.
+* 만약, 새로운 프로젝트를 시작하려 할 때, [Flutter CMS](https://github.com/thruthesky/fluttercms/)를 fork (또는 clone)한 다음 수정해서 사용하는 것도 좋은 방법입니다.
 
-* 이 때, Info.plist 를 바꾸는 등 몇 가지 설정을 해 주면 됩니다.
+* `Flutter CMS` 를 fork (또는 clone) 에서 대해서는 [Flutter CMS](https://github.com/thruthesky/fluttercms/)의 README 문서를 참고해주세요.
 
 
 
