@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import '../../widgets/flutterbase.space.dart';
+import '../flutterbase.spinner.dart';
+import '../flutterbase.space.dart';
 import '../../etc/flutterbase.comment.helper.dart';
 import '../../etc/flutterbase.defines.dart';
 import '../../etc/flutterbase.globals.dart';
 import '../../etc/flutterbase.post.helper.dart';
 import '../../models/flutterbase.forum_list.model.dart';
 import '../../models/flutterbase.post.model.dart';
-import '../../widgets/flutterbase.text_button.dart';
-import '../../widgets/forum/flutterbase.comment_edit_form.dart';
-import '../../widgets/forum/flutterbase.comment_view.dart';
-import '../../widgets/forum/flutterbase.post_edit_form.dart';
-import '../../widgets/forum/flutterbase.post_list_view_content.dart';
+import '../flutterbase.text_button.dart';
+import '../forum/flutterbase.comment_edit_form.dart';
+import '../forum/flutterbase.comment_view.dart';
+import '../forum/flutterbase.post_edit_form.dart';
+import '../forum/flutterbase.post_list_view_content.dart';
 import 'package:provider/provider.dart';
 
 class FlutterbasePostListView extends StatefulWidget {
@@ -40,7 +40,7 @@ class _FlutterbasePostListViewState extends State<FlutterbasePostListView> {
             FlutterbasePostListViewButtons(widget.post),
             Column(
               children: <Widget>[
-                if (model.inLoading) PlatformCircularProgressIndicator(),
+                if (model.inLoading) FlutterbaseSpinner(),
                 if (model.inLoading == false && model.comments != null)
                   for (var c in model.comments)
                     FlutterbaseCommentView(

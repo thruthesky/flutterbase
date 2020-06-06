@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import '../widgets/flutterbase.space.dart';
+import './flutterbase.spinner.dart';
+import './flutterbase.space.dart';
 
 class FlutterbaseButton extends StatelessWidget {
   FlutterbaseButton({
@@ -22,7 +22,7 @@ class FlutterbaseButton extends StatelessWidget {
       child: Row(
         children: <Widget>[
           if (showSpinner) ...[
-            PlatformCircularProgressIndicator(),
+            FlutterbaseSpinner(),
             FlutterbaseSpace(),
           ],
           Text(text),

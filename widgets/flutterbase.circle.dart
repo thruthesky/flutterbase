@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import './flutterbase.spinner.dart';
 
 class FlutterbaseCircle extends StatelessWidget {
   FlutterbaseCircle({
@@ -29,7 +29,7 @@ class FlutterbaseCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // if ( showSpinner ) return PlatformCircularProgressIndicator();
+    // if ( showSpinner ) return FlutterbaseSpinner();
 
     Widget icon = Material(
       elevation: elevation,
@@ -38,7 +38,7 @@ class FlutterbaseCircle extends StatelessWidget {
       color: color,
       child: Padding(
         padding: padding,
-        child: showSpinner ? PlatformCircularProgressIndicator() : child,
+        child: showSpinner ? FlutterbaseSpinner() : child,
       ),
     );
     if (onTap == null || showSpinner) return icon;

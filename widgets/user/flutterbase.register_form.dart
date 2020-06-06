@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:validators/validators.dart';
+import '../flutterbase.spinner.dart';
 import '../../etc/flutterbase.defines.dart';
 import '../../etc/flutterbase.globals.dart';
 import '../../etc/flutterbase.user.helper.dart';
-import '../../widgets/flutterbase.space.dart';
-import '../../widgets/flutterbase.text.dart';
-import '../../widgets/flutterbase.text_button.dart';
-import '../../widgets/upload/flutterbase.upload_icon.dart';
-import '../../widgets/user/flutterbase.register_user_photo.dart';
-import '../../widgets/user/flutterbase.upload_progress_bar.dart';
-import 'package:validators/validators.dart';
+import '../flutterbase.space.dart';
+import '../flutterbase.text.dart';
+import '../flutterbase.text_button.dart';
+import '../upload/flutterbase.upload_icon.dart';
+import '../user/flutterbase.register_user_photo.dart';
+import '../user/flutterbase.upload_progress_bar.dart';
 
 class FlutterbaseRegisterFrom extends StatefulWidget {
   FlutterbaseRegisterFrom({
@@ -162,7 +162,7 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
         ),
         FlutterbaseBigSpace(),
         FlutterbaseBigSpace(),
-        if (inLoading) PlatformCircularProgressIndicator(),
+        if (inLoading) FlutterbaseSpinner(),
         fb.notLoggedIn
             ? TextField(
                 controller: _emailController,

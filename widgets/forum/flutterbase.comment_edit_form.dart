@@ -1,20 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import '../flutterbase.spinner.dart';
 import '../../../flutterbase/etc/flutterbase.defines.dart';
-import '../../widgets/flutterbase.space.dart';
+import '../flutterbase.space.dart';
 import '../../etc/flutterbase.comment.helper.dart';
 import '../../etc/flutterbase.globals.dart';
 import '../../etc/flutterbase.post.helper.dart';
 import '../../models/flutterbase.post.model.dart';
-import '../../widgets/flutterbase.text.dart';
-import '../../widgets/forum/flutterbase.comment_view_content.dart';
-import '../../widgets/forum/flutterbase.post_list_view_content.dart';
-import '../../widgets/upload/flutterbase.display_uploaded_image.dart';
-import '../../widgets/upload/flutterbase.upload_icon.dart';
-import '../../widgets/user/flutterbase.upload_progress_bar.dart';
-import '../../widgets/flutterbase.page_padding.dart';
+import '../flutterbase.text.dart';
+import '../forum/flutterbase.comment_view_content.dart';
+import '../forum/flutterbase.post_list_view_content.dart';
+import '../upload/flutterbase.display_uploaded_image.dart';
+import '../upload/flutterbase.upload_icon.dart';
+import '../user/flutterbase.upload_progress_bar.dart';
+import '../flutterbase.page_padding.dart';
 
 class FlutterbaseCommentEditForm extends StatelessWidget {
   FlutterbaseCommentEditForm({
@@ -186,7 +186,7 @@ class _FlutterbaseCommentEditFormInputBoxState
                   GestureDetector(
                     /// 코멘트 편집 버튼 클릭
                     child: inSubmit
-                        ? PlatformCircularProgressIndicator()
+                        ? FlutterbaseSpinner()
                         : Icon(Icons.send),
                     onTap: () async {
                       /// 코멘트 생성 또는 수정.

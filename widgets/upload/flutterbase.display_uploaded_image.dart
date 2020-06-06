@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import '../flutterbase.spinner.dart';
 import '../../etc/flutterbase.defines.dart';
 import '../../etc/flutterbase.globals.dart';
 import '../../services/flutterbase.storage.service.dart';
-import '../../widgets/flutterbase.image.dart';
+import '../flutterbase.image.dart';
 
 /// 업로드된 사진을 표시
 ///
@@ -106,7 +106,7 @@ class _DeleteIconState extends State<DeleteIcon> {
       },
       color: Colors.black26,
       child: inLoading
-          ? PlatformCircularProgressIndicator()
+          ? FlutterbaseSpinner()
           : Icon(
               Icons.delete,
               size: 24,
