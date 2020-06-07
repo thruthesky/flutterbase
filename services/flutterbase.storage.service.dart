@@ -74,7 +74,7 @@ class FlutterbaseStorage {
   }) async {
     File file;
     const source = [ImageSource.camera, ImageSource.gallery];
-    const permissionGroups = [Permission.contacts, Permission.photos];
+    const permissionGroups = [Permission.camera, Permission.photos];
 
     /// 권한 검사
     bool haveAccess = await requestPermission(permissionGroups[sourceIdx]);
@@ -109,19 +109,34 @@ class FlutterbaseStorage {
   ///
   /// TODO: iOS 에서 권한을 두번 물어 보는데, 한번으로 줄일 것.
   ///
+  //// 여기서부터. 인터넷에서 카메라 권한 요청 소스 검색해서 적용 할 것. 안드로이드에서 안됨.
   Future<bool> requestPermission(Permission permission) async {
-    // You can can also directly ask the permission about its status.
-    if (await Permission.location.isRestricted) {
-      // The OS restricts access, for example because of parental controls.
-      return false;
-    }
-    if (await Permission.contacts.request().isGranted) {
-      // Either the permission was already granted before or the user just granted it.
-      return true;
-    } else {
-      return false;
-    }
+    var status = await Permission.camera.status;
+    print('status: $status');
+    return await Permission.camera.request().isGranted;
+
+    // // You can can also directly ask the permission about its status.
+    // if (await Permission.location.isRestricted) {
+    //   // The OS restricts access, for example because of parental controls.
+    //   return false;
+    // }
+
+    // if (await Permission.contacts.request().isGranted) {
+    //   // Either the permission was already granted before or the user just granted it.
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   }
+
+  /// `check permission` for certain device function access
+  ///
+  ///
+  // Future<bool> checkPermission(PermissionGroup permissionGroup) async {
+  //   PermissionStatus permissionStatus =
+  //       await PermissionHandler().checkPermissionStatus(permissionGroup);
+  //   return evaluatePermissionStatus(permissionStatus);
+  // }
 
   /// compress file and returns it.
   /// also fixing orientation issue when taking images via camera.
