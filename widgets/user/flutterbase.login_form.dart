@@ -10,12 +10,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FlutterbaseLoginForm extends StatefulWidget {
   FlutterbaseLoginForm({
+    this.logo,
     @required this.onLogin,
     @required this.onError,
   });
 
   final Function onLogin;
   final Function onError;
+  Widget logo;
 
   @override
   _FlutterbaseLoginFormState createState() => _FlutterbaseLoginFormState();
@@ -60,7 +62,9 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
           FlutterbaseBigSpace(),
           FlutterbaseBigSpace(),
           FlutterbaseBigSpace(),
-          FlutterbaseCircle(
+          
+          
+          widget.logo != null ? widget.logo : FlutterbaseCircle(
             padding: EdgeInsets.all(24.0),
             color: Theme.of(context).accentColor,
             child: Icon(
@@ -69,7 +73,7 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
               color: Theme.of(context).buttonColor,
             ),
           ),
-          FlutterbaseBigSpace(),
+
           FlutterbaseBigSpace(),
           FlutterbaseBigSpace(),
           TextField(
@@ -89,6 +93,7 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
             ),
           ),
           FlutterbaseBigSpace(),
+          FlutterbaseBigSpace(),
           FittedBox(
             child: FlutterbaseTextButton(
               showSpinner: inSubmit,
@@ -107,6 +112,7 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
               },
             ),
           ),
+          FlutterbaseBigSpace(),
           Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,8 +126,6 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
             ],
           ),
           FlutterbaseBigSpace(),
-          FlutterbaseBigSpace(),
-          T(OR_LOGIN_WITH),
           FlutterbaseBigSpace(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -167,6 +171,8 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
               ),
             ],
           ),
+          FlutterbaseBigSpace(),
+          T(OR_LOGIN_WITH),
           // RaisedButton(
           //   onPressed: () async {
           //     try {
