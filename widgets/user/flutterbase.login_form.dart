@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../services/flutterbase.auth.service.dart';
 import '../../widgets/flutterbase.space.dart';
 import '../../etc/flutterbase.defines.dart';
 import '../../etc/flutterbase.globals.dart';
@@ -42,16 +43,16 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
     return data;
   }
 
-  Future<FirebaseUser> _handleSignIn() async {
-    try {
-      return await fb.loginWithGoogleAccount();
-    } catch (e) {
-      print('Got error: ');
-      print(e);
-      widget.onError(e);
-      return null;
-    }
-  }
+  // Future<FirebaseUser> _handleSignIn() async {
+  //   try {
+  //     return await fb.loginWithGoogleAccount();
+  //   } catch (e) {
+  //     print('Got error: ');
+  //     print(e);
+  //     widget.onError(e);
+  //     return null;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -62,17 +63,18 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
           FlutterbaseBigSpace(),
           FlutterbaseBigSpace(),
           FlutterbaseBigSpace(),
-          
-          
-          widget.logo != null ? widget.logo : FlutterbaseCircle(
-            padding: EdgeInsets.all(24.0),
-            color: Theme.of(context).accentColor,
-            child: Icon(
-              Icons.verified_user,
-              size: 112,
-              color: Theme.of(context).buttonColor,
-            ),
-          ),
+
+          widget.logo != null
+              ? widget.logo
+              : FlutterbaseCircle(
+                  padding: EdgeInsets.all(24.0),
+                  color: Theme.of(context).accentColor,
+                  child: Icon(
+                    Icons.verified_user,
+                    size: 112,
+                    color: Theme.of(context).buttonColor,
+                  ),
+                ),
 
           FlutterbaseBigSpace(),
           FlutterbaseBigSpace(),
@@ -137,10 +139,13 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
                   color: Colors.red,
                 ),
                 onTap: () async {
-                  return alert('not supported yet');
+                  //// 구글 로그인
+                  FlutterbaseAuthService fas = FlutterbaseAuthService();
+
                   try {
-                    final user = await _handleSignIn();
-                    print(user);
+                    final user = await fas.loginWithGoogleAccount();
+                    print('user: $user');
+                    widget.onLogin(user);
                   } catch (e) {
                     widget.onError(e);
                   }

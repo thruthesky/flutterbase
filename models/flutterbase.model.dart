@@ -16,10 +16,13 @@ import '../etc/flutterbase.texts.dart';
 import '../models/flutterbase.post.model.dart';
 
 /// 앱의 전체 영역에서 사용되는 state 관리 모델
+/// 
 ///
 /// TODO: 이 모델에는 이런 저런 여러가지 함수가 포함되어져 있는데 이로 인해서 코드가 난잡 해 졌다.
 ///   - state 에 꼭 필요한 정보만 담고,
 ///   - 그 외에는 별도의 서비스 파일로 분리해야한다.
+///   - 예를 들면, 가입/로그인/프로필 수정, 게시판 관련 쿼리, 카테고리 관련 쿼리는 state 관리에서 직접적인 코드가 아니다.
+///     이런 코드를 별도의 라이브러리나 서비스로 빼 내야 한다.
 ///   그래야 깔끔하게 정리가 될 것 같다.
 ///
 class FlutterbaseModel extends ChangeNotifier {
@@ -226,34 +229,34 @@ class FlutterbaseModel extends ChangeNotifier {
   /// 구글 계정으로 로그인을 한다.
   ///
   /// 사용자가 취소를 누르면 null 이 리턴된다.
-  Future<FirebaseUser> loginWithGoogleAccount() async {
-    try {
-      final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        return null;
-      }
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+  // Future<FirebaseUser> loginWithGoogleAccount() async {
+  //   try {
+  //     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+  //     if (googleUser == null) {
+  //       return null;
+  //     }
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser.authentication;
 
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+  //     final AuthCredential credential = GoogleAuthProvider.getCredential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
 
-      final FirebaseUser user =
-          (await auth.signInWithCredential(credential)).user;
-      // print("signed in " + user.displayName);
+  //     final FirebaseUser user =
+  //         (await auth.signInWithCredential(credential)).user;
+  //     // print("signed in " + user.displayName);
 
-      /// 파이어베이스에서 이미 로그인을 했으므로, GoogleSignIn 에서는 바로 로그아웃을 한다.
-      /// GoogleSignIn 에서 로그아웃을 안하면, 다음에 로그인을 할 때, 다른 계정으로 로그인을 못한다.
-      await _googleSignIn.signOut();
-      return user;
-    } catch (e) {
-      // print('loginWithGoogleAccount::');
-      // print(e);
-      throw e.message;
-    }
-  }
+  //     /// 파이어베이스에서 이미 로그인을 했으므로, GoogleSignIn 에서는 바로 로그아웃을 한다.
+  //     /// GoogleSignIn 에서 로그아웃을 안하면, 다음에 로그인을 할 때, 다른 계정으로 로그인을 못한다.
+  //     await _googleSignIn.signOut();
+  //     return user;
+  //   } catch (e) {
+  //     // print('loginWithGoogleAccount::');
+  //     // print(e);
+  //     throw e.message;
+  //   }
+  // }
 
   /// 사용자 정보 Collection 에서 Document 가져와 파싱해서 리턴한다.
   ///

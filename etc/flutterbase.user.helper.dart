@@ -41,8 +41,8 @@ class FlutterbaseUser {
   factory FlutterbaseUser.fromMap(Map<dynamic, dynamic> data) {
     // print('user profile data: $data');
     if (data == null) {
-      // print('User profile is null. User need to update his profile!');
-      alert(t(UPDATE_PROFILE));
+      /// TODO: users collection 에 회원 정보가 없는 경우, 에러 표시를 하지 않는다.
+      // alert(t(UPDATE_PROFILE));
       return FlutterbaseUser();
     }
     bool isAdmin = false;
