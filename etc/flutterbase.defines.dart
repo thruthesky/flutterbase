@@ -34,6 +34,7 @@ const String USER_NOT_EXIST = 'flutterbase/user-not-exist';
 const String INVALID_PARAMETER = 'flutterbase/invalid-parameter';
 const String INPUT_IS_EMPTY = 'flutterbase/input-is-empty';
 const String FAILED_TO_REGISTER = 'flutterbase/failed-to-register';
+const String FAILED_ON_FACEBOOK_LOGIN = 'flutterbase/failed-on-facebook-login';
 const String EMAIL_IS_EMPTY = 'flutterbase/email-is-empty';
 const String PASSWORD_IS_EMPTY = 'flutterbase/password-is-empty';
 const String DISPLAYNAME_IS_EMPTY = 'flutterbase/displayname-is-empty';

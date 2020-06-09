@@ -139,9 +139,8 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
                   color: Colors.red,
                 ),
                 onTap: () async {
-                  //// 구글 로그인
+                  /// 구글 로그인
                   FlutterbaseAuthService fas = FlutterbaseAuthService();
-
                   try {
                     final user = await fas.loginWithGoogleAccount();
                     print('user: $user');
@@ -158,8 +157,17 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
                   size: 46,
                   color: Colors.indigo,
                 ),
-                onTap: () {
-                  return alert('not supported yet');
+                onTap: () async {
+                  /// 페이스북 로그인
+                  FlutterbaseAuthService fas = FlutterbaseAuthService();
+                  try {
+                    final user =
+                        await fas.loginWithFacebookAccount(context: context);
+                    print('user: $user');
+                    widget.onLogin(user);
+                  } catch (e) {
+                    widget.onError(e);
+                  }
                 },
               ),
               FlutterbasePageSpace(),
