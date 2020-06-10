@@ -172,16 +172,34 @@ class _FlutterbaseLoginFormState extends State<FlutterbaseLoginForm> {
               ),
               FlutterbasePageSpace(),
               GestureDetector(
-                child: FlutterbaseCircle(
-                  elevation: 0,
-                  color: Theme.of(context).accentColor,
-                  child: FaIcon(FontAwesomeIcons.twitter,
-                      size: 30, color: Theme.of(context).buttonColor),
+                child: SizedBox(
+                  width: 48,
+                  child: Image.asset(
+                    'lib/apps/korea_flutter_community/assets/icons/kakaotalk_social_login_icon.png',
+                  ),
                 ),
-                onTap: () {
-                  return alert('no supported yet');
+                onTap: () async {
+                  var fas = FlutterbaseAuthService();
+                  try {
+                    await fas.loginWithKakaotalkAccount();
+                    widget.onLogin(null);
+                  } catch (e) {
+                    widget.onError(e);
+                  }
                 },
               ),
+              // FlutterbasePageSpace(),
+              // GestureDetector(
+              //   child: FlutterbaseCircle(
+              //     elevation: 0,
+              //     color: Theme.of(context).accentColor,
+              //     child: FaIcon(FontAwesomeIcons.twitter,
+              //         size: 30, color: Theme.of(context).buttonColor),
+              //   ),
+              //   onTap: () {
+              //     return alert('no supported yet');
+              //   },
+              // ),
             ],
           ),
           FlutterbaseBigSpace(),

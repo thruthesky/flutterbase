@@ -90,7 +90,10 @@ class _FlutterbaseRegisterFromState extends State<FlutterbaseRegisterFrom> {
           () {
             _nicknameController.text = fb.user.displayName;
             _phoneNumberController.text = fb.user.phoneNumber;
-            _birthdayController.text = user.birthday.toString();
+            if (user.birthday == null)
+              _birthdayController.text = '';
+            else
+              _birthdayController.text = user.birthday.toString();
           },
         );
       }

@@ -3,15 +3,103 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:fluttercms/flutterbase/etc/flutterbase.defines.dart';
+import 'package:fluttercms/flutterbase/etc/flutterbase.globals.dart';
+import 'package:kakao_flutter_sdk/all.dart';
+import 'package:kakao_flutter_sdk/auth.dart';
 import '../../settings.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class FlutterbaseAuthService {
+  /// 카카오톡 로그인
+  ///
+  ///
+loginWithKakaotalkAccount() async {
+  /// 카카오톡 로그인을 경우, 상황에 따라 메일 주소가 없을 수 있다. 메일 주소가 필수 항목이 아닌 경우,
+  /// 따라서, id 로 메일 주소를 만들어서, 자동 회원 가입을 한다.
+  ///
+  try {
+    /// 카카오톡 앱이 핸드폰에 설치되었는가?
+    final installed = await isKakaoTalkInstalled();
+
+    /// 카카오톡 앱이 설치 되었으면, 앱으로 로그인, 아니면 OAuth 로 로그인.
+    final authCode = installed
+        ? await AuthCodeClient.instance.requestWithTalk()
+        : await AuthCodeClient.instance.request();
+
+    AccessTokenResponse token =
+        await AuthApi.instance.issueAccessToken(authCode);
+
+    /// Store access token in AccessTokenStore for future API requests.
+    /// 이걸 해야지, 아래에서 UserApi.instance.me() 와 같이 호출을 할 수 있나??
+    AccessTokenStore.instance.toStore(token);
+
+    String refreshedToken = token.refreshToken;
+    print('refreshedToken: $refreshedToken');
+
+    User user = await UserApi.instance.me();
+
+    Map<String, String> data = {
+      'email': 'kakaotalk${user.id}@kakao.com',
+      'password': 'Settings.secretKey+${user.id}',
+      'displayName': user.properties['nickname'],
+      'photoUrl': user.properties['profile_image'],
+    };
+
+    loginOrRegisterThenUpdate(data);
+  } on KakaoAuthException catch (e) {
+    throw e;
+  } on KakaoClientException catch (e) {
+    throw e;
+  } catch (e) {
+    /// 카카오톡 로그인에서 에러가 발생하는 경우,
+    /// 에러 메시지가 로그인 창에 표시가 되므로, 상단 위젯에서는 에러를 무시를 해도 된다.
+    /// 예를 들어, 비밀번호 오류나, 로그인 취소 등.
+    print('error: =====> ');
+    print(e);
+    throw e;
+  }
+}
+
+  /// 회원 로그인을 먼저 시도하고, 가입이 되어져 있지 않으면 가입을 한다.
+  ///
+  ///
+  /// - 먼저, 로그인을 한다.
+  /// - 만약, 로그인이 안되면, 회원 가입을 한다.
+  /// - 회원 정보를 업데이트한다.
+  Future<void> loginOrRegisterThenUpdate(
+      Map<String, String> data) async {
+    print('data: $data');
+
+    try {
+      await fb.login(data['email'], data['password']);
+      print('loggedIn!');
+      data.remove('email');
+      data.remove('password');
+
+      print('Going to update profile');
+      await fb.profileUpdate(data);
+    } on PlatformException catch (e) {
+      if (e.code == ERROR_USER_NOT_FOUND) {
+        /// Not regisgtered? then register
+        print('Not registered. Going to register');
+        await fb.register(data);
+      } else {
+        print('Error on login or profiel update:');
+        print(e);
+        throw e;
+      }
+    } catch (e) {
+      print('what error error: $e');
+      throw e;
+    }
+  }
+
   /// 페이스북 계정 로그인
   ///
   /// 아래의 코드는 페이스 북 계정 로그인 코드
 
-  Future<FirebaseUser> loginWithFacebookAccount({@required BuildContext context}) async {
+  Future<FirebaseUser> loginWithFacebookAccount(
+      {@required BuildContext context}) async {
     String result = await Navigator.push(
       context,
       MaterialPageRoute(
