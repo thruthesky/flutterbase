@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import '../../services/app.globals.dart';
+import '../../settings.dart';
 import '../etc/flutterbase.defines.dart';
 import '../etc/flutterbase.globals.dart';
 import 'dart:io';
@@ -154,7 +154,7 @@ class FlutterbaseStorage {
   Future<String> upload(
       File file, Function onUploadPercentage, Function onUploadComplete) async {
     final FirebaseStorage _storage =
-        FirebaseStorage(storageBucket: app.settings.storageLink);
+        FirebaseStorage(storageBucket: Settings.storageLink);
 
     /// Unique file name for the file
     String filePath = 'images/${DateTime.now()}.jpg';

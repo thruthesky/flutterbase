@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import '../../services/app.globals.dart';
+import '../../settings.dart';
 import '../etc/flutterbase.defines.dart';
 import '../etc/flutterbase.globals.dart';
 import 'package:kakao_flutter_sdk/all.dart';
@@ -106,7 +106,7 @@ class FlutterbaseAuthService {
       MaterialPageRoute(
           builder: (context) => CustomWebViewForFacebookLogin(
                 selectedUrl:
-                    'https://www.facebook.com/dialog/oauth?client_id=${app.settings.facebookAppId}&redirect_uri=${app.settings.facebookLoginRedirectUrl}&response_type=token&scope=email,public_profile,',
+                    'https://www.facebook.com/dialog/oauth?client_id=${Settings.facebookAppId}&redirect_uri=${Settings.facebookLoginRedirectUrl}&response_type=token&scope=email,public_profile,',
               ),
           maintainState: true),
     );

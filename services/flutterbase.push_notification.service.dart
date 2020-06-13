@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import '../../services/app.globals.dart';
+import '../../settings.dart';
 import '../../flutterbase/etc/flutterbase.globals.dart';
 
 class FlutterbasePushNotificationService {
@@ -15,7 +15,7 @@ class FlutterbasePushNotificationService {
       });
       _fcm.requestNotificationPermissions(IosNotificationSettings());
     }
-    await _fcm.subscribeToTopic(app.settings.fcmTopic);
+    await _fcm.subscribeToTopic(Settings.fcmTopic);
 
     _fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -63,14 +63,14 @@ class FlutterbasePushNotificationService {
         data: data,
         onTap: (ret) {
           if (ret['postId'] != null) {
-            open(app.settings.postViewRoute,
+            open(Settings.postViewRoute,
                 arguments: {'postId': ret['postId']});
           }
         },
       );
     } else {
       if (data['postId'] != null) {
-        open(app.settings.postViewRoute, arguments: {'postId': data['postId']});
+        open(Settings.postViewRoute, arguments: {'postId': data['postId']});
       }
     }
   }
