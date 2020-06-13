@@ -3,8 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../../settings.dart';
-import 'package:koreafluttercommunity/flutterbase/etc/flutterbase.globals.dart';
-import 'package:koreafluttercommunity/settings.dart';
+import '../../flutterbase/etc/flutterbase.globals.dart';
 
 class FlutterbasePushNotificationService {
   final FirebaseMessaging _fcm = FirebaseMessaging();
