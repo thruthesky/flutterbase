@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 
 import 'package:firebase_auth/firebase_auth.dart';
 import '../etc/flutterbase.category.helper.dart';
@@ -16,7 +17,7 @@ import '../etc/flutterbase.texts.dart';
 import '../models/flutterbase.post.model.dart';
 
 /// 앱의 전체 영역에서 사용되는 state 관리 모델
-/// 
+///
 ///
 /// TODO: 이 모델에는 이런 저런 여러가지 함수가 포함되어져 있는데 이로 인해서 코드가 난잡 해 졌다.
 ///   - state 에 꼭 필요한 정보만 담고,
@@ -45,6 +46,7 @@ class FlutterbaseModel extends ChangeNotifier {
               userDocument = await profile();
               print('userDocument: $userDocument, email: ${user.email}');
               notify();
+              await setUserToken();
             } catch (e) {
               print('got profile error: ');
               print(e);
@@ -72,6 +74,7 @@ class FlutterbaseModel extends ChangeNotifier {
   final Firestore store = Firestore.instance;
 
   GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  // GlobalKey<ScaffoldState> globalScaffoldKey = GlobalKey<ScaffoldState>();
 
   /// Returns the context of [navigatorKey]
   BuildContext get context => navigatorKey.currentState.overlay.context;
@@ -135,7 +138,6 @@ class FlutterbaseModel extends ChangeNotifier {
 
     if (re == null || re.user == null) throw FAILED_TO_REGISTER;
     data.remove('password');
-
 
     data.remove('email');
     data.remove('password');
@@ -764,6 +766,26 @@ class FlutterbaseModel extends ChangeNotifier {
     return true;
   }
 
+  /// 사용자 푸시 알림 토큰 저장
+  ///
+  /// 사용자의 FCM Token 을 user/uid/tokens collection 에 저장한다.
+  /// 사용자가 로그인을 할 때 마다 호출 하면 되며, iOS 에서는 추가적으로 퍼미션을 변경할 때 호출 하면 된다.
+  Future setUserToken() async {
+    final FirebaseMessaging _fcm = FirebaseMessaging();
+    String token = await _fcm.getToken();
+    if (token == null) {
+      print('token is null');
+      return;
+    }
 
-
+    if (loggedIn) {
+      var tokenRef = _userDoc(user.uid).collection('tokens').document(token);
+      await tokenRef.setData({
+        'token': token,
+        'platform': Platform.operatingSystem,
+        'createdAt': FieldValue.serverTimestamp()
+      });
+      print('token added to: ${user.uid} with: $token');
+    }
+  }
 }

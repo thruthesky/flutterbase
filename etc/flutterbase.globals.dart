@@ -1,3 +1,6 @@
+import 'package:flushbar/flushbar.dart';
+import 'package:flushbar/flushbar_helper.dart';
+
 import '../etc/flutterbase.app.localization.dart';
 import '../etc/flutterbase.defines.dart';
 import '../etc/flutterbase.texts.dart';
@@ -266,4 +269,39 @@ void back({arguments}) {
 /// Returns true if [obj] is one of null, false, empty string, or 0.
 bool isEmpty(obj) {
   return obj == null || obj == '' || obj == false || obj == 0;
+}
+
+/// 스택바 표시
+///
+/// [tilte] 제목
+/// [message] 내용
+/// [buttonText] 표시할 버튼
+/// [onTap] 버튼이 클릭되면 실행되는 이벤트. 스낵바가 그냥 사라지면 안됨.
+/// [durationInSeconds] 얼마나 오랜동안 표시 할지 지정. 정수로 입력.
+/// [data] 버튼이 클릭되면, 돌려 받을 데이터
+void snackBar({
+  @required String title,
+  @required String message,
+  String buttonText = 'Ok',
+  int durationInSeconds = 10,
+  Function onTap,
+  data,
+}) {
+  Flushbar flushbar;
+  flushbar = Flushbar(
+    title: title,
+    message: message,
+    duration: Duration(seconds: durationInSeconds),
+    animationDuration: Duration(milliseconds: 500),
+    mainButton: FlatButton(
+      onPressed: () {
+        flushbar.dismiss(true);
+        if (onTap != null) onTap(data);
+      },
+      child: Text(
+        buttonText,
+        style: TextStyle(color: Colors.amber),
+      ),
+    ),
+  )..show(fb.context);
 }
