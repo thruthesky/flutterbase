@@ -276,15 +276,18 @@ bool isEmpty(obj) {
 /// [tilte] 제목
 /// [message] 내용
 /// [buttonText] 표시할 버튼
-/// [onTap] 버튼이 클릭되면 실행되는 이벤트. 스낵바가 그냥 사라지면 안됨.
+/// [onTap] 스낵바를 클릭하면 실행되는 이벤트.
+/// [onClose] 닫기 버튼을 클릭하면 실행되는 이벤트
 /// [durationInSeconds] 얼마나 오랜동안 표시 할지 지정. 정수로 입력.
-/// [data] 버튼이 클릭되면, 돌려 받을 데이터
+/// [data] 터치(클릭)되면, 돌려 받을 데이터.
+/// 
 void snackBar({
   @required String title,
   @required String message,
   String buttonText = 'Ok',
   int durationInSeconds = 10,
   Function onTap,
+  Function onClose,
   data,
 }) {
   Flushbar flushbar;
@@ -293,10 +296,14 @@ void snackBar({
     message: message,
     duration: Duration(seconds: durationInSeconds),
     animationDuration: Duration(milliseconds: 500),
+    onTap: (x) {
+      flushbar.dismiss(true);
+      if (onTap != null) onTap(data);
+    },
     mainButton: FlatButton(
       onPressed: () {
         flushbar.dismiss(true);
-        if (onTap != null) onTap(data);
+        if (onClose != null) onClose(data);
       },
       child: Text(
         buttonText,

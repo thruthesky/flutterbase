@@ -63,10 +63,10 @@ class FlutterbasePushNotificationService {
         data: data,
         onTap: (ret) {
           if (ret['postId'] != null) {
-            open(Settings.postViewRoute,
-                arguments: {'postId': ret['postId']});
+            open(Settings.postViewRoute, arguments: {'postId': ret['postId']});
           }
         },
+        onClose: () => null,
       );
     } else {
       if (data['postId'] != null) {
